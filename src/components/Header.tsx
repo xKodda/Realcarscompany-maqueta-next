@@ -11,7 +11,7 @@ export default function Header() {
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-      <nav className="container mx-auto px-4 md:px-6 py-4 md:py-5" aria-label="Navegación principal">
+      <nav className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5" aria-label="Navegación principal">
         <div className="flex items-center justify-between">
           <Link 
             href="/" 
@@ -24,13 +24,13 @@ export default function Header() {
               alt="RealCars Company - Automotora Premium"
               width={180}
               height={60}
-              className="h-12 md:h-14 w-auto"
+              className="h-10 sm:h-12 md:h-14 w-auto"
               priority
             />
           </Link>
           
           {/* Menu Desktop */}
-          <ul className="hidden md:flex items-center space-x-10">
+          <ul className="hidden lg:flex items-center space-x-8 xl:space-x-10">
             {NAVIGATION_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
@@ -46,8 +46,9 @@ export default function Header() {
           {/* Hamburger Button */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-[#161b39] p-2"
+            className="lg:hidden text-[#161b39] p-2 touch-manipulation"
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
           >
             <motion.svg
               animate={isMenuOpen ? 'open' : 'closed'}
@@ -78,15 +79,15 @@ export default function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
+              className="lg:hidden overflow-hidden border-t border-gray-100 mt-2"
             >
-              <ul className="py-4 space-y-2">
+              <ul className="py-3 space-y-1">
                 {NAVIGATION_ITEMS.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className="block px-4 py-3 text-[#161b39] hover:bg-[#f2f2f4] hover:text-[#802223] transition-colors text-sm font-medium tracking-wide uppercase border-l-2 border-transparent hover:border-[#802223]"
+                      className="block px-4 py-3 text-[#161b39] hover:bg-[#f2f2f4] hover:text-[#802223] transition-colors text-sm font-medium tracking-wide uppercase border-l-2 border-transparent hover:border-[#802223] touch-manipulation"
                     >
                       {item.label}
                     </Link>

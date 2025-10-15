@@ -12,21 +12,19 @@ export default function SeminuevosPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header de página premium */}
-      <section className="bg-[#f2f2f4] py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="bg-gradient-to-br from-[#161b39] via-[#1d2447] to-[#802223] py-20 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-3xl"
+            className="max-w-4xl text-center mx-auto"
           >
-            <div className="inline-block mb-4 px-4 py-1.5 border border-[#802223] text-[#802223] text-xs tracking-[0.2em] uppercase">
-              Calidad certificada
-            </div>
-            <h1 className="text-5xl md:text-6xl font-light text-[#161b39] mb-6 tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-light text-white mb-6 tracking-tight">
               Vehículos <span className="font-semibold">seminuevos</span>
             </h1>
-            <p className="text-xl text-gray-600 font-light leading-relaxed">
+            <p className="text-xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
               Cada vehículo seminuevo pasa por un riguroso proceso de inspección 
               y certificación para garantizar los más altos estándares de calidad.
             </p>
@@ -35,34 +33,44 @@ export default function SeminuevosPage() {
       </section>
 
       {/* Beneficios de Seminuevos */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-light text-[#161b39] mb-8">
+              Beneficios <span className="font-semibold">exclusivos</span>
+            </h2>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#f2f2f4] border border-gray-100 p-8 text-center">
+            <div className="bg-white border border-gray-200 p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-16 h-16 bg-[#802223] text-white mx-auto mb-4 flex items-center justify-center text-2xl">
                 ✓
               </div>
               <h3 className="text-lg font-medium text-[#161b39] mb-2 tracking-wide">
-                Certificación premium
+                Certificación completa
               </h3>
               <p className="text-gray-600 font-light">
                 Inspección técnica completa de 150 puntos
               </p>
             </div>
 
-            <div className="bg-[#f2f2f4] border border-gray-100 p-8 text-center">
+            <div className="bg-white border border-gray-200 p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-16 h-16 bg-[#802223] text-white mx-auto mb-4 flex items-center justify-center text-2xl">
                 🛡️
               </div>
               <h3 className="text-lg font-medium text-[#161b39] mb-2 tracking-wide">
-                Garantía extendida
+                Garantía completa
               </h3>
               <p className="text-gray-600 font-light">
-                Hasta 2 años de garantía premium incluida
+                Hasta 2 años de garantía incluida
               </p>
             </div>
 
-            <div className="bg-[#f2f2f4] border border-gray-100 p-8 text-center">
+            <div className="bg-white border border-gray-200 p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-16 h-16 bg-[#802223] text-white mx-auto mb-4 flex items-center justify-center text-2xl">
                 📋
               </div>

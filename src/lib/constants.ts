@@ -7,13 +7,16 @@ export const NAVIGATION_ITEMS = [
   { label: 'Inicio', href: '/' },
   { label: 'Catálogo', href: '/autos' },
   { label: 'Seminuevos', href: '/seminuevos' },
+  { label: 'Monzza', href: '/sorteos' },
   { label: 'Showroom', href: '/showroom' },
   { label: 'Contacto', href: '/contacto' },
 ]
 
 export const ADMIN_NAVIGATION_ITEMS = [
-  { label: 'Dashboard', href: '/admin' },
+  { label: 'Dashboard', href: '/admin/dashboard' },
   { label: 'Autos', href: '/admin/autos' },
+  { label: 'Sorteos', href: '/admin/sorteos' },
+  { label: 'Usuarios', href: '/admin/usuarios' },
 ]
 
 export const SOCIAL_LINKS = {

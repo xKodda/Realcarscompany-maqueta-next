@@ -1,162 +1,356 @@
-# RealCars Company - Automotora Premium
+# 🚗 RealCars Company - Automotora Premium
 
-Sitio web de lujo para automotora especializada en vehículos premium de alta gama.
+Sistema web completo para automotora de lujo con sistema de sorteos y pagos integrados.
 
-## 🏆 Características Premium
+## 🎯 Características Principales
 
-- **Diseño Minimalista y Elegante**: Interfaz limpia con enfoque en el contenido
-- **Paleta de Colores Exclusiva**: Rojo burgundy (#802223), Navy (#161b39) y tonos claros
-- **Tipografía Premium**: Fuentes elegantes con spacing generoso
-- **Experiencia de Usuario Superior**: Navegación intuitiva y fluida
-- **Responsive Design**: Perfecto en todos los dispositivos
+### 🚘 Catálogo de Vehículos
+- Listado de autos premium con filtros avanzados
+- Página de detalle con galería interactiva
+- Información completa de especificaciones
+- Estados: Disponible, Reservado, Vendido
 
-## 🎨 Diseño
+### 🎰 Sistema de Sorteos (con Khipu)
+- Compra de tickets online
+- Pago seguro vía transferencia bancaria (Khipu)
+- Envío automático de tickets por email
+- Barra de progreso de tickets vendidos
+- Sorteos supervisados por notario
 
-### Paleta de Colores
-- **Primary Red**: `#802223` - Burgundy/Vino
-- **Navy Blue**: `#161b39` - Azul oscuro profundo
-- **Light Grey**: `#f2f2f4` - Gris claro elegante
-- **White**: `#ffffff` - Blanco puro
-- **Accent Gold**: `#d4af37` - Dorado (acento)
-
-### Principios de Diseño
-- Minimalismo y espacio en blanco generoso
-- Jerarquía visual clara
-- Animaciones sutiles y elegantes
-- Contenido centrado en la calidad
-- Enfoque en la experiencia premium
+### 📱 Funcionalidades
+- Integración con WhatsApp
+- Formulario de contacto
+- Página de seminuevos
+- Información de showroom en arriendo
+- Diseño responsive (mobile-first)
 
 ## 🛠️ Stack Tecnológico
 
-- **Framework**: Next.js 15.5.4 (App Router)
-- **React**: 19.1.0
-- **Estilos**: Tailwind CSS 4 con configuración personalizada
-- **Animaciones**: Framer Motion 12.23.22
-- **Íconos**: Lucide React
-- **TypeScript**: 5.x
+### Frontend
+- **Framework:** Next.js 15.5.4 (App Router)
+- **React:** 19.1.0
+- **Styling:** Tailwind CSS 4
+- **Animaciones:** Framer Motion 12.23
+- **Iconos:** Lucide React
+- **Estado:** Zustand 5.0
+- **TypeScript:** 5.x
 
-## 📦 Instalación
+### Backend (Preparado)
+- **Pagos:** Khipu (pasarela chilena)
+- **Base de datos:** PostgreSQL
+- **Email:** Resend
+- **Storage:** AWS S3 / Cloudinary
+- **Caché:** Redis
+
+## 🚀 Inicio Rápido
+
+### Prerrequisitos
+```bash
+Node.js 18+ 
+npm o pnpm
+```
+
+### Instalación
 
 ```bash
+# Clonar el repositorio
+cd realcarscompany-web
+
 # Instalar dependencias
 npm install
 
-# Ejecutar en modo desarrollo
+# Copiar variables de entorno
+cp .env.local.example .env.local
+
+# Editar .env.local con tus valores
+# (Por ahora puedes dejarlo por defecto para modo DEMO)
+
+# Iniciar servidor de desarrollo
 npm run dev
-
-# Construir para producción
-npm run build
-
-# Iniciar servidor de producción
-npm start
 ```
 
-## 📁 Estructura
+Abrir [http://localhost:3000](http://localhost:3000)
+
+## 📁 Estructura del Proyecto
 
 ```
 realcarscompany-web/
 ├── src/
-│   ├── app/
-│   │   ├── (marketing)/
-│   │   │   ├── page.tsx           # Home premium
-│   │   │   ├── autos/page.tsx     # Catálogo de lujo
-│   │   │   ├── contacto/page.tsx  # Contacto elegante
-│   │   │   └── layout.tsx
-│   │   ├── admin/
-│   │   │   ├── page.tsx           # Dashboard premium
-│   │   │   └── autos/page.tsx
-│   │   ├── global.css             # Estilos + paleta custom
-│   │   └── layout.tsx
-│   ├── components/
-│   │   ├── Header.tsx             # Nav minimalista
-│   │   ├── Footer.tsx             # Footer elegante
-│   │   └── AutoCard.tsx           # Card premium
-│   └── lib/
-│       ├── types.ts
-│       ├── constants.ts
-│       ├── data.ts
-│       ├── utils.ts
-│       └── seo.ts
-└── public/
-    └── images/
-        └── brand/
-            └── logo.png
+│   ├── app/                    # App Router (Next.js 15)
+│   │   ├── (marketing)/       # Rutas públicas
+│   │   │   ├── page.tsx       # Home
+│   │   │   ├── autos/         # Catálogo
+│   │   │   ├── sorteos/       # Sistema de sorteos
+│   │   │   ├── seminuevos/    # Seminuevos
+│   │   │   ├── showroom/      # Showroom
+│   │   │   └── contacto/      # Contacto
+│   │   ├── admin/             # Panel admin (protegido)
+│   │   ├── layout.tsx         # Layout raíz
+│   │   └── global.css         # Estilos globales
+│   │
+│   ├── components/            # Componentes reutilizables
+│   │   ├── AutoCard.tsx
+│   │   ├── CompraTicketsModal.tsx
+│   │   ├── Filters.tsx
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── ...
+│   │
+│   ├── lib/                   # Lógica de negocio
+│   │   ├── api/              # Servicios API
+│   │   │   ├── client.ts     # Cliente HTTP
+│   │   │   └── services/
+│   │   │       ├── autos.service.ts
+│   │   │       ├── consultas.service.ts
+│   │   │       ├── sorteos.service.ts
+│   │   │       └── pagos.service.ts  # Khipu
+│   │   ├── constants.ts      # Constantes
+│   │   ├── types.ts          # TypeScript types
+│   │   ├── utils.ts          # Utilidades
+│   │   └── data.ts           # Datos mock
+│   │
+│   └── hooks/                # Custom hooks
+│       ├── useAutos.ts
+│       ├── useConsultas.ts
+│       ├── useSorteos.ts
+│       └── usePagos.ts       # Hooks de Khipu
+│
+├── public/                   # Assets estáticos
+│   ├── images/
+│   └── robots.txt
+│
+├── .env.local.example       # Template de variables
+├── KHIPU_SETUP.md          # Guía de integración Khipu
+├── MEJORAS.md              # Roadmap y mejoras
+├── next.config.ts
+├── tailwind.config.ts
+├── tsconfig.json
+└── package.json
 ```
 
-## ✨ Páginas
+## 🎨 Páginas Disponibles
 
-### Públicas
-- **Home** (`/`) - Hero premium con gradientes, estadísticas y CTA
-- **Catálogo** (`/autos`) - Grid de vehículos con diseño de lujo
-- **Contacto** (`/contacto`) - Formulario elegante con info de contacto
+| Ruta | Descripción | Estado |
+|------|-------------|--------|
+| `/` | Home con autos destacados | ✅ |
+| `/autos` | Catálogo completo con filtros | ✅ |
+| `/autos/[id]` | Detalle de auto con galería | ✅ |
+| `/seminuevos` | Vehículos seminuevos | ✅ |
+| `/sorteos` | Sistema de sorteos con compra | ✅ |
+| `/showroom` | Showroom en arriendo | ✅ |
+| `/contacto` | Formulario de contacto | ✅ |
+| `/admin` | Panel de administración | ⏳ |
 
-### Administración
-- **Dashboard** (`/admin`) - Panel de control minimalista
-- **Gestión de Autos** (`/admin/autos`) - Administración del inventario
+## 🧪 Probar el Sistema
 
-## 🎯 Características del Diseño
+### Modo DEMO (sin backend)
+El proyecto incluye un modo DEMO que te permite probar toda la UI y flujo de compra sin necesidad de backend:
 
-### Header
-- Logo premium en esquina superior izquierda
-- Navegación minimalista con uppercase tracking
-- Sticky header con backdrop blur
-- CTA destacado "Contáctanos"
+1. Inicia el servidor: `npm run dev`
+2. Ve a http://localhost:3000/sorteos
+3. Click en "Comprar tickets"
+4. Completa el formulario
+5. Verás una simulación del proceso
 
-### Cards de Autos
-- Diseño limpio con bordes sutiles
-- Hover effects elegantes
-- Badge "Destacado" para vehículos especiales
-- Información clara y jerárquica
-- Tipografía light/semibold mix
+### Con Backend Real
+Para usar Khipu real, sigue la guía en [KHIPU_SETUP.md](./KHIPU_SETUP.md)
 
-### Hero Section
-- Gradiente burgundy a navy
-- Tipografía grande y espaciada
-- CTAs contrastantes
-- Pattern background sutil
+## 📦 Scripts Disponibles
 
-### Footer
-- Diseño en grid de 4 columnas
-- Logo invertido para fondo oscuro
-- Enlaces organizados
-- Información de contacto clara
+```bash
+# Desarrollo
+npm run dev          # Servidor de desarrollo (Turbopack)
 
-## 🚀 Características Técnicas
+# Producción
+npm run build        # Build para producción
+npm run start        # Servidor de producción
 
-- **SEO Optimizado**: Meta tags premium y OpenGraph
-- **Performance**: Optimización de imágenes Next.js
-- **Accesibilidad**: Labels semánticos y aria-labels
-- **Responsive**: Mobile-first approach
-- **TypeScript**: Type-safe en todo el código
+# Linting
+npm run lint         # ESLint
+```
 
-## 🔧 Próximas Mejoras
+## 🔐 Variables de Entorno
 
-- [ ] Página de detalle de vehículo individual
-- [ ] Galería de imágenes 360°
-- [ ] Filtros avanzados (marca, precio, año)
-- [ ] Comparador de vehículos
-- [ ] Sistema de favoritos
-- [ ] Integración WhatsApp Business
-- [ ] Calculadora de financiamiento
-- [ ] Blog de noticias automotrices
-- [ ] Backend con PostgreSQL
-- [ ] Panel de admin con autenticación
+Copia `.env.local.example` a `.env.local` y configura:
 
-## 🎨 Filosofía de Diseño
+```bash
+# URLs
+NEXT_PUBLIC_SITE_URL=https://realcarscompany.cl
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
 
-> "La elegancia es refinamiento sin ostentación"
+# Khipu (Sistema de pagos)
+KHIPU_RECEIVER_ID=your-receiver-id
+KHIPU_SECRET=your-secret
+NEXT_PUBLIC_KHIPU_RETURN_URL=http://localhost:3000/sorteos/pago/exito
+NEXT_PUBLIC_KHIPU_CANCEL_URL=http://localhost:3000/sorteos/pago/cancelado
 
-Este sitio refleja los valores de una automotora premium:
-- **Sofisticación** sin excesos
-- **Claridad** en la comunicación
-- **Calidad** sobre cantidad
-- **Atención** al detalle
-- **Experiencia** memorable
+# Base de datos
+DATABASE_URL=postgresql://...
+
+# Email
+RESEND_API_KEY=re_...
+EMAIL_FROM=noreply@realcarscompany.cl
+
+# Storage
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_S3_BUCKET=realcarscompany-images
+
+# Analytics
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+```
+
+Ver `.env.local.example` para la lista completa.
+
+## 💳 Sistema de Pagos (Khipu)
+
+Este proyecto usa **Khipu**, la pasarela de pagos líder en Chile que permite cobrar mediante transferencia bancaria.
+
+### Características:
+- ✅ Transferencia bancaria instantánea
+- ✅ Sin necesidad de tarjetas
+- ✅ Comisión competitiva (~2.9%)
+- ✅ API simple y robusta
+- ✅ Webhooks para notificaciones
+
+### Setup:
+1. Registrarse en https://khipu.com
+2. Obtener credenciales
+3. Seguir guía en [KHIPU_SETUP.md](./KHIPU_SETUP.md)
+
+## 📧 Sistema de Emails
+
+Los tickets se envían automáticamente por email después del pago. Servicios recomendados:
+
+- **Resend** (recomendado) - resend.com
+- **SendGrid** - sendgrid.com
+- **Amazon SES** - aws.amazon.com/ses
+
+## 🗄️ Base de Datos
+
+### Esquema Principal (PostgreSQL)
+
+```sql
+-- Autos
+CREATE TABLE autos (
+  id UUID PRIMARY KEY,
+  marca VARCHAR(100),
+  modelo VARCHAR(100),
+  año INTEGER,
+  precio DECIMAL(10,2),
+  -- ... más campos
+);
+
+-- Sorteos
+CREATE TABLE sorteos (
+  id UUID PRIMARY KEY,
+  titulo VARCHAR(200),
+  premio VARCHAR(200),
+  precio_ticket DECIMAL(10,2),
+  total_tickets INTEGER,
+  tickets_vendidos INTEGER,
+  fecha_sorteo TIMESTAMP,
+  estado VARCHAR(20),
+  -- ... más campos
+);
+
+-- Órdenes de compra
+CREATE TABLE ordenes (
+  id UUID PRIMARY KEY,
+  sorteo_id UUID REFERENCES sorteos(id),
+  comprador_nombre VARCHAR(200),
+  comprador_email VARCHAR(200),
+  comprador_telefono VARCHAR(50),
+  cantidad INTEGER,
+  total DECIMAL(10,2),
+  estado VARCHAR(20), -- pendiente, pagado, expirado
+  khipu_payment_id VARCHAR(100),
+  -- ... más campos
+);
+
+-- Tickets
+CREATE TABLE tickets (
+  id UUID PRIMARY KEY,
+  numero VARCHAR(10) UNIQUE,
+  orden_id UUID REFERENCES ordenes(id),
+  sorteo_id UUID REFERENCES sorteos(id),
+  estado VARCHAR(20), -- activo, usado, ganador
+  -- ... más campos
+);
+```
+
+## 🎯 Roadmap
+
+### ✅ Completado
+- [x] Diseño UI/UX premium
+- [x] Catálogo de autos con filtros
+- [x] Sistema de sorteos con Khipu
+- [x] Modal de compra de tickets
+- [x] Integración WhatsApp
+- [x] Responsive design
+- [x] Galería de imágenes interactiva
+- [x] Servicios API preparados
+- [x] Hooks personalizados
+- [x] TypeScript 100%
+
+### 🔄 En Progreso
+- [ ] Backend API (NestJS/Express)
+- [ ] Panel de administración
+- [ ] Sistema de autenticación
+- [ ] Envío de emails automático
+
+### 📋 Próximamente
+- [ ] Comparación de vehículos
+- [ ] Favoritos (wishlist)
+- [ ] Sistema de notificaciones
+- [ ] Blog / Noticias
+- [ ] Chat en vivo
+- [ ] App móvil (React Native)
+
+## 🤝 Contribuir
+
+Este es un proyecto privado de RealCars Company. Para contribuir:
+
+1. Fork el proyecto
+2. Crea tu branch (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add: amazing feature'`)
+4. Push al branch (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
 ## 📝 Licencia
 
-Proyecto privado - RealCars Company © 2025
+Código propietario © 2025 RealCars Company. Todos los derechos reservados.
+
+## 📞 Contacto
+
+**RealCars Company**
+- Website: https://realcarscompany.cl
+- Email: contacto@realcarscompany.cl
+- WhatsApp: +56 9 8777 5463
+- Instagram: [@realcarscompanycl](https://instagram.com/realcarscompanycl)
+
+**Desarrollo**
+- Desarrollado por [Clikium](https://clikium.cl)
 
 ---
 
-**Desarrollado con excelencia para RealCars Company** 🏆
+## 🎉 Estado del Proyecto
+
+```
+Progreso General: ████████░░ 85%
+
+Frontend:    ██████████ 100%
+Backend:     ████░░░░░░  40%
+Testing:     ██████░░░░  60%
+Deploy:      ████░░░░░░  40%
+```
+
+**Última actualización:** Octubre 2025
+
+---
+
+<div align="center">
+  <strong>🚗 Excelencia Automotriz desde 2010 🏆</strong>
+  <br>
+  <em>RealCars Company - Santiago, Chile</em>
+</div>

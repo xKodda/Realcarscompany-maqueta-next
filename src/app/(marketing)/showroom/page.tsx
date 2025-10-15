@@ -29,22 +29,20 @@ export default function ShowroomPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <section className="bg-[#f2f2f4] py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="bg-gradient-to-br from-[#161b39] via-[#1d2447] to-[#802223] py-20 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-3xl"
+            className="max-w-4xl text-center mx-auto"
           >
-            <div className="inline-block mb-4 px-4 py-1.5 border border-[#802223] text-[#802223] text-xs tracking-[0.2em] uppercase">
-              Oportunidad exclusiva
-            </div>
-            <h1 className="text-5xl md:text-6xl font-light text-[#161b39] mb-6 tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-light text-white mb-6 tracking-tight">
               Showroom <span className="font-semibold">en arriendo</span>
             </h1>
-            <p className="text-xl text-gray-600 font-light leading-relaxed">
-              Espacio premium de {SHOWROOM_INFO.espacioDisponible} disponible dentro de nuestras instalaciones de alta gama. 
+            <p className="text-xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
+              Espacio de {SHOWROOM_INFO.espacioDisponible} disponible dentro de nuestras instalaciones de alta gama. 
               Ubicación estratégica y prestigio garantizado.
             </p>
           </motion.div>

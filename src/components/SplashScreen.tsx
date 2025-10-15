@@ -12,13 +12,27 @@ export default function SplashScreen() {
     // Mostrar siempre al recargar
     setShouldShow(true)
     
+    // Bloquear scroll del body cuando el splash está visible
+    if (shouldShow && isVisible) {
+      document.body.style.overflow = 'hidden'
+      document.body.classList.add('no-scroll')
+    }
+    
     // Ocultar después de 2.5 segundos
     const timer = setTimeout(() => {
       setIsVisible(false)
+      // Restaurar scroll del body cuando se oculta
+      document.body.style.overflow = 'unset'
+      document.body.classList.remove('no-scroll')
     }, 2500)
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => {
+      clearTimeout(timer)
+      // Asegurar que el scroll se restaure al desmontar el componente
+      document.body.style.overflow = 'unset'
+      document.body.classList.remove('no-scroll')
+    }
+  }, [shouldShow, isVisible])
 
   // No renderizar nada si no debe mostrarse
   if (!shouldShow) return null
@@ -30,7 +44,15 @@ export default function SplashScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white overflow-hidden"
+          style={{ 
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            overflow: 'hidden'
+          }}
         >
           <div className="text-center px-6">
             {/* Logo animado */}

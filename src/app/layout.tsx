@@ -1,6 +1,15 @@
 import type { Metadata, Viewport } from 'next'
 import './global.css'
 
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#161b39',
+}
+
+// Metadata con headers de seguridad
 export const metadata: Metadata = {
   title: {
     template: '%s | RealCars Company',
@@ -53,13 +62,15 @@ export const metadata: Metadata = {
     // google: 'tu-código-aquí',
     // yandex: 'tu-código-aquí',
   },
-}
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
-  themeColor: '#161b39',
+  // Headers de seguridad adicionales
+  other: {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';",
+  },
 }
 
 export default function RootLayout({
