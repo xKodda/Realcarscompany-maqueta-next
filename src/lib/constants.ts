@@ -13,7 +13,7 @@ export const NAVIGATION_ITEMS = [
 ]
 
 export const ADMIN_NAVIGATION_ITEMS = [
-  { label: 'Dashboard', href: '/admin/dashboard' },
+  { label: 'Dashboard', href: '/admin' },
   { label: 'Autos', href: '/admin/autos' },
   { label: 'Sorteos', href: '/admin/sorteos' },
   { label: 'Usuarios', href: '/admin/usuarios' },

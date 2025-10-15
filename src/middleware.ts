@@ -38,7 +38,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Rate limiting básico (simulado)
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
   const userAgent = request.headers.get('user-agent') || 'unknown'
   
   // Log de acceso para monitoreo

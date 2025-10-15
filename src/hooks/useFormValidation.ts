@@ -8,9 +8,9 @@ import {
   sanitizeFormData,
   validateRateLimit,
   validateContent,
-  type FormValidationResult,
-  type ContactoForm 
+  type FormValidationResult
 } from '@/lib/validations'
+import type { ContactoForm } from '@/lib/types'
 
 export interface UseFormValidationOptions {
   enableRateLimit?: boolean

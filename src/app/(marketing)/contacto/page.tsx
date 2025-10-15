@@ -32,7 +32,10 @@ export default function ContactoPage() {
       try {
         // Enviar consulta a través del servicio
         const response = await consultasService.create({
-          ...sanitizedData,
+          nombre: sanitizedData.nombre,
+          email: sanitizedData.email,
+          telefono: sanitizedData.telefono,
+          mensaje: sanitizedData.mensaje,
           tipo: 'general'
         })
 

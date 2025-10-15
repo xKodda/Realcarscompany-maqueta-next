@@ -106,7 +106,11 @@ export default function SorteosPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className={`grid gap-8 max-w-6xl mx-auto ${
+            sorteos.length === 1 
+              ? 'grid-cols-1 max-w-2xl' 
+              : 'grid-cols-1 lg:grid-cols-2'
+          }`}>
             {sorteos.map((sorteo, index) => (
               <motion.div
                 key={sorteo.id}
