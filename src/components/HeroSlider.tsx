@@ -25,7 +25,7 @@ const slides: Slide[] = [
     title: 'Lujo en cada',
     subtitle: 'detalle',
     description:
-      'Descubre nuestra exclusiva colección de vehículos premium, donde la elegancia se encuentra con el rendimiento.',
+      'Descubre nuestra exclusiva colección de vehículos de lujo, donde la elegancia se encuentra con el rendimiento.',
     image: '/images/brand/banner2.jpeg',
     badge: 'Excelencia Automotriz',
     cta: {
@@ -35,8 +35,8 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    title: 'Próximamente',
-    subtitle: 'PROYECTO MONZZA',
+    title: 'Proyecto MONZZA',
+    subtitle: '',
     description:
       'La nueva plataforma de sorteos exclusivos de lujo.\nPropiedades, autos, joyas, relojes de alta gama y más.',
     image: '/images/brand/showroom1.jpeg',
@@ -132,11 +132,11 @@ export default function HeroSlider() {
 
                 {/* título */}
                 <h1 className="mb-3 sm:mb-4 md:mb-5 text-2xl sm:text-3xl md:text-6xl leading-[1.05] tracking-tight">
-                  <span className="block font-extrabold capitalize text-xl sm:text-2xl md:text-5xl">
+                  <span className="block font-extrabold text-xl sm:text-2xl md:text-5xl">
                     {slides[currentSlide].title}
                   </span>
                   <span
-                    className="block font-black uppercase text-3xl sm:text-4xl md:text-7xl mt-1"
+                    className="block font-black text-xl sm:text-2xl md:text-5xl mt-1"
                     style={{
                       textShadow: '0 6px 28px rgba(0,0,0,.35)'
                     }}
@@ -217,16 +217,6 @@ export default function HeroSlider() {
           />
         </div>
 
-        {/* play/pause */}
-        <button
-          onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-          aria-label={isAutoPlaying ? 'Pausar' : 'Reproducir'}
-          className="absolute right-4 sm:right-8 top-4 sm:top-8 z-20 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm transition hover:bg-white/20 touch-manipulation"
-        >
-          <motion.svg animate={{ scale: isAutoPlaying ? 1 : 0.9 }} className="h-4 w-4 sm:h-5 sm:w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-            {isAutoPlaying ? <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" /> : <path d="M8 5v14l11-7z" />}
-          </motion.svg>
-        </button>
       </div>
     </section>
   )

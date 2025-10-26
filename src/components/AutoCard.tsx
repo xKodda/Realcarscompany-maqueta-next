@@ -41,26 +41,14 @@ export default function AutoCard({ auto, index = 0 }: AutoCardProps) {
             Destacado
           </motion.div>
         )}
-        {auto.kilometraje === 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-green-600 text-white px-2 sm:px-3 py-1 text-xs font-medium tracking-wider uppercase"
-          >
-            0 KM
-          </motion.div>
-        )}
-        {auto.kilometraje > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-blue-600 text-white px-2 sm:px-3 py-1 text-xs font-medium tracking-wider uppercase"
-          >
-            {auto.kilometraje.toLocaleString('es-CL')} km
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-blue-600 text-white px-2 sm:px-3 py-1 text-xs font-medium tracking-wider uppercase"
+        >
+          {auto.kilometraje.toLocaleString('es-CL')} km
+        </motion.div>
       </div>
       
       <div className="p-4 sm:p-6">

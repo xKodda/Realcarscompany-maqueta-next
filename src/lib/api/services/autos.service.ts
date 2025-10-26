@@ -3,6 +3,7 @@
 
 import { apiClient, type ApiResponse } from '../client'
 import type { Auto } from '@/lib/types'
+import { autos as mockAutos } from '@/lib/data'
 
 export interface AutoFilters {
   marca?: string
@@ -71,7 +72,32 @@ class AutosService {
 
   // Buscar autos
   async search(query: string): Promise<ApiResponse<Auto[]>> {
-    return apiClient.get<Auto[]>(`${this.endpoint}/search?q=${query}`)
+    // Implementación mock temporal - buscar en datos locales
+    try {
+      const lowerQuery = query.toLowerCase().trim()
+      
+      if (!lowerQuery || lowerQuery.length < 2) {
+        return {
+          success: true,
+          data: [],
+        }
+      }
+
+      const results = mockAutos.filter((auto) => {
+        const searchableText = `${auto.marca} ${auto.modelo} ${auto.año} ${auto.color}`.toLowerCase()
+        return searchableText.includes(lowerQuery)
+      })
+
+      return {
+        success: true,
+        data: results,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Error al buscar autos',
+      }
+    }
   }
 
   // Obtener autos destacados

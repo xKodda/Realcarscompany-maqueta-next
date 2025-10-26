@@ -17,12 +17,6 @@ export default function ShowroomPage() {
       alt: 'Showroom RealCars Company - Área de exhibición',
       title: 'Área de Exhibición',
       description: 'Zona dedicada para presentación de vehículos'
-    },
-    {
-      src: '/images/brand/showroom3.jpeg',
-      alt: 'Showroom RealCars Company - Vista completa',
-      title: 'Vista Completa del Espacio',
-      description: 'Perspectiva total del showroom disponible'
     }
   ]
 
@@ -75,7 +69,7 @@ export default function ShowroomPage() {
               <div className="space-y-6">
                 {showroomImages.map((image, index) => (
                   <div key={index} className="group">
-                    <div className="relative h-72 md:h-80 overflow-hidden">
+                    <div className="relative h-96 md:h-[28rem] overflow-hidden">
                       <Image
                         src={image.src}
                         alt={image.alt}

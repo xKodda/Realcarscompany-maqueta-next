@@ -33,10 +33,10 @@ export default function Home() {
             className="text-center mb-12 sm:mb-16 md:mb-20"
           >
             <h2 className="text-3xl sm:text-4xl md:text-6xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
-              Autos publicados <span className="font-semibold">recientemente</span>
+              Vehículos de <span className="font-semibold">lujo</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed px-4">
-              Los vehículos más nuevos en nuestro catálogo
+              Nuestra selección de vehículos seminuevos de lujo
             </p>
           </motion.div>
           

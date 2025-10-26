@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAVIGATION_ITEMS } from '@/lib/constants'
+import SearchBar from './SearchBar'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -12,10 +13,10 @@ export default function Header() {
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
       <nav className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5" aria-label="Navegación principal">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <Link 
             href="/" 
-            className="flex items-center transition-opacity hover:opacity-80"
+            className="flex items-center transition-opacity hover:opacity-80 flex-shrink-0"
             aria-label="Ir al inicio - RealCars Company"
             onClick={() => setIsMenuOpen(false)}
           >
@@ -29,8 +30,13 @@ export default function Header() {
             />
           </Link>
           
+          {/* Buscador - Desktop */}
+          <div className="hidden md:block flex-1 max-w-lg">
+            <SearchBar />
+          </div>
+          
           {/* Menu Desktop */}
-          <ul className="hidden lg:flex items-center space-x-8 xl:space-x-10">
+          <ul className="hidden lg:flex items-center space-x-8 xl:space-x-10 flex-shrink-0">
             {NAVIGATION_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
@@ -46,7 +52,7 @@ export default function Header() {
           {/* Hamburger Button */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden text-[#161b39] p-2 touch-manipulation"
+            className="lg:hidden text-[#161b39] p-2 touch-manipulation flex-shrink-0"
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
           >
@@ -81,6 +87,11 @@ export default function Header() {
               transition={{ duration: 0.3 }}
               className="lg:hidden overflow-hidden border-t border-gray-100 mt-2"
             >
+              {/* Buscador - Mobile */}
+              <div className="md:hidden px-4 py-3 border-b border-gray-100">
+                <SearchBar />
+              </div>
+              
               <ul className="py-3 space-y-1">
                 {NAVIGATION_ITEMS.map((item) => (
                   <li key={item.href}>

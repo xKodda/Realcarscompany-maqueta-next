@@ -6,7 +6,7 @@ export const SITE_URL = 'https://realcarscompany.cl'
 export const NAVIGATION_ITEMS = [
   { label: 'Inicio', href: '/' },
   { label: 'Catálogo', href: '/autos' },
-  { label: 'Seminuevos', href: '/seminuevos' },
+  { label: 'Servicios', href: '/servicios' },
   { label: 'Monzza', href: '/sorteos' },
   { label: 'Showroom', href: '/showroom' },
   { label: 'Contacto', href: '/contacto' },
@@ -40,7 +40,7 @@ export const SHOWROOM_INFO = {
   titulo: 'Showroom Premium',
   descripcion: 'Espacio exclusivo disponible para arriendo dentro de nuestras instalaciones',
   ubicacion: 'Santiago, Chile',
-  espacioDisponible: '150 m²',
+  espacioDisponible: '70 m²',
   caracteristicas: [
     'Ubicación estratégica de alto tráfico',
     'Iluminación profesional LED',

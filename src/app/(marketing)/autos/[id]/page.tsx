@@ -107,11 +107,6 @@ export default function AutoDetailPage({ params }: AutoPageProps) {
                   Destacado
                 </div>
               )}
-              {auto.kilometraje === 0 && (
-                <div className="absolute top-6 right-6 bg-green-600 text-white px-4 py-2 text-sm font-medium tracking-wider uppercase shadow-lg">
-                  0 KM
-                </div>
-              )}
 
               {/* Controles de navegación si hay más de una imagen */}
               {imageGallery.length > 1 && (
@@ -240,7 +235,7 @@ export default function AutoDetailPage({ params }: AutoPageProps) {
                   <p className="text-xs text-gray-600 tracking-wider uppercase">Kilometraje</p>
                 </div>
                 <p className="text-lg font-medium text-[#161b39]">
-                  {auto.kilometraje === 0 ? '0 KM' : `${auto.kilometraje.toLocaleString('es-CL')} km`}
+                  {auto.kilometraje.toLocaleString('es-CL')} km
                 </p>
               </div>
               <div className="bg-[#f2f2f4] p-4 hover:bg-[#e8e8ea] transition-colors">

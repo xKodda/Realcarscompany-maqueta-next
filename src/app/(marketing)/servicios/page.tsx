@@ -104,7 +104,7 @@ export default function ServiciosPage() {
               </Link>
             </motion.div>
 
-            {/* Servicio 3 */}
+            {/* Servicio 3 - Detallado de Automóviles */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -113,20 +113,20 @@ export default function ServiciosPage() {
             >
               <div className="w-14 h-14 text-[#802223] mb-6 flex items-center justify-center">
                 <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-[#161b39] mb-3 tracking-wide">
-                Permutas
+                Servicios de Detallado
               </h3>
               <p className="text-gray-600 font-light mb-4">
-                Aceptamos tu vehículo actual como parte de pago. Evaluación justa y transparente.
+                Servicios profesionales de detallado automotriz para mantener tu vehículo en perfecto estado. Lavado premium, encerado y tratamientos especializados.
               </p>
               <Link
                 href="/contacto"
                 className="text-[#802223] hover:text-[#6b1d1e] font-medium text-sm tracking-wide uppercase inline-flex items-center gap-2 group-hover:gap-3 transition-all"
               >
-                Cotizar
+                Cotizar servicio
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -302,6 +302,3 @@ export default function ServiciosPage() {
     </div>
   )
 }
-
-
-

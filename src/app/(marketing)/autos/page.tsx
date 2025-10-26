@@ -18,6 +18,7 @@ const Filters = dynamic(() => import('@/components/Filters'), {
 
 export default function AutosPage() {
   const [filteredAutos, setFilteredAutos] = useState<Auto[]>(autos)
+  
   return (
     <div className="min-h-screen bg-white">
       {/* Header de página premium */}
@@ -31,11 +32,11 @@ export default function AutosPage() {
             className="max-w-4xl text-center mx-auto"
           >
             <h1 className="text-3xl sm:text-5xl md:text-7xl font-light text-white mb-4 sm:mb-6 tracking-tight">
-              Catálogo de <span className="font-semibold">vehículos</span>
+              Vehículos de <span className="font-semibold">lujo</span>
             </h1>
             <p className="text-lg sm:text-xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto px-4">
-              Descubre cada detalle de nuestra selecta colección de vehículos, 
-              cuidadosamente seleccionados para los más exigentes.
+              Descubre nuestra exclusiva colección de vehículos de lujo, 
+              cuidadosamente seleccionados y certificados para los más exigentes.
             </p>
           </motion.div>
         </div>
@@ -50,7 +51,7 @@ export default function AutosPage() {
           {/* Contador de resultados */}
           <div className="mb-6 sm:mb-8">
             <p className="text-gray-600 font-light text-sm sm:text-base">
-              Mostrando {filteredAutos.length} de {autos.length} vehículos
+              Mostrando {filteredAutos.length} vehículos de lujo disponibles
             </p>
           </div>
 
@@ -68,7 +69,7 @@ export default function AutosPage() {
                   No se encontraron vehículos
                 </h3>
                 <p className="text-gray-500 font-light text-sm sm:text-base">
-                  Intenta ajustar los filtros de búsqueda para encontrar tu vehículo ideal
+                  Intenta ajustar los filtros de búsqueda para encontrar tu vehículo de lujo ideal
                 </p>
               </div>
             </div>
@@ -85,10 +86,10 @@ export default function AutosPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-2xl sm:text-3xl font-light text-[#161b39] mb-3 sm:mb-4">
-              ¿No encuentras lo que buscas?
+              ¿Buscas algo específico?
             </h2>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 font-light px-4">
-              Contáctanos y te ayudaremos a encontrar tu vehículo ideal
+              Contáctanos y te ayudaremos a encontrar el vehículo de lujo perfecto para ti
             </p>
             <a
               href={`https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent('Hola, no encuentro lo que busco. ¿Pueden ayudarme?')}`}
