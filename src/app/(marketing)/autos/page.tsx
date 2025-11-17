@@ -46,84 +46,106 @@ function serializeAuto(auto: any): Auto {
 }
 
 async function getAutos(searchParams: any) {
-  const page = parseInt(searchParams.page || '1', 10)
-  const skip = (page - 1) * ITEMS_PER_PAGE
-
-  // Construir filtros
-  const where: any = {
-    NOT: { estado: 'vendido' }, // mostrar disponibles y reservados
-  }
-
-  if (searchParams.marca) {
-    where.marca = { contains: searchParams.marca, mode: 'insensitive' }
-  }
-  if (searchParams.modelo) {
-    where.modelo = { contains: searchParams.modelo, mode: 'insensitive' }
-  }
-  if (searchParams.precioMin || searchParams.precioMax) {
-    where.precio = {}
-    if (searchParams.precioMin) {
-      where.precio.gte = parseFloat(searchParams.precioMin)
+  try {
+    // Verificar que DATABASE_URL esté disponible
+    if (!process.env.DATABASE_URL) {
+      console.warn('DATABASE_URL not configured, returning empty autos')
+      return {
+        autos: [],
+        total: 0,
+        currentPage: 1,
+        totalPages: 0,
+      }
     }
-    if (searchParams.precioMax) {
-      where.precio.lte = parseFloat(searchParams.precioMax)
-    }
-  }
-  if (searchParams.añoMin || searchParams.añoMax) {
-    where.anio = {}
-    if (searchParams.añoMin) {
-      where.anio.gte = parseInt(searchParams.añoMin, 10)
-    }
-    if (searchParams.añoMax) {
-      where.anio.lte = parseInt(searchParams.añoMax, 10)
-    }
-  }
-  if (searchParams.transmision) {
-    where.transmision = searchParams.transmision
-  }
-  if (searchParams.combustible) {
-    where.combustible = searchParams.combustible
-  }
 
-  // Obtener total y autos
-  const [total, autos] = await Promise.all([
-    prisma.auto.count({ where }),
-    prisma.auto.findMany({
-      where,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      skip,
-      take: ITEMS_PER_PAGE,
-      select: {
-        id: true,
-        slug: true,
-        marca: true,
-        modelo: true,
-        anio: true,
-        precio: true,
-        kilometraje: true,
-        transmision: true,
-        combustible: true,
-        color: true,
-        imagen: true,
-        imagenes: true,
-        descripcion: true,
-        caracteristicas: true,
-        estado: true,
-        destacado: true,
-        createdAt: true,
-      },
-    }),
-  ])
+    const page = parseInt(searchParams.page || '1', 10)
+    const skip = (page - 1) * ITEMS_PER_PAGE
 
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
+    // Construir filtros
+    const where: any = {
+      NOT: { estado: 'vendido' }, // mostrar disponibles y reservados
+    }
 
-  return {
-    autos: autos.map(serializeAuto),
-    total,
-    currentPage: page,
-    totalPages,
+    if (searchParams.marca) {
+      where.marca = { contains: searchParams.marca, mode: 'insensitive' }
+    }
+    if (searchParams.modelo) {
+      where.modelo = { contains: searchParams.modelo, mode: 'insensitive' }
+    }
+    if (searchParams.precioMin || searchParams.precioMax) {
+      where.precio = {}
+      if (searchParams.precioMin) {
+        where.precio.gte = parseFloat(searchParams.precioMin)
+      }
+      if (searchParams.precioMax) {
+        where.precio.lte = parseFloat(searchParams.precioMax)
+      }
+    }
+    if (searchParams.añoMin || searchParams.añoMax) {
+      where.anio = {}
+      if (searchParams.añoMin) {
+        where.anio.gte = parseInt(searchParams.añoMin, 10)
+      }
+      if (searchParams.añoMax) {
+        where.anio.lte = parseInt(searchParams.añoMax, 10)
+      }
+    }
+    if (searchParams.transmision) {
+      where.transmision = searchParams.transmision
+    }
+    if (searchParams.combustible) {
+      where.combustible = searchParams.combustible
+    }
+
+    // Obtener total y autos
+    const [total, autos] = await Promise.all([
+      prisma.auto.count({ where }),
+      prisma.auto.findMany({
+        where,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: ITEMS_PER_PAGE,
+        select: {
+          id: true,
+          slug: true,
+          marca: true,
+          modelo: true,
+          anio: true,
+          precio: true,
+          kilometraje: true,
+          transmision: true,
+          combustible: true,
+          color: true,
+          imagen: true,
+          imagenes: true,
+          descripcion: true,
+          caracteristicas: true,
+          estado: true,
+          destacado: true,
+          createdAt: true,
+        },
+      }),
+    ])
+
+    const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
+
+    return {
+      autos: autos.map(serializeAuto),
+      total,
+      currentPage: page,
+      totalPages,
+    }
+  } catch (error) {
+    console.error('Error fetching autos:', error)
+    // En caso de error, retornar datos vacíos para que la página siga funcionando
+    return {
+      autos: [],
+      total: 0,
+      currentPage: 1,
+      totalPages: 0,
+    }
   }
 }
 

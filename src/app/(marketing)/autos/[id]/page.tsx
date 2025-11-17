@@ -13,18 +13,25 @@ interface AutoPageProps {
 }
 
 async function getAuto(id: string) {
-  const auto = await prisma.auto.findUnique({
-    where: { id },
-    include: {
-      vehicleImages: {
-        orderBy: { position: 'asc' },
-      },
-    },
-  })
+  try {
+    // Verificar que DATABASE_URL esté disponible
+    if (!process.env.DATABASE_URL) {
+      console.warn('DATABASE_URL not configured')
+      return null
+    }
 
-  if (!auto) {
-    return null
-  }
+    const auto = await prisma.auto.findUnique({
+      where: { id },
+      include: {
+        vehicleImages: {
+          orderBy: { position: 'asc' },
+        },
+      },
+    })
+
+    if (!auto) {
+      return null
+    }
 
   // Transform to match Auto type
   const imageGallery = auto.vehicleImages.length > 0
@@ -55,6 +62,10 @@ async function getAuto(id: string) {
     estado: auto.estado as 'disponible' | 'vendido' | 'reservado',
     destacado: auto.destacado,
     createdAt: auto.createdAt.toISOString(),
+  }
+  } catch (error) {
+    console.error('Error fetching auto:', error)
+    return null
   }
 }
 

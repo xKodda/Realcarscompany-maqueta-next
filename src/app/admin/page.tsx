@@ -24,33 +24,50 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
   const skip = (page - 1) * ITEMS_PER_PAGE
 
   // Fetch statistics from database
-  const [
-    totalAutos,
-    autosDisponibles,
-    autosReservados,
-    autosVendidos,
-    recentAutos,
-    totalCount,
-  ] = await Promise.all([
-    prisma.auto.count(),
-    prisma.auto.count({ where: { estado: 'disponible' } }),
-    prisma.auto.count({ where: { estado: 'reservado' } }),
-    prisma.auto.count({ where: { estado: 'vendido' } }),
-    prisma.auto.findMany({
-      skip,
-      take: ITEMS_PER_PAGE,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        marca: true,
-        modelo: true,
-        anio: true,
-        precio: true,
-        estado: true,
-      },
-    }),
-    prisma.auto.count(),
-  ])
+  let totalAutos = 0
+  let autosDisponibles = 0
+  let autosReservados = 0
+  let autosVendidos = 0
+  let recentAutos: any[] = []
+  let totalCount = 0
+
+  try {
+    // Verificar que DATABASE_URL esté disponible
+    if (!process.env.DATABASE_URL) {
+      console.warn('DATABASE_URL not configured')
+    } else {
+      const results = await Promise.all([
+        prisma.auto.count(),
+        prisma.auto.count({ where: { estado: 'disponible' } }),
+        prisma.auto.count({ where: { estado: 'reservado' } }),
+        prisma.auto.count({ where: { estado: 'vendido' } }),
+        prisma.auto.findMany({
+          skip,
+          take: ITEMS_PER_PAGE,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            marca: true,
+            modelo: true,
+            anio: true,
+            precio: true,
+            estado: true,
+          },
+        }),
+        prisma.auto.count(),
+      ])
+
+      totalAutos = results[0]
+      autosDisponibles = results[1]
+      autosReservados = results[2]
+      autosVendidos = results[3]
+      recentAutos = results[4]
+      totalCount = results[5]
+    }
+  } catch (error) {
+    console.error('Error fetching admin dashboard data:', error)
+    // Continuar con valores por defecto (0 y arrays vacíos)
+  }
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
 
