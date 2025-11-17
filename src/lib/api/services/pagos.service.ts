@@ -75,7 +75,7 @@ export interface CrearOrdenResponse {
   tickets: TicketSorteo[]
 }
 
-export interface OrdenCompraDetalle extends OrdenCompra {
+export interface OrdenCompraDetalle extends Omit<OrdenCompra, 'tickets'> {
   tickets: TicketSorteo[]
   pagos: PagoKhipuResumen[]
 }
