@@ -6,6 +6,10 @@ import FinalCTASection from '@/components/FinalCTASection'
 import { prisma } from '@/lib/prisma'
 import type { Auto } from '@/lib/types'
 
+// Forzar renderizado dinámico para evitar errores durante el build
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function serializeAuto(auto: any): Auto {
   return {
     id: auto.id,

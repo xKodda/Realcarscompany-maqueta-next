@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma'
 import AutosPageClient from './AutosPageClient'
 import type { Auto } from '@/lib/types'
 
+// Forzar renderizado dinámico
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   searchParams: Promise<{
     page?: string

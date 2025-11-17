@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import AutoDetailClient from './AutoDetailClient'
 
+// Forzar renderizado dinámico
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface AutoPageProps {
   params: Promise<{
     id: string
