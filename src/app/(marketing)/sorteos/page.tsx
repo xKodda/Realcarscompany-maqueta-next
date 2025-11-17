@@ -106,10 +106,10 @@ export default function SorteosPage() {
             </p>
           </motion.div>
 
-          <div className={`grid gap-8 max-w-6xl mx-auto ${
+          <div className={`grid gap-6 max-w-5xl mx-auto ${
             sorteos.length === 1 
-              ? 'grid-cols-1 max-w-2xl' 
-              : 'grid-cols-1 lg:grid-cols-2'
+              ? 'grid-cols-1 max-w-md' 
+              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
           }`}>
             {sorteos.map((sorteo, index) => (
               <motion.div
@@ -117,123 +117,84 @@ export default function SorteosPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white border border-gray-100 hover:border-[#161b39] hover:shadow-2xl transition-all duration-500 overflow-hidden group shadow-lg rounded-2xl"
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 group border border-gray-100 max-w-sm mx-auto"
               >
-                {/* Imagen del sorteo */}
-                <div className="relative h-48 overflow-hidden cursor-pointer bg-gray-50" onClick={() => setShowGalleryModal(true)}>
+                {/* Imagen sin fondo - solo la imagen */}
+                <div className="relative h-48 sm:h-52 overflow-hidden cursor-pointer bg-transparent" onClick={() => setShowGalleryModal(true)}>
                   <Image
                     src={sorteo.imagen}
                     alt={sorteo.titulo}
                     fill
-                    className="object-contain object-center group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-contain object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    quality={90}
                   />
-                  {/* Badge de estado */}
-                  <div className={`absolute top-4 right-4 px-4 py-2 text-xs font-medium tracking-wider uppercase ${
+                  
+                  {/* Badge de estado flotante */}
+                  <div className={`absolute top-2 right-2 px-2.5 py-1 text-xs font-semibold tracking-wider uppercase rounded-full shadow-lg ${
                     sorteo.estado === 'activo' 
-                      ? 'bg-green-600 text-white' 
+                      ? 'bg-green-500 text-white' 
                       : sorteo.estado === 'proximo'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-600 text-white'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-500 text-white'
                   }`}>
                     {sorteo.estado === 'activo' ? '🔥 Activo' : sorteo.estado === 'proximo' ? '🎯 Próximamente' : 'Finalizado'}
                   </div>
                 </div>
 
-                <div className="p-8">
-                  <h3 className="text-2xl font-light text-[#161b39] mb-3 tracking-tight">
-                    {sorteo.titulo}
-                  </h3>
-                  <p className="text-gray-600 font-light mb-4 leading-relaxed">
-                    {sorteo.descripcion}
-                  </p>
-
-                  {/* Premio destacado */}
-                  <div className="bg-[#f2f2f4] p-4 mb-4 border-l-4 border-[#802223]">
-                    <p className="text-xs text-gray-600 mb-1 tracking-wider uppercase">Premio principal</p>
-                    <p className="text-lg font-medium text-[#161b39]">{sorteo.premio}</p>
+                {/* Contenido compacto */}
+                <div className="p-4">
+                  {/* Título y premio */}
+                  <div className="mb-3">
+                    <h3 className="text-base sm:text-lg font-light text-[#161b39] mb-1 tracking-tight">
+                      {sorteo.titulo}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#802223] font-medium">
+                      {sorteo.premio}
+                    </p>
                   </div>
 
-                  {/* Precio y tickets disponibles */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-white border border-gray-200 p-3 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Precio por ticket</p>
-                      <p className="text-xl font-bold text-[#802223]">
+                  {/* Información clave compacta */}
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div className="text-center p-2.5 bg-[#f8f8f9] rounded-lg border border-gray-100">
+                      <p className="text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-light">Precio</p>
+                      <p className="text-lg font-bold text-[#802223]">
                         ${sorteo.precioTicket.toLocaleString('es-CL')}
                       </p>
                     </div>
-                    <div className="bg-white border border-gray-200 p-3 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Disponibles</p>
-                      <p className="text-xl font-bold text-[#161b39]">
+                    <div className="text-center p-2.5 bg-[#f8f8f9] rounded-lg border border-gray-100">
+                      <p className="text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-light">Disponibles</p>
+                      <p className="text-lg font-bold text-[#161b39]">
                         {(sorteo.totalTickets - sorteo.ticketsVendidos).toLocaleString('es-CL')}
                       </p>
                     </div>
                   </div>
 
-                  {/* Barra de progreso */}
-                  <div className="mb-6">
-                    <div className="flex justify-between text-xs text-gray-600 mb-2">
-                      <span>Vendidos: {sorteo.ticketsVendidos.toLocaleString('es-CL')}</span>
-                      <span>{Math.round((sorteo.ticketsVendidos / sorteo.totalTickets) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-gradient-to-r from-[#802223] to-[#d4af37] h-full transition-all duration-500"
-                        style={{ width: `${(sorteo.ticketsVendidos / sorteo.totalTickets) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Fechas */}
-                  <div className="flex gap-4 mb-6 text-sm">
-                    <div>
-                      <p className="text-gray-500 mb-1">Inicio</p>
-                      <p className="text-[#161b39] font-medium">
-                        {new Date(sorteo.fechaInicio).toLocaleDateString('es-CL', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    <div className="border-l border-gray-200"></div>
-                    <div>
-                      <p className="text-gray-500 mb-1">Finaliza</p>
-                      <p className="text-[#161b39] font-medium">
-                        {new Date(sorteo.fechaFin).toLocaleDateString('es-CL', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Botones */}
-                  <div className="flex gap-2">
+                  {/* Botón principal */}
+                  {sorteo.estado !== 'finalizado' && (
                     <button
-                      onClick={() => setSelectedSorteo(sorteo)}
-                      className="flex-1 border-2 border-[#161b39] text-[#161b39] hover:bg-[#161b39] hover:text-white py-3 text-sm font-medium tracking-wider uppercase transition-all"
+                      onClick={() => {
+                        setSelectedSorteo(sorteo)
+                        setShowCompraModal(true)
+                      }}
+                      disabled={sorteo.ticketsVendidos >= sorteo.totalTickets}
+                      className={`w-full py-2.5 text-xs font-semibold tracking-wider uppercase transition-all duration-300 rounded-lg mb-2 ${
+                        sorteo.ticketsVendidos >= sorteo.totalTickets
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-[#802223] to-[#6b1d1e] hover:from-[#6b1d1e] hover:to-[#802223] text-white shadow-md hover:shadow-lg'
+                      }`}
                     >
-                      Ver detalles
+                      {sorteo.ticketsVendidos >= sorteo.totalTickets ? 'Agotado' : 'Comprar Tickets'}
                     </button>
-                    {sorteo.estado !== 'finalizado' && (
-                      <button
-                        onClick={() => {
-                          setSelectedSorteo(sorteo)
-                          setShowCompraModal(true)
-                        }}
-                        disabled={sorteo.ticketsVendidos >= sorteo.totalTickets}
-                        className={`flex-1 py-3 text-sm font-medium tracking-wider uppercase transition-all ${
-                          sorteo.ticketsVendidos >= sorteo.totalTickets
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-[#802223] hover:bg-[#6b1d1e] text-white'
-                        }`}
-                      >
-                        {sorteo.ticketsVendidos >= sorteo.totalTickets ? 'Agotado' : 'Comprar tickets'}
-                      </button>
-                    )}
-                  </div>
+                  )}
+                  
+                  {/* Botón secundario */}
+                  <button
+                    onClick={() => setSelectedSorteo(sorteo)}
+                    className="w-full py-2 text-xs font-medium tracking-wide text-[#161b39] hover:text-[#802223] border border-gray-200 hover:border-[#802223] rounded-lg transition-all duration-300"
+                  >
+                    Ver detalles
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -367,24 +328,26 @@ export default function SorteosPage() {
       {/* Modal de detalles del sorteo */}
       {selectedSorteo && !showCompraModal && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedSorteo(null)}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8">
-              <div className="flex justify-between items-start mb-6">
+              <div className="flex justify-between items-start mb-6 pb-6 border-b border-gray-100">
                 <h3 className="text-3xl font-light text-[#161b39] tracking-tight">
                   {selectedSorteo.titulo}
                 </h3>
                 <button
                   onClick={() => setSelectedSorteo(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-gray-400 hover:text-[#802223] transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-50"
+                  aria-label="Cerrar"
                 >
                   ×
                 </button>
@@ -392,17 +355,17 @@ export default function SorteosPage() {
 
               <div className="space-y-6">
                 {/* Info del premio */}
-                <div className="bg-[#f2f2f4] p-6 border-l-4 border-[#802223]">
-                  <p className="text-xs text-gray-600 mb-2 tracking-wider uppercase">Premio</p>
-                  <p className="text-2xl font-medium text-[#161b39] mb-4">{selectedSorteo.premio}</p>
+                <div className="bg-gradient-to-br from-[#f8f8f9] to-white p-6 border-l-4 border-[#802223] shadow-sm">
+                  <p className="text-xs text-gray-500 mb-2 tracking-wider uppercase font-medium">Premio</p>
+                  <p className="text-2xl font-light text-[#161b39] mb-4 tracking-tight">{selectedSorteo.premio}</p>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-600">Precio por ticket</p>
-                      <p className="text-lg font-bold text-[#802223]">${selectedSorteo.precioTicket.toLocaleString('es-CL')}</p>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Precio por ticket</p>
+                      <p className="text-lg font-semibold text-[#802223]">${selectedSorteo.precioTicket.toLocaleString('es-CL')}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Tickets disponibles</p>
-                      <p className="text-lg font-bold text-[#161b39]">
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Tickets disponibles</p>
+                      <p className="text-lg font-semibold text-[#161b39]">
                         {(selectedSorteo.totalTickets - selectedSorteo.ticketsVendidos).toLocaleString('es-CL')}
                       </p>
                     </div>

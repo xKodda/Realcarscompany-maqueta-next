@@ -16,6 +16,19 @@ export interface Auto {
   caracteristicas: string[]
   estado: 'disponible' | 'vendido' | 'reservado'
   destacado?: boolean
+  slug?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface Consulta {
+  id: string
+  nombre: string
+  email: string
+  telefono: string
+  mensaje: string
+  autoId?: string
+  createdAt: string
 }
 
 export interface ContactoForm {
@@ -25,13 +38,8 @@ export interface ContactoForm {
   mensaje: string
 }
 
-export interface Consulta {
-  id: string
-  autoId?: string
-  nombre: string
-  email: string
-  telefono: string
-  mensaje: string
-  fecha: string
-  estado: 'pendiente' | 'respondido' | 'cerrado'
+export interface NavigationItem {
+  label: string
+  href: string
+  comingSoon?: boolean
 }

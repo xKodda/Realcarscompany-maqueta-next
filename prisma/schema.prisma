@@ -1,0 +1,191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AutoEstado {
+  disponible
+  vendido
+  reservado
+}
+
+enum AdminRol {
+  SUPERADMIN
+}
+
+enum OrdenEstado {
+  pendiente
+  pagado
+  expirado
+  cancelado
+}
+
+enum TicketEstado {
+  activo
+  usado
+  ganador
+}
+
+enum PagoEstado {
+  pending
+  verified
+  done
+  expired
+  cancelled
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    @default("admin")
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  vehicles     Auto[]    @relation("UserVehicles")
+}
+
+model Auto {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  marca           String
+  modelo          String
+  anio            Int
+  precio          Int
+  kilometraje     Int
+  transmision     String
+  combustible     String
+  color           String
+  imagen          String
+  imagenes        String[]      @default([])
+  descripcion     String
+  caracteristicas String[]      @default([])
+  estado          AutoEstado    @default(disponible)
+  destacado       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Extended fields for Vehicle model compatibility
+  title            String?       // Can be derived from marca + modelo
+  brand            String?       // Alias for marca
+  model            String?       // Alias for modelo
+  year             Int?          // Alias for anio
+  price            Decimal?      // Alias for precio
+  currency         String        @default("CLP")
+  mileageKm        Int?          // Alias for kilometraje
+  fuelType         String?       // Alias for combustible
+  transmission     String?       // Alias for transmision
+  bodyType         String?
+  engine           String?
+  traction         String?
+  locationCity     String?
+  condition        String?
+  status           String        @default("available")
+  mainImageUrl     String?       // Alias for imagen
+  shortDescription String?
+  isFeatured       Boolean       @default(false)
+  
+  // Relations
+  createdById      Int?
+  createdBy        User?         @relation("UserVehicles", fields: [createdById], references: [id])
+  
+  // Vehicle images
+  vehicleImages    VehicleImage[]
+}
+
+model VehicleImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  vehicleId String
+  vehicle   Auto     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+// Keep AdminUser for backward compatibility, but use User for new auth
+model AdminUser {
+  id           String    @id @default(cuid())
+  nombre       String
+  email        String    @unique
+  passwordHash String
+  role         AdminRol  @default(SUPERADMIN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model OrdenCompra {
+  id                        String               @id @default(cuid())
+  sorteoId                  String?
+  sorteoTitulo              String?
+  cantidad                  Int
+  total                     Int
+  precioUnitario            Int
+  currency                  String               @default("CLP")
+  compradorNombre           String
+  compradorEmail            String
+  compradorTelefono         String
+  compradorRut              String?
+  estado                    OrdenEstado          @default(pendiente)
+  khipuPaymentUrl           String?
+  khipuSimplifiedTransferUrl String?
+  khipuTransferUrl          String?
+  khipuAppUrl               String?
+  fechaPago                 DateTime?
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
+  tickets                   TicketSorteo[]
+  pagos                     PagoKhipu[]
+}
+
+model TicketSorteo {
+  id           String       @id @default(cuid())
+  numero       String       @unique
+  sorteoId     String
+  comprador    String
+  estado       TicketEstado @default(activo)
+  fechaCompra  DateTime     @default(now())
+  orden        OrdenCompra  @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  ordenId      String
+}
+
+model PagoKhipu {
+  id                     String      @id @default(cuid())
+  transactionId          String      @unique
+  khipuPaymentId         String?     @unique
+  subject                String?
+  amount                 Int
+  currency               String      @default("CLP")
+  status                 PagoEstado  @default(pending)
+  statusDetail           String?
+  returnUrl              String?
+  cancelUrl              String?
+  notificationToken      String?
+  receiverId             String?
+  readyForTerminal       Boolean     @default(false)
+  conciliationDate       DateTime?
+  payerEmail             String?
+  payerName              String?
+  customData             Json?
+  expiresAt              DateTime?
+  paymentUrl             String?
+  simplifiedTransferUrl  String?
+  transferUrl            String?
+  appUrl                 String?
+  metadata               Json?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  orden                  OrdenCompra? @relation(fields: [ordenId], references: [id], onDelete: SetNull)
+  ordenId                String?
+}

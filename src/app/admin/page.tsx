@@ -1,36 +1,83 @@
 import Link from 'next/link'
-import { autos } from '@/lib/data'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/auth'
+import RecentInventory from './RecentInventory'
 
-export default function AdminDashboard() {
-  const autosDisponibles = autos.filter((a) => a.estado === 'disponible').length
-  const autosVendidos = autos.filter((a) => a.estado === 'vendido').length
-  const autosReservados = autos.filter((a) => a.estado === 'reservado').length
-  const totalAutos = autos.length
+interface PageProps {
+  searchParams: Promise<{
+    page?: string
+  }>
+}
+
+const ITEMS_PER_PAGE = 10
+
+export default async function AdminDashboard({ searchParams }: PageProps) {
+  const user = await getCurrentUser()
+  
+  if (!user) {
+    redirect('/admin/login')
+  }
+
+  const params = await searchParams
+  const page = parseInt(params.page || '1', 10)
+  const skip = (page - 1) * ITEMS_PER_PAGE
+
+  // Fetch statistics from database
+  const [
+    totalAutos,
+    autosDisponibles,
+    autosReservados,
+    autosVendidos,
+    recentAutos,
+    totalCount,
+  ] = await Promise.all([
+    prisma.auto.count(),
+    prisma.auto.count({ where: { estado: 'disponible' } }),
+    prisma.auto.count({ where: { estado: 'reservado' } }),
+    prisma.auto.count({ where: { estado: 'vendido' } }),
+    prisma.auto.findMany({
+      skip,
+      take: ITEMS_PER_PAGE,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        marca: true,
+        modelo: true,
+        anio: true,
+        precio: true,
+        estado: true,
+      },
+    }),
+    prisma.auto.count(),
+  ])
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
 
   const stats = [
     {
       title: 'Total Autos',
       value: totalAutos,
       color: 'bg-[#161b39]',
-      link: '/admin/autos',
+      link: '/admin/vehicles',
     },
     {
       title: 'Disponibles',
       value: autosDisponibles,
       color: 'bg-green-600',
-      link: '/admin/autos',
+      link: '/admin/vehicles?status=disponible',
     },
     {
       title: 'Reservados',
       value: autosReservados,
       color: 'bg-yellow-600',
-      link: '/admin/autos',
+      link: '/admin/vehicles?status=reservado',
     },
     {
       title: 'Vendidos',
       value: autosVendidos,
       color: 'bg-[#802223]',
-      link: '/admin/autos',
+      link: '/admin/vehicles?status=vendido',
     },
   ]
 
@@ -56,10 +103,16 @@ export default function AdminDashboard() {
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div className="flex-1">
-                <p className="text-xs sm:text-sm tracking-wider uppercase text-gray-600 mb-1 sm:mb-2">{stat.title}</p>
-                <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-[#161b39] group-hover:text-[#802223] transition-colors">{stat.value}</p>
+                <p className="text-xs sm:text-sm tracking-wider uppercase text-gray-600 mb-1 sm:mb-2">
+                  {stat.title}
+                </p>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-[#161b39] group-hover:text-[#802223] transition-colors">
+                  {stat.value}
+                </p>
               </div>
-              <div className={`${stat.color} w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center text-white opacity-20 group-hover:opacity-100 transition-opacity mt-2 sm:mt-0`}>
+              <div
+                className={`${stat.color} w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center text-white opacity-20 group-hover:opacity-100 transition-opacity mt-2 sm:mt-0`}
+              >
                 <span className="text-sm sm:text-lg lg:text-2xl">📊</span>
               </div>
             </div>
@@ -74,16 +127,16 @@ export default function AdminDashboard() {
           <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
             Acciones <span className="font-semibold">Rápidas</span>
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Link
-              href="/admin/autos"
+              href="/admin/vehicles"
               className="block w-full bg-[#161b39] hover:bg-[#802223] text-white text-center py-3 sm:py-4 text-sm font-medium tracking-wider uppercase transition-all touch-manipulation"
             >
-              📱 Gestionar Inventario
+              🚗 Gestionar Vehículos
             </Link>
-            <button className="block w-full border-2 border-[#161b39] text-[#161b39] hover:bg-[#161b39] hover:text-white text-center py-3 sm:py-4 text-sm font-medium tracking-wider uppercase transition-all touch-manipulation">
-              📁 Agregar Nuevo Auto
-            </button>
+            <p className="text-xs sm:text-sm text-gray-600">
+              Dentro podrás agregar un nuevo vehículo desde el botón “Agregar Vehículo”.
+            </p>
           </div>
         </div>
 
@@ -94,62 +147,48 @@ export default function AdminDashboard() {
           </h2>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-light">Disponibles:</span>
-              <span className="font-semibold text-green-600 text-base sm:text-lg">{autosDisponibles}</span>
+              <span className="text-sm sm:text-base text-gray-600 font-light">
+                Disponibles:
+              </span>
+              <span className="font-semibold text-green-600 text-base sm:text-lg">
+                {autosDisponibles}
+              </span>
             </div>
             <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-light">Reservados:</span>
-              <span className="font-semibold text-yellow-600 text-base sm:text-lg">{autosReservados}</span>
+              <span className="text-sm sm:text-base text-gray-600 font-light">
+                Reservados:
+              </span>
+              <span className="font-semibold text-yellow-600 text-base sm:text-lg">
+                {autosReservados}
+              </span>
             </div>
             <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-light">Vendidos:</span>
-              <span className="font-semibold text-[#802223] text-base sm:text-lg">{autosVendidos}</span>
+              <span className="text-sm sm:text-base text-gray-600 font-light">
+                Vendidos:
+              </span>
+              <span className="font-semibold text-[#802223] text-base sm:text-lg">
+                {autosVendidos}
+              </span>
             </div>
             <div className="flex justify-between items-center pt-2">
-              <span className="text-[#161b39] font-medium text-sm sm:text-base">Total:</span>
-              <span className="font-semibold text-[#161b39] text-xl sm:text-2xl">{totalAutos}</span>
+              <span className="text-[#161b39] font-medium text-sm sm:text-base">
+                Total:
+              </span>
+              <span className="font-semibold text-[#161b39] text-xl sm:text-2xl">
+                {totalAutos}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Inventario reciente - Ocupa todo el ancho en móvil */}
-        <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 lg:col-span-2">
-          <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
-            Inventario <span className="font-semibold">Reciente</span>
-          </h2>
-          <div className="space-y-2 sm:space-y-3">
-            {autos.slice(0, 5).map((auto) => (
-              <div
-                key={auto.id}
-                className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 sm:p-4 bg-[#f2f2f4] hover:bg-gray-100 transition-colors touch-manipulation"
-              >
-                <div className="flex-1 mb-2 sm:mb-0">
-                  <p className="font-medium text-[#161b39] text-sm sm:text-base">
-                    {auto.marca} {auto.modelo} {auto.año}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-600 font-light">
-                    {new Intl.NumberFormat('es-CL', {
-                      style: 'currency',
-                      currency: 'CLP',
-                    }).format(auto.precio)}
-                  </p>
-                </div>
-                <span
-                  className={`px-3 py-1.5 text-xs font-medium tracking-wider uppercase rounded-full ${
-                    auto.estado === 'disponible'
-                      ? 'bg-green-100 text-green-800'
-                      : auto.estado === 'vendido'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}
-                >
-                  {auto.estado}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
+        <RecentInventory
+          autos={recentAutos}
+          total={totalCount}
+          currentPage={page}
+          totalPages={totalPages}
+          itemsPerPage={ITEMS_PER_PAGE}
+        />
       </div>
     </div>
   )

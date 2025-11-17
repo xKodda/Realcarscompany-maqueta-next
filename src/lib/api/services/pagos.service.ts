@@ -3,41 +3,12 @@
 
 import { apiClient, type ApiResponse } from '../client'
 
-export interface KhipuPaymentData {
-  subject: string // Título del pago (ej: "Tickets Sorteo Mercedes-Benz")
-  amount: number // Monto en pesos chilenos
-  currency: 'CLP' // Siempre CLP para Khipu
-  notify_url?: string // URL de notificación (webhook)
-  return_url?: string // URL de retorno después del pago
-  cancel_url?: string // URL si cancela el pago
-  transaction_id?: string // ID único de la transacción
-  custom?: string // Datos personalizados (JSON stringificado)
-  body?: string // Descripción detallada
-  payer_email?: string // Email del pagador
-  payer_name?: string // Nombre del pagador
-  expires_date?: string // Fecha de expiración
-}
-
-export interface KhipuPaymentResponse {
-  payment_id: string // ID del pago en Khipu
-  payment_url: string // URL para redirigir al usuario
-  simplified_transfer_url: string // URL simplificada
-  transfer_url: string // URL de transferencia
-  app_url: string // URL para app móvil
-  ready_for_terminal: boolean
-  notification_token: string
-  receiver_id: string
-  conciliation_date: string
-  subject: string
-  amount: number
-  currency: string
-  status: 'pending' | 'verified' | 'done' | 'expired'
-  status_detail: string
-}
-
 export interface CompraTicketData {
   sorteoId: string
   cantidad: number // Cantidad de tickets
+  precioTicket: number
+  currency?: string
+  sorteoTitulo?: string
   comprador: {
     nombre: string
     email: string
@@ -48,20 +19,26 @@ export interface CompraTicketData {
 
 export interface OrdenCompra {
   id: string
-  sorteoId: string
+  sorteoId: string | null
+  sorteoTitulo?: string | null
   cantidad: number
   total: number
+  precioUnitario: number
+  currency: string
   comprador: {
     nombre: string
     email: string
     telefono: string
     rut?: string
   }
-  tickets: string[] // IDs de los tickets generados
+  tickets?: string[]
   estado: 'pendiente' | 'pagado' | 'expirado' | 'cancelado'
-  khipuPaymentId?: string
   khipuPaymentUrl?: string
-  fechaCreacion: string
+  khipuSimplifiedTransferUrl?: string
+  khipuTransferUrl?: string
+  khipuAppUrl?: string
+  createdAt: string
+  updatedAt: string
   fechaPago?: string
 }
 
@@ -75,14 +52,42 @@ export interface TicketSorteo {
   fechaCompra: string
 }
 
+export interface PagoKhipuResumen {
+  id: string
+  transactionId: string
+  khipuPaymentId?: string | null
+  amount: number
+  currency: string
+  status: string
+  statusDetail?: string | null
+  receiverId?: string | null
+  notificationToken?: string | null
+  paymentUrl?: string | null
+  simplifiedTransferUrl?: string | null
+  transferUrl?: string | null
+  appUrl?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CrearOrdenResponse {
+  orden: OrdenCompra
+  tickets: TicketSorteo[]
+}
+
+export interface OrdenCompraDetalle extends OrdenCompra {
+  tickets: TicketSorteo[]
+  pagos: PagoKhipuResumen[]
+}
+
 class PagosService {
   private endpoint = '/pagos'
 
   /**
    * Crear orden de compra de tickets
    */
-  async crearOrden(data: CompraTicketData): Promise<ApiResponse<OrdenCompra>> {
-    return apiClient.post<OrdenCompra>(`${this.endpoint}/tickets/orden`, data)
+  async crearOrden(data: CompraTicketData): Promise<ApiResponse<CrearOrdenResponse>> {
+    return apiClient.post<CrearOrdenResponse>(`${this.endpoint}/tickets/orden`, data)
   }
 
   /**
@@ -92,8 +97,8 @@ class PagosService {
     ordenId: string,
     returnUrl?: string,
     cancelUrl?: string
-  ): Promise<ApiResponse<KhipuPaymentResponse>> {
-    return apiClient.post<KhipuPaymentResponse>(
+  ): Promise<ApiResponse<any>> {
+    return apiClient.post(
       `${this.endpoint}/khipu/iniciar`,
       {
         ordenId,
@@ -108,8 +113,8 @@ class PagosService {
    */
   async verificarPago(
     paymentId: string
-  ): Promise<ApiResponse<KhipuPaymentResponse>> {
-    return apiClient.get<KhipuPaymentResponse>(
+  ): Promise<ApiResponse<any>> {
+    return apiClient.get(
       `${this.endpoint}/khipu/verificar/${paymentId}`
     )
   }
@@ -117,8 +122,8 @@ class PagosService {
   /**
    * Obtener orden por ID
    */
-  async obtenerOrden(ordenId: string): Promise<ApiResponse<OrdenCompra>> {
-    return apiClient.get<OrdenCompra>(`${this.endpoint}/tickets/orden/${ordenId}`)
+  async obtenerOrden(ordenId: string): Promise<ApiResponse<OrdenCompraDetalle>> {
+    return apiClient.get<OrdenCompraDetalle>(`${this.endpoint}/tickets/orden/${ordenId}`)
   }
 
   /**

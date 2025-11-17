@@ -52,7 +52,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div ref={searchRef} className="relative flex-1 max-w-lg mx-4">
+    <div ref={searchRef} className="relative flex-1 max-w-lg mx-4 z-50">
       {/* Input de búsqueda */}
       <div className="relative">
         <input
@@ -102,20 +102,43 @@ export default function SearchBar() {
       {/* Resultados de búsqueda */}
       <AnimatePresence>
         {isOpen && searchQuery && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
-          >
+          <>
+            {/* Overlay específico para móviles - fondo blanco sólido */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-white z-[9998] md:hidden"
+              onClick={() => {
+                setIsOpen(false)
+                setSearchQuery('')
+              }}
+              style={{ backgroundColor: '#ffffff' }}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-96 overflow-y-auto z-[9999] sm:bg-white md:bg-white lg:bg-white"
+              style={{ 
+                backgroundColor: '#ffffff !important',
+                opacity: '1 !important',
+                position: 'absolute',
+                zIndex: 9999,
+                WebkitBackdropFilter: 'none',
+                backdropFilter: 'none'
+              }}
+            >
             {loading ? (
               <div className="p-4 text-center text-gray-500 text-sm">
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-[#802223]"></div>
                 <p className="mt-2">Buscando...</p>
               </div>
             ) : results.length > 0 ? (
-              <div className="py-2">
+              <div className="py-2 bg-white">
                 <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
                   {results.length} {results.length === 1 ? 'vehículo encontrado' : 'vehículos encontrados'}
                 </div>
@@ -124,7 +147,7 @@ export default function SearchBar() {
                     key={auto.id}
                     href={`/autos/${auto.id}`}
                     onClick={handleResultClick}
-                    className="block px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                    className="block px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 bg-white"
                   >
                     <div className="flex items-center gap-3">
                       <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-100">
@@ -152,7 +175,7 @@ export default function SearchBar() {
                 ))}
               </div>
             ) : (
-              <div className="p-6 text-center">
+              <div className="p-6 text-center bg-white">
                 <svg
                   className="mx-auto h-12 w-12 text-gray-300"
                   fill="none"
@@ -170,7 +193,8 @@ export default function SearchBar() {
                 <p className="text-xs text-gray-400 mt-1">Intenta con otra búsqueda</p>
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

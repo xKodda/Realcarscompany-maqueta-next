@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Auto } from '@/lib/types'
 
@@ -22,81 +22,77 @@ interface FilterState {
   combustible: string
 }
 
+const DEFAULT_FILTERS: FilterState = {
+  search: '',
+  marca: '',
+  precioMin: 0,
+  precioMax: 200000000,
+  añoMin: 1990,
+  añoMax: new Date().getFullYear() + 1,
+  kilometraje: '',
+  destacado: null,
+  transmision: '',
+  combustible: '',
+}
+
 export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    marca: '',
-    precioMin: 0,
-    precioMax: 120000000,
-    añoMin: 2018,
-    añoMax: 2023,
-    kilometraje: '',
-    destacado: null,
-    transmision: '',
-    combustible: ''
-  })
+  const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTERS })
 
-  // Obtener valores únicos para los filtros
-  const marcas = [...new Set(autos.map(auto => auto.marca))].sort()
-  const transmisiones = [...new Set(autos.map(auto => auto.transmision))].sort()
-  const combustibles = [...new Set(autos.map(auto => auto.combustible))].sort()
-  const años = [...new Set(autos.map(auto => auto.año))].sort()
+  const marcas = useMemo(
+    () => [...new Set(autos.map((auto) => auto.marca))].sort(),
+    [autos]
+  )
+  const transmisiones = useMemo(
+    () => [...new Set(autos.map((auto) => auto.transmision))].sort(),
+    [autos]
+  )
+  const combustibles = useMemo(
+    () => [...new Set(autos.map((auto) => auto.combustible))].sort(),
+    [autos]
+  )
 
-  // Aplicar filtros
-  useEffect(() => {
-    const filtered = autos.filter(auto => {
-      // Búsqueda por texto
+  const filteredAutos = useMemo(() => {
+    return autos.filter((auto) => {
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase()
         const searchText = `${auto.marca} ${auto.modelo} ${auto.color}`.toLowerCase()
         if (!searchText.includes(searchTerm)) return false
       }
 
-      // Filtro por marca
       if (filters.marca && auto.marca !== filters.marca) return false
 
-      // Filtro por precio
       if (auto.precio < filters.precioMin || auto.precio > filters.precioMax) return false
 
-      // Filtro por año
       if (auto.año < filters.añoMin || auto.año > filters.añoMax) return false
 
-      // Filtro por kilometraje
       if (filters.kilometraje) {
         if (filters.kilometraje === '0' && auto.kilometraje !== 0) return false
-        if (filters.kilometraje === 'seminuevo' && (auto.kilometraje === 0 || auto.kilometraje > 50000)) return false
+        if (
+          filters.kilometraje === 'seminuevo' &&
+          (auto.kilometraje === 0 || auto.kilometraje > 50000)
+        ) {
+          return false
+        }
         if (filters.kilometraje === 'usado' && auto.kilometraje <= 50000) return false
       }
 
-      // Filtro por destacado
       if (filters.destacado !== null && auto.destacado !== filters.destacado) return false
 
-      // Filtro por transmisión
       if (filters.transmision && auto.transmision !== filters.transmision) return false
 
-      // Filtro por combustible
       if (filters.combustible && auto.combustible !== filters.combustible) return false
 
       return true
     })
+  }, [autos, filters])
 
-    onFilteredAutos(filtered)
-  }, [filters, autos, onFilteredAutos])
+  useEffect(() => {
+    onFilteredAutos(filteredAutos)
+  }, [filteredAutos, onFilteredAutos])
 
   const resetFilters = () => {
-    setFilters({
-      search: '',
-      marca: '',
-      precioMin: 0,
-      precioMax: 50000000,
-      añoMin: 2020,
-      añoMax: 2024,
-      kilometraje: '',
-      destacado: null,
-      transmision: '',
-      combustible: ''
-    })
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const formatPrice = (price: number) => {
@@ -115,8 +111,10 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
     filters.combustible,
     filters.kilometraje,
     filters.destacado !== null,
-    filters.precioMin > 0,
-    filters.precioMax < 50000000,
+    filters.precioMin > DEFAULT_FILTERS.precioMin,
+    filters.precioMax < DEFAULT_FILTERS.precioMax,
+    filters.añoMin > DEFAULT_FILTERS.añoMin,
+    filters.añoMax < DEFAULT_FILTERS.añoMax,
   ].filter(Boolean).length
 
   return (
@@ -182,7 +180,11 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                     <select
                       value={filters.marca}
                       onChange={(e) => setFilters(prev => ({ ...prev, marca: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors text-sm bg-white rounded"
+                      className={`w-full px-3 py-2 border transition-all duration-200 outline-none text-sm bg-white rounded-md font-light ${
+                        filters.marca
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                          : 'border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                      }`}
                     >
                       <option value="">Todas</option>
                       {marcas.map(marca => (
@@ -199,7 +201,11 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                     <select
                       value={filters.transmision}
                       onChange={(e) => setFilters(prev => ({ ...prev, transmision: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors text-sm bg-white rounded"
+                      className={`w-full px-3 py-2 border transition-all duration-200 outline-none text-sm bg-white rounded-md font-light ${
+                        filters.transmision
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                          : 'border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                      }`}
                     >
                       <option value="">Todas</option>
                       {transmisiones.map(transmision => (
@@ -216,7 +222,11 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                     <select
                       value={filters.combustible}
                       onChange={(e) => setFilters(prev => ({ ...prev, combustible: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors text-sm bg-white rounded"
+                      className={`w-full px-3 py-2 border transition-all duration-200 outline-none text-sm bg-white rounded-md font-light ${
+                        filters.combustible
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                          : 'border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                      }`}
                     >
                       <option value="">Todos</option>
                       {combustibles.map(combustible => (
@@ -233,7 +243,11 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                     <select
                       value={filters.kilometraje}
                       onChange={(e) => setFilters(prev => ({ ...prev, kilometraje: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors text-sm bg-white rounded"
+                      className={`w-full px-3 py-2 border transition-all duration-200 outline-none text-sm bg-white rounded-md font-light ${
+                        filters.kilometraje
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                          : 'border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                      }`}
                     >
                       <option value="">Todos</option>
                       <option value="0">0 KM</option>
@@ -250,7 +264,11 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                     <select
                       value={filters.destacado === null ? '' : filters.destacado.toString()}
                       onChange={(e) => setFilters(prev => ({ ...prev, destacado: e.target.value === '' ? null : e.target.value === 'true' }))}
-                      className="w-full px-2 py-1.5 border border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors text-sm bg-white rounded"
+                      className={`w-full px-3 py-2 border transition-all duration-200 outline-none text-sm bg-white rounded-md font-light ${
+                        filters.destacado !== null
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                          : 'border-gray-200 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                      }`}
                     >
                       <option value="">Todos</option>
                       <option value="true">Solo destacados</option>
@@ -304,8 +322,8 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                           <span className="text-xs text-gray-500 mb-1 block">Desde</span>
                           <input
                             type="range"
-                            min="2020"
-                            max="2024"
+                            min="1990"
+                            max={new Date().getFullYear() + 1}
                             step="1"
                             value={filters.añoMin}
                             onChange={(e) => setFilters(prev => ({ ...prev, añoMin: parseInt(e.target.value) }))}
@@ -316,8 +334,8 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
                           <span className="text-xs text-gray-500 mb-1 block">Hasta</span>
                           <input
                             type="range"
-                            min="2020"
-                            max="2024"
+                            min="1990"
+                            max={new Date().getFullYear() + 1}
                             step="1"
                             value={filters.añoMax}
                             onChange={(e) => setFilters(prev => ({ ...prev, añoMax: parseInt(e.target.value) }))}

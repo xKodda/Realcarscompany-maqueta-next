@@ -1,136 +1,30 @@
-'use client'
+import { headers } from 'next/headers'
+import { getCurrentUser } from '@/lib/auth'
+import AdminLayoutClient from './AdminLayoutClient'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ADMIN_NAVIGATION_ITEMS } from '@/lib/constants'
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  // Obtener la ruta actual
+  const headersList = await headers()
+  const pathname = headersList.get('x-invoke-path') || headersList.get('referer') || ''
+  
+  // Si es la ruta de login, renderizar sin el layout de admin para evitar loops
+  if (pathname.includes('/admin/login')) {
+    return <>{children}</>
+  }
 
-  return (
-    <div className="min-h-screen bg-[#f2f2f4]">
-      {/* Header móvil optimizado */}
-      <nav className="bg-[#161b39] text-white border-b border-white/10 sticky top-0 z-50">
-        <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo y título */}
-            <div className="flex items-center gap-3 sm:gap-6">
-              <Link href="/" className="flex-shrink-0">
-                <Image
-                  src="/images/brand/realcarscompanylogo.png"
-                  alt="RealCars Company"
-                  width={150}
-                  height={50}
-                  className="h-8 sm:h-10 w-auto"
-                />
-              </Link>
-              <span className="hidden sm:block text-xs sm:text-sm text-white/60 border-l border-white/20 pl-3 sm:pl-6 tracking-wider uppercase">
-                Admin
-              </span>
-            </div>
-            
-            {/* Navegación desktop */}
-            <ul className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-              {ADMIN_NAVIGATION_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-white/80 hover:text-[#802223] transition-colors text-xs xl:text-sm font-medium tracking-wide uppercase"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            
-            {/* Botones de acción */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link
-                href="/"
-                className="hidden sm:block text-xs sm:text-sm text-white/60 hover:text-white transition-colors tracking-wide"
-              >
-                ← Volver
-              </Link>
-              
-              {/* Botón hamburguesa móvil */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden text-white p-2 touch-manipulation"
-                aria-label="Toggle menu"
-                aria-expanded={isMobileMenuOpen}
-              >
-                <motion.svg
-                  animate={isMobileMenuOpen ? 'open' : 'closed'}
-                  className="w-5 h-5 sm:w-6 sm:h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <motion.path
-                    variants={{
-                      closed: { d: 'M4 6h16M4 12h16M4 18h16' },
-                      open: { d: 'M6 18L18 6M6 6l12 12' }
-                    }}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    transition={{ duration: 0.2 }}
-                  />
-                </motion.svg>
-              </button>
-            </div>
-          </div>
-        </div>
+  // Verificar autenticación para otras rutas
+  const user = await getCurrentUser()
 
-        {/* Menú móvil */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden overflow-hidden border-t border-white/10 bg-[#161b39]"
-            >
-              <div className="container mx-auto px-3 sm:px-6 py-4">
-                <ul className="space-y-1">
-                  {ADMIN_NAVIGATION_ITEMS.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-3 py-3 text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm font-medium tracking-wide uppercase border-l-2 border-transparent hover:border-[#802223] touch-manipulation"
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                  <li className="pt-2 border-t border-white/10">
-                    <Link
-                      href="/"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-3 py-3 text-white/60 hover:text-white transition-colors text-sm tracking-wide touch-manipulation"
-                    >
-                      ← Volver al sitio
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-      
-      {/* Contenido principal optimizado para móvil */}
-      <main className="container mx-auto px-3 sm:px-6 py-6 sm:py-10">
-        {children}
-      </main>
-    </div>
-  )
+  // Si no hay usuario autenticado, renderizar sin el layout de admin
+  // (las páginas individuales manejarán sus propios redirects)
+  if (!user) {
+    return <>{children}</>
+  }
+
+  // Si está autenticado, usar el layout completo de admin
+  return <AdminLayoutClient>{children}</AdminLayoutClient>
 }

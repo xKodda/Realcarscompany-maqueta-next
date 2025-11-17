@@ -1,7 +1,7 @@
 // Cliente API para RealCars Company
 // Este archivo prepara la estructura para el backend futuro
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 export interface ApiResponse<T> {
   success: boolean
@@ -43,6 +43,16 @@ class ApiClient {
   // Validar URL para prevenir ataques
   private validateUrl(url: string): boolean {
     try {
+      // Permitir URLs relativas (común en Next.js)
+      if (url.startsWith('/')) {
+        // Validar que no contenga caracteres peligrosos
+        if (url.includes('javascript:') || url.includes('data:') || url.includes('<') || url.includes('>')) {
+          return false
+        }
+        return true
+      }
+
+      // Para URLs absolutas, validar protocolo
       const urlObj = new URL(url)
       // Solo permitir HTTPS en producción
       if (process.env.NODE_ENV === 'production' && urlObj.protocol !== 'https:') {
@@ -50,6 +60,7 @@ class ApiClient {
       }
       return ['http:', 'https:'].includes(urlObj.protocol)
     } catch {
+      // Si no es una URL válida ni relativa, rechazar
       return false
     }
   }
@@ -169,15 +180,33 @@ class ApiClient {
 
         if (!response.ok) {
           throw {
-            message: data.message || `Error ${response.status}: ${response.statusText}`,
+            message: data.message || data.error || `Error ${response.status}: ${response.statusText}`,
             status: response.status,
             details: data,
           }
         }
 
+        // Si la respuesta ya tiene la estructura { success, data }, extraer el data correctamente
+        if (data && typeof data === 'object' && 'success' in data) {
+          const apiResponse = data as { success: boolean; data?: any; error?: string }
+          // Si success es true y hay data, devolver la estructura correcta
+          if (apiResponse.success && apiResponse.data !== undefined) {
+            return {
+              success: true,
+              data: apiResponse.data as T,
+            }
+          }
+          // Si success es false, devolver el error
+          return {
+            success: false,
+            error: apiResponse.error || 'Error en la respuesta del servidor',
+          }
+        }
+
+        // Si no tiene la estructura, envolverla en la estructura estándar
         return {
           success: true,
-          data: data,
+          data: data as T,
         }
       }).catch((error) => {
         // Limpiar de la cola en caso de error

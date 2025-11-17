@@ -1,9 +1,11 @@
 // Constantes del proyecto RealCars Company - Automotora Premium
 
+import type { NavigationItem } from './types'
+
 export const SITE_NAME = 'RealCars Company'
 export const SITE_URL = 'https://realcarscompany.cl'
 
-export const NAVIGATION_ITEMS = [
+export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Inicio', href: '/' },
   { label: 'Catálogo', href: '/autos' },
   { label: 'Servicios', href: '/servicios' },
@@ -12,11 +14,11 @@ export const NAVIGATION_ITEMS = [
   { label: 'Contacto', href: '/contacto' },
 ]
 
-export const ADMIN_NAVIGATION_ITEMS = [
+export const ADMIN_NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Dashboard', href: '/admin' },
-  { label: 'Autos', href: '/admin/autos' },
-  { label: 'Sorteos', href: '/admin/sorteos' },
-  { label: 'Usuarios', href: '/admin/usuarios' },
+  { label: 'Vehículos', href: '/admin/vehicles' },
+  { label: 'Sorteos', href: '/admin/sorteos', comingSoon: true },
+  { label: 'Usuarios', href: '/admin/usuarios', comingSoon: true },
 ]
 
 export const SOCIAL_LINKS = {

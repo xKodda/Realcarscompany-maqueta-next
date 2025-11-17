@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -12,6 +13,8 @@ interface AutoCardProps {
 }
 
 export default function AutoCard({ auto, index = 0 }: AutoCardProps) {
+  const [imageError, setImageError] = useState(false)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -21,16 +24,25 @@ export default function AutoCard({ auto, index = 0 }: AutoCardProps) {
       className="group bg-white border border-gray-100 hover:border-[#802223] transition-all duration-300 overflow-hidden shadow-sm hover:shadow-lg"
     >
       {/* Imagen real del vehículo - Optimizada para mostrar el auto */}
-      <div className="relative h-64 sm:h-72 w-full overflow-hidden">
-        <Image
-          src={auto.imagen}
-          alt={`${auto.marca} ${auto.modelo} ${auto.año}`}
-          fill
-          className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          quality={75}
-          loading={index > 2 ? 'lazy' : 'eager'}
-        />
+      <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-100">
+        {auto.imagen && !imageError ? (
+          <Image
+            src={auto.imagen}
+            alt={`${auto.marca} ${auto.modelo} ${auto.año}`}
+            fill
+            className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            quality={75}
+            loading={index > 2 ? 'lazy' : 'eager'}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
         {auto.destacado && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}

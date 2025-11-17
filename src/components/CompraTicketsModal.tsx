@@ -44,6 +44,7 @@ export default function CompraTicketsModal({ sorteo, onClose }: Props) {
     const resultado = await comprar({
       sorteoId: sorteo.id,
       cantidad,
+      precioTicket: sorteo.precioTicket,
       comprador: {
         nombre: formData.nombre,
         email: formData.email,
@@ -92,20 +93,11 @@ export default function CompraTicketsModal({ sorteo, onClose }: Props) {
             <div className="bg-[#f2f2f4] p-6 border-l-4 border-[#802223]">
               <p className="text-xs text-gray-600 mb-2 tracking-wider uppercase">Premio</p>
               <p className="text-xl font-medium text-[#161b39] mb-4">{sorteo.premio}</p>
-              <div className="flex items-center gap-4 text-sm">
-                <div>
-                  <p className="text-gray-600">Precio por ticket</p>
-                  <p className="text-lg font-bold text-[#802223]">
-                    ${sorteo.precioTicket.toLocaleString('es-CL')}
-                  </p>
-                </div>
-                <div className="h-8 w-px bg-gray-300"></div>
-                <div>
-                  <p className="text-gray-600">Disponibles</p>
-                  <p className="text-lg font-bold text-[#161b39]">
-                    {ticketsDisponibles.toLocaleString('es-CL')}
-                  </p>
-                </div>
+              <div className="text-sm">
+                <p className="text-gray-600 mb-1">Precio por ticket</p>
+                <p className="text-2xl font-bold text-[#802223]">
+                  ${sorteo.precioTicket.toLocaleString('es-CL')}
+                </p>
               </div>
             </div>
 
@@ -141,9 +133,6 @@ export default function CompraTicketsModal({ sorteo, onClose }: Props) {
                   +
                 </button>
               </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Máximo {ticketsDisponibles} tickets disponibles
-              </p>
             </div>
 
             {/* Datos del comprador */}
