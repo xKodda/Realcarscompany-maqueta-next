@@ -33,6 +33,12 @@ function serializeAuto(auto: any): Auto {
 
 async function getFeaturedAutos() {
   try {
+    // Verificar que DATABASE_URL esté disponible
+    if (!process.env.DATABASE_URL) {
+      console.warn('DATABASE_URL not configured, returning empty featured autos')
+      return []
+    }
+
     const autos = await prisma.auto.findMany({
       where: {
         destacado: true,
@@ -45,6 +51,7 @@ async function getFeaturedAutos() {
     return autos.map(serializeAuto)
   } catch (error) {
     console.error('Error fetching featured autos:', error)
+    // En caso de error, retornar array vacío para que la página siga funcionando
     return []
   }
 }

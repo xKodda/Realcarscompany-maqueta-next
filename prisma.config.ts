@@ -11,7 +11,8 @@ const getDatabaseUrl = () => {
   } catch {
     // Si no está disponible, usar URL dummy solo para generar el cliente
     // Esto permite que prisma generate funcione durante el build sin conexión real
-    return "DATABASE_URL=postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
+    // IMPORTANTE: Esta URL dummy solo se usa para generar tipos, no para conexiones reales
+    return "postgresql://postgres:password@localhost:5432/postgres"
   }
 }
 

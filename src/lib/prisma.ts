@@ -5,17 +5,31 @@ declare global {
   var prisma: PrismaClient | undefined
 }
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === 'development'
-        ? ['query', 'error', 'warn']
-        : ['error'],
-  })
+// Crear instancia de Prisma con manejo de errores mejorado
+let prismaInstance: PrismaClient
 
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma
+if (process.env.NODE_ENV === 'production') {
+  // En producción, crear nueva instancia cada vez (serverless)
+  prismaInstance = new PrismaClient({
+    log: ['error'],
+  })
+} else {
+  // En desarrollo, reutilizar la instancia global
+  if (!global.prisma) {
+    global.prisma = new PrismaClient({
+      log: ['query', 'error', 'warn'],
+    })
+  }
+  prismaInstance = global.prisma
 }
+
+// Manejar desconexión graceful
+if (process.env.NODE_ENV !== 'production') {
+  process.on('beforeExit', async () => {
+    await prismaInstance.$disconnect()
+  })
+}
+
+export const prisma = prismaInstance
 
 
