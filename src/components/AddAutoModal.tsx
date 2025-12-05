@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useFormValidation } from '@/hooks/useFormValidation'
+import { useScrollLock } from '@/hooks/useScrollLock'
 
 interface AddAutoModalProps {
   isOpen: boolean
@@ -23,6 +24,9 @@ interface AutoFormData {
 }
 
 export default function AddAutoModal({ isOpen, onClose, onSubmit }: AddAutoModalProps) {
+  // Bloquear scroll cuando el modal está abierto
+  useScrollLock(isOpen)
+  
   const [formData, setFormData] = useState<AutoFormData>({
     marca: '',
     modelo: '',

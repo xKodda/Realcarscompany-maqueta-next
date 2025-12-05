@@ -50,7 +50,13 @@ export function useComprarTickets() {
       const pagoResponse = await pagosService.iniciarPagoKhipu(orden.id)
       
       if (!pagoResponse.success || !pagoResponse.data) {
-        throw new Error(pagoResponse.error || 'Error al iniciar el pago')
+        const errorMsg = pagoResponse.error || 'Error al iniciar el pago'
+        console.error('Error al iniciar pago Khipu:', {
+          error: errorMsg,
+          ordenId: orden.id,
+          response: pagoResponse,
+        })
+        throw new Error(errorMsg)
       }
 
       // Redirigir a Khipu
@@ -62,8 +68,23 @@ export function useComprarTickets() {
         throw new Error('No se recibió la URL de pago de Khipu')
       }
     } catch (err) {
-      setError('Error al procesar la compra')
-      console.error(err)
+      // Extraer mensaje de error más específico
+      let errorMessage = 'Error al procesar la compra'
+      
+      if (err instanceof Error) {
+        errorMessage = err.message || errorMessage
+      } else if (typeof err === 'string') {
+        errorMessage = err
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        errorMessage = String((err as any).message) || errorMessage
+      }
+      
+      setError(errorMessage)
+      console.error('Error en comprar tickets:', {
+        error: err,
+        message: errorMessage,
+        timestamp: new Date().toISOString(),
+      })
       return null
     } finally {
       setLoading(false)

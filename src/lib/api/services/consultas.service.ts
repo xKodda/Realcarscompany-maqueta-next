@@ -10,7 +10,8 @@ export interface CreateConsultaData {
   email: string
   telefono: string
   mensaje: string
-  tipo?: 'general' | 'auto' | 'showroom' | 'sorteo'
+  tipo?: 'general' | 'auto' | 'sorteo' | 'consignacion'
+  imagenes?: string[]
 }
 
 export interface ConsultasResponse {

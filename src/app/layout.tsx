@@ -57,6 +57,16 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  icons: {
+    icon: [
+      { url: '/images/brand/realcarscompanylogo.png', type: 'image/png' },
+      { url: '/images/brand/logo.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/images/brand/realcarscompanylogo.png', type: 'image/png' },
+    ],
+    shortcut: '/images/brand/realcarscompanylogo.png',
+  },
   verification: {
     // Agregar códigos de verificación cuando estén disponibles
     // google: 'tu-código-aquí',
@@ -78,8 +88,42 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // JSON-LD structured data para SEO
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AutomotiveBusiness',
+    name: 'RealCars Company',
+    description: 'Automotora premium especializada en vehículos de lujo en Chile',
+    url: 'https://realcarscompany.cl',
+    logo: 'https://realcarscompany.cl/images/brand/realcarscompanylogo.png',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Santiago',
+      addressCountry: 'CL',
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+56-9-8777-5463',
+      contactType: 'Customer Service',
+      email: 'contacto@realcarscompany.cl',
+      availableLanguage: 'Spanish',
+    },
+    sameAs: [
+      'https://www.instagram.com/realcarscompanycl/',
+      'https://www.facebook.com/realcarscompany',
+    ],
+  }
+
   return (
     <html lang="es">
+      <head>
+        <link rel="icon" href="/images/brand/realcarscompanylogo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/images/brand/realcarscompanylogo.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="antialiased bg-white text-[#161b39]">
         {children}
       </body>

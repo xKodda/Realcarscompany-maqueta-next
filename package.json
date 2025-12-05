@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "postinstall": "node scripts/postinstall.js",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "validate:env": "node scripts/validate-env.js",
+    "diagnose:db": "node scripts/diagnose-connection.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

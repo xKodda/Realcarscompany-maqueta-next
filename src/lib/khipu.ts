@@ -98,10 +98,26 @@ export async function createKhipuPayment(payload: CreatePaymentPayload) {
   })
 
   if (!response.ok) {
-    const data = await response.json().catch(() => null)
-    throw new Error(
-      data?.message || `Error al crear el pago en Khipu (${response.status})`,
-    )
+    let errorMessage = `Error al crear el pago en Khipu (${response.status})`
+    
+    try {
+      const data = await response.json()
+      errorMessage = data?.message || data?.error || errorMessage
+      
+      // Mensajes más específicos según el código de estado
+      if (response.status === 401 || response.status === 403) {
+        errorMessage = 'Credenciales de Khipu inválidas. Verifica la configuración.'
+      } else if (response.status === 400) {
+        errorMessage = data?.message || 'Datos inválidos para el pago. Verifica la información.'
+      } else if (response.status >= 500) {
+        errorMessage = 'Error del servidor de Khipu. Intenta nuevamente más tarde.'
+      }
+    } catch {
+      // Si no se puede parsear el JSON, usar el mensaje por defecto
+      errorMessage = `Error al crear el pago en Khipu (${response.status}: ${response.statusText})`
+    }
+    
+    throw new Error(errorMessage)
   }
 
   return response.json()

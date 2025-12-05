@@ -23,17 +23,14 @@ export default function WhyChooseUsSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {[
             {
-              icon: '✨',
               title: 'Calidad Garantizada',
               description: 'Cada vehículo es meticulosamente inspeccionado para garantizar los más altos estándares'
             },
             {
-              icon: '🛡️',
               title: 'Garantía Completa',
               description: 'Protección completa y tranquilidad para tu inversión'
             },
             {
-              icon: '👔',
               title: 'Servicio Personalizado',
               description: 'Asesoría experta y atención exclusiva en cada paso del proceso'
             }
@@ -42,9 +39,6 @@ export default function WhyChooseUsSection() {
               key={index}
               className="text-center group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300"
             >
-              <div className="w-16 h-16 mx-auto mb-6 bg-[#802223] flex items-center justify-center rounded-xl">
-                <span className="text-2xl">{feature.icon}</span>
-              </div>
               <h3 className="text-xl font-medium mb-4 tracking-wide">
                 {feature.title}
               </h3>

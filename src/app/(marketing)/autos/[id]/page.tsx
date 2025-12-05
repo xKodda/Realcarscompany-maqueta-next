@@ -54,6 +54,7 @@ async function getAuto(id: string) {
       | 'Diesel'
       | 'Eléctrico'
       | 'Híbrido',
+    litrosMotor: (auto.litrosMotor && auto.litrosMotor.trim() !== '') ? auto.litrosMotor : undefined,
     color: auto.color,
     imagen: auto.imagen,
     imagenes: imageGallery,

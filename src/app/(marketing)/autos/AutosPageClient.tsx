@@ -73,7 +73,6 @@ export default function AutosPageClient({
           {displayedAutos.length === 0 && (
             <div className="text-center py-12 sm:py-20">
               <div className="max-w-md mx-auto px-4">
-                <div className="text-4xl sm:text-6xl mb-4">🚗</div>
                 <h3 className="text-lg sm:text-xl font-medium text-[#161b39] mb-2">
                   No se encontraron vehículos
                 </h3>

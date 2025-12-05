@@ -1,14 +1,67 @@
+import type { Metadata } from 'next'
 import FeaturedAutosSection from '@/components/FeaturedAutosSection'
 import HeroSliderWrapper from '@/components/HeroSliderWrapper'
 import SafePurchaseSection from '@/components/SafePurchaseSection'
 import WhyChooseUsSection from '@/components/WhyChooseUsSection'
 import FinalCTASection from '@/components/FinalCTASection'
 import { prisma } from '@/lib/prisma'
+import { SITE_URL } from '@/lib/constants'
 import type { Auto } from '@/lib/types'
 
 // Forzar renderizado dinámico para evitar errores durante el build
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+export const metadata: Metadata = {
+  title: 'Inicio',
+  description: 'RealCars Company - Automotora premium especializada en vehículos de lujo en Chile. Descubre nuestra colección de autos premium, servicios de consignación y sorteos exclusivos. Últimos vehículos agregados al inventario.',
+  keywords: [
+    'automotora lujo chile',
+    'autos premium santiago',
+    'vehículos de lujo',
+    'automotora premium',
+    'concesionario autos lujo',
+    'venta autos premium',
+    'autos de segunda mano premium',
+    'vehículos exclusivos chile',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'RealCars Company - Automotora Premium de Lujo',
+    description: 'Descubre nuestra exclusiva colección de vehículos de lujo y servicios premium. Últimos vehículos agregados a nuestro inventario.',
+    url: `${SITE_URL}/`,
+    siteName: 'RealCars Company',
+    locale: 'es_CL',
+    type: 'website',
+    images: [
+      {
+        url: `${SITE_URL}/images/brand/realcarscompanylogo.png`,
+        width: 1200,
+        height: 630,
+        alt: 'RealCars Company - Automotora Premium',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RealCars Company - Automotora Premium de Lujo',
+    description: 'Descubre nuestra exclusiva colección de vehículos de lujo. Últimos vehículos agregados.',
+    images: [`${SITE_URL}/images/brand/realcarscompanylogo.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
 
 function serializeAuto(auto: any): Auto {
   return {
@@ -20,6 +73,7 @@ function serializeAuto(auto: any): Auto {
     kilometraje: auto.kilometraje,
     transmision: auto.transmision as 'Manual' | 'Automática',
     combustible: auto.combustible as 'Gasolina' | 'Diesel' | 'Eléctrico' | 'Híbrido',
+    litrosMotor: auto.litrosMotor || undefined,
     color: auto.color,
     imagen: auto.imagen,
     imagenes: auto.imagenes || [],
@@ -28,20 +82,21 @@ function serializeAuto(auto: any): Auto {
     estado: auto.estado as 'disponible' | 'vendido' | 'reservado',
     destacado: auto.destacado || false,
     slug: auto.slug,
+    createdAt: auto.createdAt?.toISOString(),
   }
 }
 
-async function getFeaturedAutos() {
+async function getLatestAutos() {
   try {
     // Verificar que DATABASE_URL esté disponible
     if (!process.env.DATABASE_URL) {
-      console.warn('DATABASE_URL not configured, returning empty featured autos')
+      console.warn('DATABASE_URL not configured, returning empty latest autos')
       return []
     }
 
+    // Obtener los últimos 4 vehículos agregados a la base de datos
     const autos = await prisma.auto.findMany({
       where: {
-        destacado: true,
         estado: 'disponible',
       },
       orderBy: { createdAt: 'desc' },
@@ -50,23 +105,23 @@ async function getFeaturedAutos() {
 
     return autos.map(serializeAuto)
   } catch (error) {
-    console.error('Error fetching featured autos:', error)
+    console.error('Error fetching latest autos:', error)
     // En caso de error, retornar array vacío para que la página siga funcionando
     return []
   }
 }
 
 export default async function Home() {
-  // Obtener autos destacados desde la base de datos
-  const autosDestacados = await getFeaturedAutos()
+  // Obtener los últimos 4 vehículos agregados desde la base de datos
+  const ultimosAutos = await getLatestAutos()
 
   return (
     <div className="bg-white">
       {/* Hero Slider */}
       <HeroSliderWrapper />
 
-      {/* Autos Destacados */}
-      <FeaturedAutosSection autos={autosDestacados} />
+      {/* Últimos Vehículos Agregados */}
+      <FeaturedAutosSection autos={ultimosAutos} />
 
       {/* Compra tu auto de manera segura */}
       <SafePurchaseSection />

@@ -31,6 +31,18 @@ export default async function EditVehiclePage({ params }: PageProps) {
     notFound()
   }
 
+  // Serialize vehicle data, converting Decimal to number and Date to string
+  const serializedVehicle = {
+    ...vehicle,
+    price: vehicle.price ? Number(vehicle.price) : null,
+    createdAt: vehicle.createdAt.toISOString(),
+    updatedAt: vehicle.updatedAt.toISOString(),
+    vehicleImages: (vehicle.vehicleImages || []).map(img => ({
+      ...img,
+      createdAt: img.createdAt.toISOString(),
+    })),
+  }
+
   const breadcrumbItems = [
     { label: 'Vehículos', href: '/admin/vehicles' },
     { label: 'Editar Vehículo', current: true },
@@ -49,7 +61,7 @@ export default async function EditVehiclePage({ params }: PageProps) {
         </p>
       </div>
 
-      <VehicleForm vehicle={vehicle} />
+      <VehicleForm vehicle={serializedVehicle} />
     </div>
   )
 }

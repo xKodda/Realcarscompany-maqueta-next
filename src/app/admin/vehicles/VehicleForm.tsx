@@ -27,25 +27,6 @@ interface Vehicle {
   estado: string
   destacado: boolean
   vehicleImages: VehicleImage[]
-  // Extended fields
-  title?: string | null
-  brand?: string | null
-  model?: string | null
-  year?: number | null
-  price?: any | null
-  currency?: string | null
-  mileageKm?: number | null
-  fuelType?: string | null
-  transmission?: string | null
-  bodyType?: string | null
-  engine?: string | null
-  traction?: string | null
-  locationCity?: string | null
-  condition?: string | null
-  status?: string | null
-  mainImageUrl?: string | null
-  shortDescription?: string | null
-  isFeatured?: boolean | null
 }
 
 interface VehicleFormProps {
@@ -64,18 +45,18 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     kilometraje: vehicle?.kilometraje || 0,
     transmision: vehicle?.transmision || 'Automática',
     combustible: vehicle?.combustible || 'Gasolina',
+    litrosMotor: (vehicle as any)?.litrosMotor || (vehicle as any)?.engine || '',
     color: vehicle?.color || '',
     imagen: vehicle?.imagen || '',
     descripcion: vehicle?.descripcion || '',
     estado: vehicle?.estado || 'disponible',
     destacado: vehicle?.destacado || false,
     // Extended fields
-    bodyType: vehicle?.bodyType || '',
-    engine: vehicle?.engine || '',
-    traction: vehicle?.traction || '',
-    locationCity: vehicle?.locationCity || '',
-    condition: vehicle?.condition || 'Nuevo',
-    shortDescription: vehicle?.shortDescription || '',
+    bodyType: (vehicle as any)?.bodyType || '',
+    traction: (vehicle as any)?.traction || '',
+    locationCity: (vehicle as any)?.locationCity || '',
+    condition: (vehicle as any)?.condition || 'Nuevo',
+    shortDescription: (vehicle as any)?.shortDescription || '',
   })
 
   const [imageUrls, setImageUrls] = useState<string[]>(
@@ -91,12 +72,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
   const [displayKilometraje, setDisplayKilometraje] = useState(
     new Intl.NumberFormat('es-CL').format(formData.kilometraje || 0)
   )
-  const [displayEngine, setDisplayEngine] = useState(() => {
-    const onlyDigits = String(formData.engine || '').replace(/\D/g, '')
-    return onlyDigits && /^\d+$/.test(String(formData.engine || ''))
-      ? new Intl.NumberFormat('es-CL').format(parseInt(onlyDigits, 10))
-      : formData.engine || ''
-  })
+  const [displayLitrosMotor, setDisplayLitrosMotor] = useState(formData.litrosMotor || '')
   const brandOptions = [
     'Aston Martin',
     'Audi',
@@ -145,18 +121,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     setDisplayKilometraje(new Intl.NumberFormat('es-CL').format(numeric))
   }
 
-  const handleEngineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLitrosMotorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    const digits = value.replace(/[^\d]/g, '')
-    // Si el usuario escribe solo números, mostramos con separadores y guardamos sin puntos
-    if (digits && /^[\d\s.]+$/.test(value)) {
-      setFormData({ ...formData, engine: digits })
-      setDisplayEngine(new Intl.NumberFormat('es-CL').format(parseInt(digits, 10)))
-    } else {
-      // Si incluye letras (e.g., "V8 Biturbo" o "2.0L"), no tocamos el formato
-      setFormData({ ...formData, engine: value })
-      setDisplayEngine(value)
-    }
+    setFormData({ ...formData, litrosMotor: value })
+    setDisplayLitrosMotor(value)
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -470,15 +438,17 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Motor
+              Litros del Motor
             </label>
             <input
               type="text"
               inputMode="text"
-              value={displayEngine}
-              onChange={handleEngineChange}
+              value={displayLitrosMotor}
+              onChange={handleLitrosMotorChange}
+              placeholder="Ej: 2.0T, 3.0, 4.0L"
               className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
             />
+            <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5 (puede usar punto o coma)</p>
           </div>
 
           <div>

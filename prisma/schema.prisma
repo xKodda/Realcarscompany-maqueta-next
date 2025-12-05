@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum AutoEstado {
@@ -66,6 +67,7 @@ model Auto {
   kilometraje     Int
   transmision     String
   combustible     String
+  litrosMotor     String?
   color           String
   imagen          String
   imagenes        String[]      @default([])

@@ -104,7 +104,7 @@ export default function ServiciosPage() {
               </Link>
             </motion.div>
 
-            {/* Servicio 3 - Detallado de Automóviles */}
+            {/* Servicio 3 - Consignación */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -113,152 +113,26 @@ export default function ServiciosPage() {
             >
               <div className="w-14 h-14 text-[#802223] mb-6 flex items-center justify-center">
                 <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-[#161b39] mb-3 tracking-wide">
-                Servicios de Detallado
+                Consignación
               </h3>
               <p className="text-gray-600 font-light mb-4">
-                Servicios profesionales de detallado automotriz para mantener tu vehículo en perfecto estado. Lavado premium, encerado y tratamientos especializados.
+                Vende tu vehículo sin complicaciones. Nos encargamos de todo el proceso mientras tú te relajas.
               </p>
               <Link
-                href="/contacto"
+                href="/consignacion"
                 className="text-[#802223] hover:text-[#6b1d1e] font-medium text-sm tracking-wide uppercase inline-flex items-center gap-2 group-hover:gap-3 transition-all"
               >
-                Cotizar servicio
+                Más información
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             </motion.div>
 
-            {/* Servicio 4 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 group"
-            >
-              <div className="w-14 h-14 text-[#802223] mb-6 flex items-center justify-center">
-                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#161b39] mb-3 tracking-wide">
-                Certificación
-              </h3>
-              <p className="text-gray-600 font-light mb-4">
-                Inspección técnica completa de 150 puntos para garantizar la calidad de cada vehículo.
-              </p>
-              <Link
-                href="/contacto"
-                className="text-[#802223] hover:text-[#6b1d1e] font-medium text-sm tracking-wide uppercase inline-flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                Más info
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
-
-            {/* Servicio 5 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="bg-white border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 group"
-            >
-              <div className="w-14 h-14 text-[#802223] mb-6 flex items-center justify-center">
-                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#161b39] mb-3 tracking-wide">
-                Post-Venta
-              </h3>
-              <p className="text-gray-600 font-light mb-4">
-                Servicio de mantenimiento, repuestos y asistencia continua para tu tranquilidad.
-              </p>
-              <Link
-                href="/contacto"
-                className="text-[#802223] hover:text-[#6b1d1e] font-medium text-sm tracking-wide uppercase inline-flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                Contactar
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
-
-            {/* Servicio 6 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="bg-white border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 group"
-            >
-              <div className="w-14 h-14 text-[#802223] mb-6 flex items-center justify-center">
-                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#161b39] mb-3 tracking-wide">
-                Showroom
-              </h3>
-              <p className="text-gray-600 font-light mb-4">
-                Espacio premium disponible para arriendo. Ideal para exhibir tu marca o productos.
-              </p>
-              <Link
-                href="/showroom"
-                className="text-[#802223] hover:text-[#6b1d1e] font-medium text-sm tracking-wide uppercase inline-flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                Ver espacio
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Proceso de Atención */}
-      <section className="py-20 bg-[#161b39] text-white">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-light mb-4 tracking-tight">
-              Nuestro <span className="font-semibold">Proceso</span>
-            </h2>
-            <p className="text-lg md:text-xl text-white/70 mb-12 font-light">
-              Atención personalizada en cada paso del camino
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-5xl font-light text-[#802223] mb-2">01</div>
-                <h3 className="text-sm tracking-widest uppercase mb-2">Consulta</h3>
-                <p className="text-white/60 font-light text-sm">Escuchamos tus necesidades</p>
-              </div>
-
-              <div className="text-center">
-                <div className="text-5xl font-light text-[#802223] mb-2">02</div>
-                <h3 className="text-sm tracking-widest uppercase mb-2">Asesoría</h3>
-                <p className="text-white/60 font-light text-sm">Te guiamos en la mejor opción</p>
-              </div>
-
-              <div className="text-center">
-                <div className="text-5xl font-light text-[#802223] mb-2">03</div>
-                <h3 className="text-sm tracking-widest uppercase mb-2">Cotización</h3>
-                <p className="text-white/60 font-light text-sm">Propuesta personalizada</p>
-              </div>
-
-              <div className="text-center">
-                <div className="text-5xl font-light text-[#802223] mb-2">04</div>
-                <h3 className="text-sm tracking-widest uppercase mb-2">Entrega</h3>
-                <p className="text-white/60 font-light text-sm">Seguimiento continuo</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>

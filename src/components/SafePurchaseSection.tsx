@@ -106,7 +106,7 @@ export default function SafePurchaseSection() {
                     Cada vehículo es sometido a una inspección técnica exhaustiva por mecánicos certificados, garantizando su óptimo funcionamiento.
                   </p>
                   <ul className="text-sm text-gray-500 space-y-1">
-                    <li>• 150 puntos de inspección</li>
+                    <li>• Inspección exhaustiva en todos los sistemas</li>
                     <li>• Certificación mecánica</li>
                     <li>• Garantía incluida</li>
                   </ul>

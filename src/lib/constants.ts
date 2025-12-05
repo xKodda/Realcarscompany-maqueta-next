@@ -5,14 +5,17 @@ import type { NavigationItem } from './types'
 export const SITE_NAME = 'RealCars Company'
 export const SITE_URL = 'https://realcarscompany.cl'
 
-export const NAVIGATION_ITEMS: NavigationItem[] = [
+// Array inmutable para evitar problemas de hidratación
+const navigationItemsData: NavigationItem[] = [
   { label: 'Inicio', href: '/' },
   { label: 'Catálogo', href: '/autos' },
   { label: 'Servicios', href: '/servicios' },
+  { label: 'Consignación', href: '/consignacion' },
   { label: 'Monzza', href: '/sorteos' },
-  { label: 'Showroom', href: '/showroom' },
   { label: 'Contacto', href: '/contacto' },
 ]
+
+export const NAVIGATION_ITEMS: readonly NavigationItem[] = Object.freeze(navigationItemsData) as readonly NavigationItem[]
 
 export const ADMIN_NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Dashboard', href: '/admin' },
@@ -38,25 +41,26 @@ export const CONTACTO = {
   },
 }
 
-export const SHOWROOM_INFO = {
-  titulo: 'Showroom Premium',
-  descripcion: 'Espacio exclusivo disponible para arriendo dentro de nuestras instalaciones',
-  ubicacion: 'Santiago, Chile',
-  espacioDisponible: '70 m²',
-  caracteristicas: [
-    'Ubicación estratégica de alto tráfico',
-    'Iluminación profesional LED',
-    'Sistema de seguridad 24/7',
-    'Estacionamiento exclusivo',
-    'Área de exhibición premium',
-    'Oficina privada equipada',
-    'Baño privado',
-    'Acceso independiente',
-  ],
-  serviciosIncluidos: [
-    'Internet de alta velocidad',
-    'Sistema de climatización',
-    'Servicio de limpieza',
-    'Mantenimiento incluido',
-  ],
-}
+// Lista de marcas disponibles para filtros
+export const MARCAS_DISPONIBLES = [
+  'BMW',
+  'JEEP',
+  'Land Rover',
+  'Mercedes-Benz',
+  'Toyota',
+  'Audi',
+  'Porsche',
+  'Volvo',
+  'Lexus',
+  'Range Rover',
+  'Ford',
+  'Chevrolet',
+  'Nissan',
+  'Honda',
+  'Mazda',
+  'Hyundai',
+  'Kia',
+  'Volkswagen',
+  'Peugeot',
+  'Renault',
+]

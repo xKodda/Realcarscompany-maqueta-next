@@ -6,7 +6,7 @@
   --color-luxury-light: #f2f2f4;
   --color-luxury-white: #ffffff;
   --color-luxury-gold: #d4af37;
-  
+
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -26,20 +26,17 @@ body.no-scroll {
 
 /* Optimizaciones para móviles */
 @media (max-width: 640px) {
+
   /* Mejorar el scroll en móviles */
   * {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Prevenir zoom en inputs en iOS */
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     font-size: 16px;
-  }
-  
-  /* Mejorar el rendimiento en móviles */
-  * {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
   }
 }
 
@@ -52,7 +49,7 @@ body.no-scroll {
   background: #802223;
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .slider-thumb::-moz-range-thumb {
@@ -62,7 +59,7 @@ body.no-scroll {
   background: #802223;
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .slider-thumb::-webkit-slider-track {

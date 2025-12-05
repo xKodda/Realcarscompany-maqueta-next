@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useComprarTickets } from '@/hooks/usePagos'
+import { useScrollLock } from '@/hooks/useScrollLock'
 
 interface Sorteo {
   id: string
@@ -20,6 +21,9 @@ interface Props {
 
 export default function CompraTicketsModal({ sorteo, onClose }: Props) {
   const { comprar, loading, error } = useComprarTickets()
+  
+  // Bloquear scroll cuando el modal está abierto
+  useScrollLock(true)
   
   const [cantidad, setCantidad] = useState(1)
   const [formData, setFormData] = useState({

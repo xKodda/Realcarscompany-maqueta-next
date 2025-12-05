@@ -220,21 +220,52 @@ class ApiClient {
       return await requestPromise
 
     } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error)
-      
-      // Determinar tipo de error
+      // Serializar el error de forma segura para logging
+      let errorDetails = 'Error desconocido'
       let errorMessage = 'Error desconocido'
-      if (error instanceof Error) {
-        if (error.message === 'Request timeout') {
-          errorMessage = 'La petición tardó demasiado tiempo. Verifica tu conexión.'
-        } else if (error.message.includes('fetch')) {
-          errorMessage = 'Error de conexión. Verifica tu internet.'
+      
+      try {
+        if (error instanceof Error) {
+          errorDetails = error.message || error.name || 'Error sin mensaje'
+          errorMessage = error.message || 'Error desconocido'
+          
+          if (error.message === 'Request timeout') {
+            errorMessage = 'La petición tardó demasiado tiempo. Verifica tu conexión.'
+          } else if (error.message.includes('fetch') || error.message.includes('network')) {
+            errorMessage = 'Error de conexión. Verifica tu internet.'
+          }
+        } else if (typeof error === 'object' && error !== null) {
+          // Intentar extraer información del objeto de error
+          if ('message' in error) {
+            errorDetails = String((error as ApiError).message || 'Error sin mensaje')
+            errorMessage = String((error as ApiError).message || 'Error desconocido')
+          } else if ('status' in error) {
+            errorDetails = `Error HTTP ${(error as any).status}`
+            errorMessage = `Error del servidor: ${(error as any).status}`
+          } else {
+            // Intentar stringificar el objeto
+            try {
+              errorDetails = JSON.stringify(error)
+            } catch {
+              errorDetails = String(error)
+            }
+            errorMessage = 'Error al procesar la solicitud'
+          }
         } else {
-          errorMessage = error.message
+          errorDetails = String(error)
+          errorMessage = String(error) || 'Error desconocido'
         }
-      } else if (typeof error === 'object' && error !== null && 'message' in error) {
-        errorMessage = (error as ApiError).message
+      } catch (serializationError) {
+        errorDetails = 'Error al procesar el error'
+        errorMessage = 'Error desconocido al procesar la solicitud'
       }
+      
+      // Log del error con más contexto
+      console.error(`API Error [${endpoint}]:`, {
+        error: errorDetails,
+        endpoint,
+        timestamp: new Date().toISOString(),
+      })
 
       return {
         success: false,

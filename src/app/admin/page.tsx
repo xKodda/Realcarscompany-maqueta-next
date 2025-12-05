@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
@@ -52,6 +53,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
             anio: true,
             precio: true,
             estado: true,
+            imagen: true,
           },
         }),
         prisma.auto.count(),
@@ -101,7 +103,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
   return (
     <div>
       {/* Header optimizado para móvil */}
-      <div className="mb-6 sm:mb-10">
+      <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-light text-[#161b39] mb-2 tracking-tight">
           Dashboard
         </h1>
@@ -111,7 +113,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
       </div>
 
       {/* Stats cards optimizadas para móvil */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
         {stats.map((stat) => (
           <Link
             key={stat.title}
@@ -138,32 +140,41 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
       </div>
 
       {/* Grid optimizado para móvil */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         {/* Acciones rápidas - Prioridad móvil */}
-        <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8">
-          <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
-            Acciones <span className="font-semibold">Rápidas</span>
-          </h2>
-          <div className="space-y-2">
-            <Link
-              href="/admin/vehicles"
-              className="block w-full bg-[#161b39] hover:bg-[#802223] text-white text-center py-3 sm:py-4 text-sm font-medium tracking-wider uppercase transition-all touch-manipulation"
-            >
-              🚗 Gestionar Vehículos
-            </Link>
-            <p className="text-xs sm:text-sm text-gray-600">
-              Dentro podrás agregar un nuevo vehículo desde el botón “Agregar Vehículo”.
-            </p>
+        <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 relative overflow-hidden group">
+          <div className="absolute inset-0">
+            <Image 
+              src="/images/brand/showroom3.jpeg" 
+              alt="Showroom" 
+              fill
+              className="object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+          </div>
+          <div className="relative z-10">
+            <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
+              Acciones <span className="font-semibold">Rápidas</span>
+            </h2>
+            <div className="space-y-2">
+              <Link
+                href="/admin/vehicles"
+                className="block w-full bg-[#161b39] hover:bg-[#802223] text-white text-center py-3 sm:py-4 text-sm font-medium tracking-wider uppercase transition-all touch-manipulation relative z-10"
+              >
+                Gestionar Vehículos
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Resumen de inventario */}
         <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8">
-          <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-light text-[#161b39] mb-3 sm:mb-4 tracking-tight">
             Resumen de <span className="font-semibold">Inventario</span>
           </h2>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
               <span className="text-sm sm:text-base text-gray-600 font-light">
                 Disponibles:
               </span>
@@ -171,7 +182,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
                 {autosDisponibles}
               </span>
             </div>
-            <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
               <span className="text-sm sm:text-base text-gray-600 font-light">
                 Reservados:
               </span>
@@ -179,7 +190,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
                 {autosReservados}
               </span>
             </div>
-            <div className="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-100">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
               <span className="text-sm sm:text-base text-gray-600 font-light">
                 Vendidos:
               </span>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import MonzzaCollage from './MonzzaCollage'
+import MonzzaInfoModal from './MonzzaInfoModal'
 
 interface Slide {
   id: number
@@ -35,15 +36,15 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    title: 'Proyecto MONZZA',
-    subtitle: '',
+    title: 'MONZZA',
+    subtitle: 'Tu oportunidad de ganar',
     description:
-      'La nueva plataforma de sorteos exclusivos de lujo.\nPropiedades, autos, joyas, relojes de alta gama y más.',
-    image: '/images/brand/showroom1.jpeg',
-    badge: 'Próximo Lanzamiento',
+      'Próximamente lanzaremos nuestra promoción comercial exclusiva.\nParticipa y gana esta increíble moto MV Agusta F3 800 RC.',
+    image: '/images/brand/banner1.png',
+    badge: 'Próximamente',
     cta: {
-      primary: { text: 'Conocer más', href: '/contacto' },
-      secondary: { text: 'Mantenerme informado', href: '/contacto' }
+      primary: { text: 'Muy pronto', href: '/contacto' },
+      secondary: { text: 'Quiero más información', href: '/contacto' }
     }
   }
 ]
@@ -51,6 +52,7 @@ const slides: Slide[] = [
 export default function HeroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [showMonzzaModal, setShowMonzzaModal] = useState(false)
 
   useEffect(() => {
     if (!isAutoPlaying) return
@@ -83,7 +85,7 @@ export default function HeroSlider() {
       </div>
 
       {/* capa de slides (imagen o collage) */}
-      <div className="relative h-[100vh] sm:h-[90vh] md:h-[72vh] min-h-[600px] sm:min-h-[500px] md:min-h-[520px]">
+      <div className="relative h-[70vh] sm:h-[80vh] md:h-[72vh] min-h-[500px] sm:min-h-[500px] md:min-h-[520px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -125,10 +127,10 @@ export default function HeroSlider() {
                 transition={{ duration: 0.7 }}
                 className="max-w-3xl rounded-xl md:rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 md:p-12 backdrop-blur-md"
               >
-                 {/* badge */}
-                 <div className="mb-4 sm:mb-6 inline-block border border-white/30 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-1.5 text-xs uppercase tracking-[0.2em]">
-                   {slides[currentSlide].badge}
-                 </div>
+                {/* badge */}
+                <div className="mb-4 sm:mb-6 inline-block border border-white/30 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-1.5 text-xs uppercase tracking-[0.2em]">
+                  {slides[currentSlide].badge}
+                </div>
 
                 {/* título */}
                 <h1 className="mb-3 sm:mb-4 md:mb-5 text-2xl sm:text-3xl md:text-6xl leading-[1.05] tracking-tight">
@@ -154,21 +156,41 @@ export default function HeroSlider() {
                   ))}
                 </div>
 
-                 {/* CTAs */}
-                 <div className="flex flex-col gap-2 sm:gap-3 sm:flex-row sm:gap-4">
-                   <Link
-                     href={slides[currentSlide].cta.primary.href}
-                     className="inline-block border-2 border-white bg-white px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-[#161b39] transition-all hover:bg-[#802223] hover:border-[#802223] hover:text-white text-center touch-manipulation"
-                   >
-                     {slides[currentSlide].cta.primary.text}
-                   </Link>
-                   <Link
-                     href={slides[currentSlide].cta.secondary.href}
-                     className="inline-block border-2 border-white/70 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-white transition-all hover:bg-white hover:border-white hover:text-[#161b39] text-center touch-manipulation"
-                   >
-                     {slides[currentSlide].cta.secondary.text}
-                   </Link>
-                 </div>
+                {/* CTAs */}
+                <div className="flex flex-col gap-2 sm:gap-3 sm:flex-row sm:gap-4">
+                  {currentSlide === 1 ? (
+                    <>
+                      <button
+                        onClick={() => { }}
+                        disabled
+                        className="inline-block border-2 border-white/50 bg-white/20 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-white/70 cursor-not-allowed text-center touch-manipulation"
+                      >
+                        {slides[currentSlide].cta.primary.text}
+                      </button>
+                      <button
+                        onClick={() => setShowMonzzaModal(true)}
+                        className="inline-block border-2 border-white/70 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-white transition-all hover:bg-white hover:border-white hover:text-[#161b39] text-center touch-manipulation"
+                      >
+                        {slides[currentSlide].cta.secondary.text}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href={slides[currentSlide].cta.primary.href}
+                        className="inline-block border-2 border-white bg-white px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-[#161b39] transition-all hover:bg-[#802223] hover:border-[#802223] hover:text-white text-center touch-manipulation"
+                      >
+                        {slides[currentSlide].cta.primary.text}
+                      </Link>
+                      <Link
+                        href={slides[currentSlide].cta.secondary.href}
+                        className="inline-block border-2 border-white/70 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 text-xs sm:text-xs md:text-sm font-medium uppercase tracking-wider text-white transition-all hover:bg-white hover:border-white hover:text-[#161b39] text-center touch-manipulation"
+                      >
+                        {slides[currentSlide].cta.secondary.text}
+                      </Link>
+                    </>
+                  )}
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -218,6 +240,12 @@ export default function HeroSlider() {
         </div>
 
       </div>
+
+      {/* Modal de información Monzza */}
+      <MonzzaInfoModal
+        isOpen={showMonzzaModal}
+        onClose={() => setShowMonzzaModal(false)}
+      />
     </section>
   )
 }

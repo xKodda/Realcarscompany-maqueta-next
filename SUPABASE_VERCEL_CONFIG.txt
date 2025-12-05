@@ -1,0 +1,33 @@
+# GUÍA DE CONFIGURACIÓN SUPABASE + VERCEL
+
+## 1. Archivo .env (Local)
+
+Copia y pega el siguiente contenido en tu archivo `.env` (reemplazando lo que tengas):
+
+```env
+# --- CONFIGURACIÓN DE SUPABASE (PROYECTO: biygbkzzjeijfynrfjrj) ---
+
+# 1. DIRECT_URL: Conexión directa (Puerto 5432).
+# Usada por Prisma Migrate.
+DIRECT_URL="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
+
+# 2. DATABASE_URL: Conexión de la aplicación.
+# Para desarrollo local, usamos la misma conexión directa para evitar problemas.
+DATABASE_URL="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
+
+# NOTA: Si quisieras usar el Pooler localmente, sería algo como:
+# DATABASE_URL="postgresql://postgres.biygbkzzjeijfynrfjrj:Realcarscompany2025*@aws-0-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+```
+
+## 2. Configuración en Vercel (Producción)
+
+Al desplegar, configura estas variables en Vercel (Settings > Environment Variables):
+
+| Variable | Valor |
+|----------|-------|
+| `DIRECT_URL` | `postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres` |
+| `DATABASE_URL` | **IMPORTANTE:** Usa la URL del Pooler (Puerto 6543).<br>Debería ser similar a:<br>`postgresql://postgres.biygbkzzjeijfynrfjrj:Realcarscompany2025*@aws-0-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1`<br>*(Verifica el host exacto en Supabase > Settings > Database)* |
+
+## 3. Explicación
+* Hemos detectado dos proyectos diferentes en tus archivos. Hemos asumido que el correcto es el que termina en `...biygbkzzjeijfynrfjrj` ya que es el que tenías activo en `.env.local`.
+* El otro proyecto (`...bgtthymbhuihucjkcpj`) parece ser antiguo o incorrecto.

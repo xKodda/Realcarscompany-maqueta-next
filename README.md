@@ -20,8 +20,6 @@ Sistema web completo para automotora de lujo con sistema de sorteos y pagos inte
 ### 📱 Funcionalidades
 - Integración con WhatsApp
 - Formulario de contacto
-- Página de seminuevos
-- Información de showroom en arriendo
 - Diseño responsive (mobile-first)
 
 ## 🛠️ Stack Tecnológico
@@ -81,8 +79,6 @@ realcarscompany-web/
 │   │   │   ├── page.tsx       # Home
 │   │   │   ├── autos/         # Catálogo
 │   │   │   ├── sorteos/       # Sistema de sorteos
-│   │   │   ├── seminuevos/    # Seminuevos
-│   │   │   ├── showroom/      # Showroom
 │   │   │   └── contacto/      # Contacto
 │   │   ├── admin/             # Panel admin (protegido)
 │   │   ├── layout.tsx         # Layout raíz
@@ -120,8 +116,6 @@ realcarscompany-web/
 │   └── robots.txt
 │
 ├── .env.local.example       # Template de variables
-├── KHIPU_SETUP.md          # Guía de integración Khipu
-├── MEJORAS.md              # Roadmap y mejoras
 ├── next.config.ts
 ├── tailwind.config.ts
 ├── tsconfig.json
@@ -132,12 +126,10 @@ realcarscompany-web/
 
 | Ruta | Descripción | Estado |
 |------|-------------|--------|
-| `/` | Home con autos destacados | ✅ |
+| `/` | Home con últimos vehículos agregados | ✅ |
 | `/autos` | Catálogo completo con filtros | ✅ |
 | `/autos/[id]` | Detalle de auto con galería | ✅ |
-| `/seminuevos` | Vehículos seminuevos | ✅ |
 | `/sorteos` | Sistema de sorteos con compra | ✅ |
-| `/showroom` | Showroom en arriendo | ✅ |
 | `/contacto` | Formulario de contacto | ✅ |
 | `/admin` | Panel de administración | ⏳ |
 
@@ -153,7 +145,7 @@ El proyecto incluye un modo DEMO que te permite probar toda la UI y flujo de com
 5. Verás una simulación del proceso
 
 ### Con Backend Real
-Para usar Khipu real, sigue la guía en [KHIPU_SETUP.md](./KHIPU_SETUP.md)
+Para usar Khipu real, configura las variables de entorno necesarias en `.env.local`.
 
 ## 📦 Scripts Disponibles
 
@@ -215,8 +207,8 @@ Este proyecto usa **Khipu**, la pasarela de pagos líder en Chile que permite co
 
 ### Setup:
 1. Registrarse en https://khipu.com
-2. Obtener credenciales
-3. Seguir guía en [KHIPU_SETUP.md](./KHIPU_SETUP.md)
+2. Obtener credenciales (KHIPU_RECEIVER_ID y KHIPU_SECRET)
+3. Configurar las variables de entorno en `.env.local`
 
 ## 📧 Sistema de Emails
 

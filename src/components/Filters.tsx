@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Auto } from '@/lib/types'
+import { MARCAS_DISPONIBLES } from '@/lib/constants'
 
 interface FiltersProps {
   autos: Auto[]
@@ -39,10 +40,14 @@ export default function Filters({ autos, onFilteredAutos }: FiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTERS })
 
-  const marcas = useMemo(
-    () => [...new Set(autos.map((auto) => auto.marca))].sort(),
-    [autos]
-  )
+  const marcas = useMemo(() => {
+    // Obtener marcas de los autos en la base de datos
+    const marcasDeAutos = [...new Set(autos.map((auto) => auto.marca))]
+    // Combinar con la lista estática de marcas disponibles
+    const todasLasMarcas = [...new Set([...MARCAS_DISPONIBLES, ...marcasDeAutos])]
+    // Ordenar alfabéticamente
+    return todasLasMarcas.sort()
+  }, [autos])
   const transmisiones = useMemo(
     () => [...new Set(autos.map((auto) => auto.transmision))].sort(),
     [autos]

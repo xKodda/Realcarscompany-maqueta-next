@@ -20,10 +20,10 @@ export default function FeaturedAutosSection({ autos }: FeaturedAutosSectionProp
           className="text-center mb-12 sm:mb-16 md:mb-20"
         >
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-light text-[#161b39] mb-4 sm:mb-6 tracking-tight">
-            Vehículos <span className="font-semibold">destacados</span>
+            Últimos <span className="font-semibold">agregados</span>
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed px-4">
-            Nuestra selección exclusiva de vehículos premium destacados
+            Los vehículos más recientes que hemos agregado a nuestro inventario
           </p>
         </motion.div>
         
@@ -36,7 +36,7 @@ export default function FeaturedAutosSection({ autos }: FeaturedAutosSectionProp
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg font-light">
-              No hay vehículos destacados disponibles en este momento
+              No hay vehículos disponibles en este momento
             </p>
           </div>
         )}

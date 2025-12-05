@@ -64,7 +64,7 @@ export async function POST(request: Request) {
 
     if (!notifyUrl || notifyUrl === '/api/pagos/khipu/webhook') {
       console.warn(
-        '⚠️ KHIPU_NOTIFY_URL no configurada. El webhook no funcionará correctamente.',
+        'KHIPU_NOTIFY_URL no configurada. El webhook no funcionará correctamente.',
       )
     }
 
@@ -128,14 +128,47 @@ export async function POST(request: Request) {
       },
     })
   } catch (error) {
-    console.error('Iniciar pago Khipu error:', error)
+    // Log detallado del error para debugging
+    let errorMessage = 'Error al iniciar el pago con Khipu'
+    let errorDetails: any = {}
+    
+    if (error instanceof Error) {
+      errorMessage = error.message || errorMessage
+      errorDetails = {
+        name: error.name,
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      }
+      
+      // Mensajes más específicos según el tipo de error
+      if (error.message.includes('KHIPU_RECEIVER_ID') || error.message.includes('KHIPU_SECRET')) {
+        errorMessage = 'Configuración de Khipu incompleta. Contacta al administrador.'
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage = 'Error de conexión con el servicio de pagos. Intenta nuevamente.'
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'La solicitud tardó demasiado tiempo. Intenta nuevamente.'
+      }
+    } else if (typeof error === 'object' && error !== null) {
+      try {
+        errorDetails = JSON.parse(JSON.stringify(error))
+        if ('message' in error) {
+          errorMessage = String((error as any).message) || errorMessage
+        }
+      } catch {
+        errorDetails = { error: String(error) }
+      }
+    }
+    
+    console.error('Iniciar pago Khipu error:', {
+      error: errorMessage,
+      details: errorDetails,
+      timestamp: new Date().toISOString(),
+    })
+    
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Error al iniciar el pago con Khipu',
+        error: errorMessage,
       },
       { status: 500 },
     )

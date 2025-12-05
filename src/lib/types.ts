@@ -9,6 +9,7 @@ export interface Auto {
   kilometraje: number
   transmision: 'Manual' | 'Automática'
   combustible: 'Gasolina' | 'Diesel' | 'Eléctrico' | 'Híbrido'
+  litrosMotor?: string
   color: string
   imagen: string
   imagenes?: string[]

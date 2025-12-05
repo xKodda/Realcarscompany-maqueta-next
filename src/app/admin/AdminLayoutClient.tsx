@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,7 +13,16 @@ export default function AdminLayoutClient({
   children: React.ReactNode
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  
+  // Helper to check if a route is active
+  const isActiveRoute = (href: string) => {
+    if (href === '/admin') {
+      return pathname === '/admin'
+    }
+    return pathname.startsWith(href)
+  }
 
   const handleLogout = async () => {
     try {
@@ -61,7 +70,11 @@ export default function AdminLayoutClient({
                   ) : (
                     <Link
                       href={item.href}
-                      className="text-white/80 hover:text-[#802223] transition-colors text-xs xl:text-sm font-medium tracking-wide uppercase"
+                      className={`transition-colors text-xs xl:text-sm font-medium tracking-wide uppercase ${
+                        isActiveRoute(item.href)
+                          ? 'text-[#802223] border-b-2 border-[#802223] pb-1'
+                          : 'text-white/80 hover:text-[#802223]'
+                      }`}
                     >
                       {item.label}
                     </Link>
@@ -143,7 +156,11 @@ export default function AdminLayoutClient({
                         <Link
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block px-3 py-3 text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm font-medium tracking-wide uppercase border-l-2 border-transparent hover:border-[#802223] touch-manipulation"
+                          className={`block px-3 py-3 transition-colors text-sm font-medium tracking-wide uppercase border-l-2 touch-manipulation ${
+                            isActiveRoute(item.href)
+                              ? 'text-white bg-white/10 border-[#802223]'
+                              : 'text-white/80 hover:bg-white/10 hover:text-white border-transparent hover:border-[#802223]'
+                          }`}
                         >
                           {item.label}
                         </Link>

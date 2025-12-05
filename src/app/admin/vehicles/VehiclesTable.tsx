@@ -91,7 +91,6 @@ export default function VehiclesTable({
   if (vehicles.length === 0) {
     return (
       <div className="bg-white border border-gray-100 p-8 sm:p-16 text-center">
-        <div className="text-6xl mb-4">🚗</div>
         <p className="text-gray-500 text-base sm:text-lg font-light mb-6">
           No hay vehículos registrados
         </p>
@@ -187,14 +186,14 @@ export default function VehiclesTable({
                     href={`/admin/vehicles/${vehicle.id}/edit`}
                     className="inline-flex items-center gap-1 text-[#161b39] hover:text-[#802223] transition-colors underline-offset-2 hover:underline"
                   >
-                    ✏️ Editar
+                    Editar
                   </Link>
                   <button
                     onClick={() => handleDelete(vehicle.id)}
                     disabled={deletingId === vehicle.id}
                     className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 underline-offset-2 hover:underline"
                   >
-                    {deletingId === vehicle.id ? 'Eliminando…' : '🗑️ Eliminar'}
+                    {deletingId === vehicle.id ? 'Eliminando…' : 'Eliminar'}
                   </button>
                 </td>
               </tr>
