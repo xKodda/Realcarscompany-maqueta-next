@@ -10,7 +10,7 @@ interface PageProps {
 
 export default async function EditVehiclePage({ params }: PageProps) {
   const user = await getCurrentUser()
-  
+
   if (!user) {
     redirect('/admin/login')
   }
@@ -34,13 +34,14 @@ export default async function EditVehiclePage({ params }: PageProps) {
   // Serialize vehicle data, converting Decimal to number and Date to string
   const serializedVehicle = {
     ...vehicle,
-    price: vehicle.price ? Number(vehicle.price) : null,
+
     createdAt: vehicle.createdAt.toISOString(),
     updatedAt: vehicle.updatedAt.toISOString(),
     vehicleImages: (vehicle.vehicleImages || []).map(img => ({
       ...img,
       createdAt: img.createdAt.toISOString(),
     })),
+    imagenes: [], // Legacy field requirement
   }
 
   const breadcrumbItems = [
