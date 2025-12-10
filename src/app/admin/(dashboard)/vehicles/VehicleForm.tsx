@@ -68,6 +68,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     new Intl.NumberFormat('es-CL').format(formData.kilometraje || 0)
   )
   const [displayLitrosMotor, setDisplayLitrosMotor] = useState(formData.litrosMotor || '')
+  const [caracteristicas, setCaracteristicas] = useState(
+    vehicle?.caracteristicas?.join(', ') || ''
+  )
+  const [isUploadingImages, setIsUploadingImages] = useState(false)
   const brandOptions = [
     'Aston Martin',
     'Audi',
@@ -113,6 +117,57 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     const value = e.target.value
     setFormData({ ...formData, litrosMotor: value })
     setDisplayLitrosMotor(value)
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploadingImages(true)
+    setError('')
+
+    try {
+      const uploadedUrls: string[] = []
+
+      for (const file of Array.from(files)) {
+        // Validar tamaño (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          setError(`La imagen "${file.name}" excede los 5MB`)
+          setIsUploadingImages(false)
+          return
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!response.ok) {
+          throw new Error('Error al subir la imagen')
+        }
+
+        const data = await response.json()
+        if (data.success && data.url) {
+          uploadedUrls.push(data.url)
+        }
+      }
+
+      setImageUrls((prev) => [...prev, ...uploadedUrls])
+    } catch (error) {
+      console.error('Error uploading images:', error)
+      setError('Error al subir las imágenes. Intenta nuevamente.')
+    } finally {
+      setIsUploadingImages(false)
+      // Reset input
+      e.target.value = ''
+    }
+  }
+
+  const handleRemoveImage = (index: number) => {
+    setImageUrls((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -171,7 +226,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
         body: JSON.stringify({
           ...formData,
           imagenes: imageUrls,
-          caracteristicas: [],
+          caracteristicas: caracteristicas
+            .split(',')
+            .map((c) => c.trim())
+            .filter((c) => c.length > 0),
         }),
       })
 
@@ -411,6 +469,119 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
             />
             <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5 (puede usar punto o coma)</p>
+          </div>
+        </div>
+
+        {/* Descripción */}
+        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
+          Descripción
+        </h2>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Descripción del Vehículo <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            required
+            value={formData.descripcion}
+            onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+            rows={6}
+            placeholder="Describe el vehículo detalladamente..."
+            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
+          />
+        </div>
+
+        {/* Características */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Características
+          </label>
+          <textarea
+            value={caracteristicas}
+            onChange={(e) => setCaracteristicas(e.target.value)}
+            rows={4}
+            placeholder="Ingresa las características separadas por comas (Ej: Aire acondicionado, ABS, Airbags, etc.)"
+            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Separa cada característica con una coma
+          </p>
+        </div>
+
+        {/* Imágenes */}
+        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
+          Imágenes del Vehículo
+        </h2>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Galería de Imágenes
+          </label>
+          <div className="space-y-4">
+            {/* Upload button */}
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                disabled={isUploadingImages}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#161b39] hover:bg-[#802223] text-white text-sm font-medium tracking-wider uppercase transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUploadingImages ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Agregar Imágenes
+                  </>
+                )}
+              </label>
+              <p className="mt-2 text-xs text-gray-500">
+                Puedes seleccionar múltiples imágenes. Formatos: JPG, PNG, WebP (máx 5MB cada una)
+              </p>
+            </div>
+
+            {/* Image preview grid */}
+            {imageUrls.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {imageUrls.map((url, index) => (
+                  <div
+                    key={index}
+                    className="relative group aspect-video bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent hover:border-[#802223] transition-colors"
+                  >
+                    <img
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      title="Eliminar imagen"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                      #{index + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
