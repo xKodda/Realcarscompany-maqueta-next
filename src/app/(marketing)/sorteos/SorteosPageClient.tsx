@@ -54,7 +54,7 @@ export default function SorteosPageClient() {
             transition={{ delay: 0.8, duration: 0.8 }}
             className="text-lg md:text-xl text-gray-300 font-light max-w-2xl mx-auto mb-12 leading-relaxed"
           >
-            Estamos preparando una experiencia de sorteos premium única.
+            Estamos preparando una experiencia de concursos premium única.
             Muy pronto podrás participar por vehículos exclusivos con total transparencia y seguridad.
           </motion.p>
 
@@ -80,7 +80,7 @@ export default function SorteosPageClient() {
             className="w-full max-w-5xl mx-auto"
           >
             <h3 className="text-xl md:text-2xl text-white/80 font-light mb-8 uppercase tracking-widest border-t border-white/10 pt-8 mt-8">
-              Adelanto Exclusivo: <span className="text-[#802223] font-semibold">Moto 2025</span>
+              Adelanto Exclusivo: <span className="text-[#802223] font-semibold">Moto 2024</span>
             </h3>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -97,7 +97,7 @@ export default function SorteosPageClient() {
                 >
                   <Image
                     src={img}
-                    alt={`Adelanto Sorteo Monzza ${index + 1}`}
+                    alt={`Adelanto Concurso Monzza ${index + 1}`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 50vw, 25vw"
@@ -107,7 +107,7 @@ export default function SorteosPageClient() {
               ))}
             </div>
             <p className="text-white/40 text-[10px] md:text-xs mt-6 uppercase tracking-[0.2em] font-light">
-              Imágenes referenciales del modelo a sortear • Sujeto a disponibilidad
+              Imágenes referenciales del modelo a concursar • Sujeto a disponibilidad
             </p>
           </motion.div>
         </motion.div>

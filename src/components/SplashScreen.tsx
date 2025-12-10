@@ -52,11 +52,17 @@ export default function SplashScreen() {
             right: 0,
             bottom: 0,
             width: '100vw',
-            height: '100dvh', // Dynamic viewport height for mobile
+            maxWidth: '100vw',
+            height: '100vh',
+            minHeight: '-webkit-fill-available',
+            maxHeight: '100vh',
             overflow: 'hidden',
-            isolation: 'isolate', // Create new stacking context
+            isolation: 'isolate',
             WebkitBackfaceVisibility: 'hidden',
             backfaceVisibility: 'hidden',
+            margin: 0,
+            padding: 0,
+            transform: 'translate3d(0, 0, 0)',
           }}
         >
           <div className="text-center px-6">
