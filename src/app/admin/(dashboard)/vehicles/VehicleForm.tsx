@@ -77,6 +77,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     'Ferrari',
     'Ford',
     'Jaguar',
+    'JEEP',
     'Lamborghini',
     'Land Rover',
     'Lexus',
