@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 import './global.css'
 
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     default: 'RealCars Company - Automotora Premium de Lujo',
   },
   description: 'Automotora especializada en vehículos premium y de lujo. Excelencia automotriz con más de 15 años de experiencia en Santiago, Chile.',
-  keywords: ['automotora lujo', 'autos premium', 'vehículos exclusivos', 'autos de lujo chile', 'automotora premium', 'vehículos alta gama', 'concesionario premium'],
+  keywords: ['automotora lujo', 'autos premium', 'vehículos exclusivos', 'autos de lujo chile', 'automotora premium', 'vehículos alta gama', 'concesionario premium', 'venta autos lujo santiago', 'consignacion vehiculos premium'],
   authors: [{ name: 'RealCars Company' }],
   creator: 'RealCars Company',
   publisher: 'RealCars Company',
@@ -31,20 +32,11 @@ export const metadata: Metadata = {
     siteName: 'RealCars Company',
     title: 'RealCars Company - Automotora Premium de Lujo',
     description: 'Especialistas en vehículos premium y de lujo. Calidad, excelencia y servicio personalizado.',
-    images: [
-      {
-        url: '/images/brand/realcarscompanylogo.png',
-        width: 1200,
-        height: 630,
-        alt: 'RealCars Company',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RealCars Company - Automotora Premium',
     description: 'Especialistas en vehículos premium y de lujo en Chile',
-    images: ['/images/brand/realcarscompanylogo.png'],
   },
   robots: {
     index: true,
@@ -103,9 +95,9 @@ export default function RootLayout({
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+56-9-8777-5463',
+      telephone: '+56-9-6130-4115',
       contactType: 'Customer Service',
-      email: 'contacto@realcarscompany.cl',
+      email: 'Realcarscompanyspa@gmail.com',
       availableLanguage: 'Spanish',
     },
     sameAs: [
@@ -126,6 +118,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-white text-[#161b39]">
         {children}
+        <Analytics />
       </body>
     </html>
   )

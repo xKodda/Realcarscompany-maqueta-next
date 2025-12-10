@@ -105,8 +105,7 @@ async function getLatestAutos() {
     return autos.map(serializeAuto)
   } catch (error) {
     console.error('Error fetching latest autos:', error)
-    // En caso de error, retornar array vacío para que la página siga funcionando
-    return []
+    return null
   }
 }
 

@@ -73,8 +73,26 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
           >
             {/* Imagen principal */}
             <div
-              className="relative h-96 lg:h-[500px] overflow-hidden rounded-sm mb-4 cursor-pointer group"
+              className="relative h-96 lg:h-[500px] overflow-hidden rounded-sm mb-4 cursor-pointer group touch-pan-y"
               onClick={() => setIsGalleryOpen(true)}
+              onTouchStart={(e) => {
+                const touch = e.touches[0]
+                e.currentTarget.dataset.touchStartX = String(touch.clientX)
+              }}
+              onTouchEnd={(e) => {
+                const touchStartX = Number(e.currentTarget.dataset.touchStartX)
+                const touchEndX = e.changedTouches[0].clientX
+                const diff = touchStartX - touchEndX
+
+                // Swipe umbral (50px)
+                if (Math.abs(diff) > 50) {
+                  if (diff > 0) {
+                    handleNextImage()
+                  } else {
+                    handlePrevImage()
+                  }
+                }
+              }}
             >
               <Image
                 src={imageGallery[selectedImageIndex]}
@@ -87,7 +105,7 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
               />
 
               {/* Overlay con zoom icon */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center pointer-events-none">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-3 rounded-full">
                   <svg
                     className="w-6 h-6 text-[#161b39]"
@@ -112,7 +130,7 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                 </div>
               )}
 
-              {/* Controles de navegación si hay más de una imagen */}
+              {/* Controles de navegación */}
               {imageGallery.length > 1 && (
                 <>
                   <button
@@ -120,11 +138,11 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                       e.stopPropagation()
                       handlePrevImage()
                     }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                    className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 active:scale-95"
                     aria-label="Imagen anterior"
                   >
                     <svg
-                      className="w-6 h-6 text-[#161b39]"
+                      className="w-5 h-5 lg:w-6 lg:h-6 text-[#161b39]"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -142,11 +160,11 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                       e.stopPropagation()
                       handleNextImage()
                     }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                    className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 active:scale-95"
                     aria-label="Imagen siguiente"
                   >
                     <svg
-                      className="w-6 h-6 text-[#161b39]"
+                      className="w-5 h-5 lg:w-6 lg:h-6 text-[#161b39]"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -176,8 +194,8 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
                     className={`relative h-20 overflow-hidden rounded-sm transition-all duration-300 ${selectedImageIndex === index
-                        ? 'ring-2 ring-[#802223] ring-offset-2 ring-offset-white shadow-lg shadow-[#802223]/20 scale-105 opacity-100'
-                        : 'opacity-60 hover:opacity-90 hover:ring-1 hover:ring-gray-300'
+                      ? 'ring-2 ring-[#802223] ring-offset-2 ring-offset-white shadow-lg shadow-[#802223]/20 scale-105 opacity-100'
+                      : 'opacity-60 hover:opacity-90 hover:ring-1 hover:ring-gray-300'
                       }`}
                     whileHover={{ scale: selectedImageIndex === index ? 1.05 : 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -238,10 +256,10 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
               >
                 <span
                   className={`px-3 py-1 text-xs font-medium tracking-wider uppercase ${auto.estado === 'disponible'
-                      ? 'bg-green-100 text-green-700'
-                      : auto.estado === 'reservado'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-red-100 text-red-700'
+                    ? 'bg-green-100 text-green-700'
+                    : auto.estado === 'reservado'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
                     }`}
                 >
                   {auto.estado === 'disponible'

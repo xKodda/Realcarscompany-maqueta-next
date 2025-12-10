@@ -20,6 +20,7 @@ interface Vehicle {
   transmision: string
   combustible: string
   color: string
+  litrosMotor?: string | null
   imagen: string
   imagenes: string[]
   descripcion: string
@@ -45,24 +46,18 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     kilometraje: vehicle?.kilometraje || 0,
     transmision: vehicle?.transmision || 'Automática',
     combustible: vehicle?.combustible || 'Gasolina',
-    litrosMotor: (vehicle as any)?.litrosMotor || (vehicle as any)?.engine || '',
+    litrosMotor: vehicle?.litrosMotor || '',
     color: vehicle?.color || '',
     imagen: vehicle?.imagen || '',
     descripcion: vehicle?.descripcion || '',
     estado: vehicle?.estado || 'disponible',
     destacado: vehicle?.destacado || false,
-    // Extended fields
-    bodyType: (vehicle as any)?.bodyType || '',
-    traction: (vehicle as any)?.traction || '',
-    locationCity: (vehicle as any)?.locationCity || '',
-    condition: (vehicle as any)?.condition || 'Nuevo',
-    shortDescription: (vehicle as any)?.shortDescription || '',
   })
 
   const [imageUrls, setImageUrls] = useState<string[]>(
     vehicle?.vehicleImages?.map((img) => img.imageUrl) ||
-      vehicle?.imagenes ||
-      []
+    vehicle?.imagenes ||
+    []
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -95,15 +90,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     'Volvo'
   ]
   const colorOptions = [
-    'Blanco','Negro','Gris','Plata','Azul','Rojo','Verde','Amarillo','Naranja','Café','Beige'
-  ]
-  const bodyTypeOptions = [
-    'Sedán','SUV','Hatchback','Coupé','Pickup','Convertible','Wagon','Van'
-  ]
-  const tractionOptions = ['FWD','RWD','AWD','4x4']
-  const cityOptions = [
-    'Santiago','Providencia','Las Condes','La Florida','Maipú','Ñuñoa','Vitacura','Puente Alto',
-    'Valparaíso','Viña del Mar','Concepción','Antofagasta','La Serena','Temuco','Iquique','Rancagua'
+    'Blanco', 'Negro', 'Gris', 'Plata', 'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja', 'Café', 'Beige'
   ]
   const years = Array.from({ length: (new Date().getFullYear() + 1) - 1990 + 1 }, (_, i) => (new Date().getFullYear() + 1) - i).filter(y => y >= 1990)
 
@@ -270,11 +257,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               required
               value={formData.marca}
               onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.marca
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
+              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.marca
+                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                }`}
             >
               <option value="">Selecciona una marca</option>
               {brandOptions.map((b) => (
@@ -352,11 +338,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               onChange={(e) =>
                 setFormData({ ...formData, transmision: e.target.value })
               }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.transmision
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
+              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.transmision
+                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                }`}
             >
               <option value="Automática">Automática</option>
               <option value="Manual">Manual</option>
@@ -373,11 +358,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               onChange={(e) =>
                 setFormData({ ...formData, combustible: e.target.value })
               }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.combustible
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
+              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.combustible
+                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                }`}
             >
               <option value="Gasolina">Gasolina</option>
               <option value="Diesel">Diesel</option>
@@ -394,11 +378,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               required
               value={formData.color}
               onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.color
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
+              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.color
+                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                }`}
             >
               <option value="" disabled>Selecciona un color</option>
               {colorOptions.map((c) => (
@@ -410,32 +393,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
 
         {/* Additional Information */}
         <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Información Adicional
+          Información del Motor
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Carrocería
-            </label>
-            <select
-              value={formData.bodyType}
-              onChange={(e) =>
-                setFormData({ ...formData, bodyType: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.bodyType
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
-            >
-              <option value="">Selecciona tipo</option>
-              {bodyTypeOptions.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Litros del Motor
@@ -450,191 +411,6 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
             />
             <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5 (puede usar punto o coma)</p>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tracción
-            </label>
-            <select
-              value={formData.traction}
-              onChange={(e) =>
-                setFormData({ ...formData, traction: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.traction
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
-            >
-              <option value="">Selecciona tracción</option>
-              {tractionOptions.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ciudad
-            </label>
-            <select
-              value={formData.locationCity}
-              onChange={(e) =>
-                setFormData({ ...formData, locationCity: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.locationCity
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
-            >
-              <option value="">Selecciona ciudad</option>
-              {cityOptions.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Condición
-            </label>
-            <select
-              value={formData.condition}
-              onChange={(e) =>
-                setFormData({ ...formData, condition: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.condition
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
-            >
-              <option value="Nuevo">Nuevo</option>
-              <option value="Seminuevo">Seminuevo</option>
-              <option value="Usado">Usado</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Images */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Imágenes
-        </h2>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Imagen Principal <span className="text-red-500">*</span>
-          </label>
-          {formData.imagen ? (
-            <div className="flex items-center gap-4">
-              {/* Vista previa simple */}
-              <img
-                src={formData.imagen}
-                alt="Imagen principal"
-                className="w-24 h-24 object-cover border border-gray-200"
-              />
-              <label className="inline-flex">
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handlePickMainImage}
-                  className="hidden"
-                />
-                <span className="px-4 py-3 border-2 border-gray-300 text-gray-700 hover:border-[#802223] hover:text-[#802223] cursor-pointer">
-                  Reemplazar imagen
-                </span>
-              </label>
-            </div>
-          ) : (
-            <label className="inline-flex">
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handlePickMainImage}
-                className="hidden"
-              />
-              <span className="px-4 py-3 border-2 border-dashed border-gray-300 text-gray-700 hover:border-[#802223] hover:text-[#802223] cursor-pointer w-full text-center">
-                Cargar imagen principal
-              </span>
-            </label>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Cargar imágenes adicionales
-          </label>
-          <div className="mb-3">
-            <label className="inline-flex">
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                multiple
-                onChange={handlePickGallery}
-                className="hidden"
-              />
-              <span className="px-4 py-3 border-2 border-gray-300 text-gray-700 hover:border-[#802223] hover:text-[#802223] cursor-pointer">
-                Cargar imágenes
-              </span>
-            </label>
-          </div>
-          {imageUrls.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {imageUrls.map((url, index) => (
-                <div key={index} className="border border-gray-200 p-2 relative bg-white">
-                  <img
-                    src={url}
-                    alt={`Imagen ${index + 1}`}
-                    className="w-full h-28 object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImageUrl(index)}
-                    className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 hover:bg-red-700"
-                    aria-label="Eliminar imagen"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Descripción <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            required
-            rows={6}
-            value={formData.descripcion}
-            onChange={(e) =>
-              setFormData({ ...formData, descripcion: e.target.value })
-            }
-            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-          />
-        </div>
-
-        {/* Short Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Descripción Corta
-          </label>
-          <textarea
-            rows={2}
-            value={formData.shortDescription}
-            onChange={(e) =>
-              setFormData({ ...formData, shortDescription: e.target.value })
-            }
-            placeholder="Breve descripción para mostrar en listados"
-            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-          />
         </div>
 
         {/* Status & Options */}
@@ -651,11 +427,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               required
               value={formData.estado}
               onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${
-                formData.estado
-                  ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                  : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-              }`}
+              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.estado
+                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
+                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
+                }`}
             >
               <option value="disponible">Disponible</option>
               <option value="reservado">Reservado</option>
@@ -697,8 +472,8 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
             {isSubmitting
               ? 'Guardando...'
               : isEditing
-              ? 'Actualizar Vehículo'
-              : 'Crear Vehículo'}
+                ? 'Actualizar Vehículo'
+                : 'Crear Vehículo'}
           </button>
           <Link
             href="/admin/vehicles"

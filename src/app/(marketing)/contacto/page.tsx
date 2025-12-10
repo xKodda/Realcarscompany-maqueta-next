@@ -15,7 +15,7 @@ export default function ContactoPage() {
   })
 
   const [showSuccess, setShowSuccess] = useState(false)
-  
+
   const {
     errors,
     isSubmitting,
@@ -42,7 +42,7 @@ export default function ContactoPage() {
         if (response.success) {
           setShowSuccess(true)
           setFormData({ nombre: '', email: '', telefono: '', mensaje: '' })
-          
+
           // Ocultar mensaje de éxito después de 5 segundos
           setTimeout(() => setShowSuccess(false), 5000)
         } else {
@@ -56,7 +56,6 @@ export default function ContactoPage() {
 
     if (!success) {
       // Los errores ya se manejan en el hook
-      console.log('Formulario no válido:', errors)
     }
   }
 
@@ -96,7 +95,7 @@ export default function ContactoPage() {
               Contáctanos
             </h1>
             <p className="text-xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
-              Nuestro equipo de expertos está listo para ayudarte a encontrar 
+              Nuestro equipo de expertos está listo para ayudarte a encontrar
               el vehículo perfecto para ti.
             </p>
           </motion.div>
@@ -110,7 +109,7 @@ export default function ContactoPage() {
             <h2 className="text-3xl md:text-4xl font-light text-[#161b39] mb-8">
               Información de <span className="font-semibold">contacto</span>
             </h2>
-            
+
             <div className="space-y-8 mb-12">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 flex items-center justify-center text-[#802223]">
@@ -175,7 +174,7 @@ export default function ContactoPage() {
             <h2 className="text-3xl font-light text-[#161b39] mb-8">
               Envíanos un <span className="font-semibold">mensaje</span>
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Mensaje de éxito */}
               {showSuccess && (
@@ -227,11 +226,10 @@ export default function ContactoPage() {
                   onBlur={handleBlur}
                   required
                   maxLength={100}
-                  className={`w-full px-4 py-3 border transition-colors ${
-                    errors.nombre 
-                      ? 'border-red-300 focus:border-red-500' 
+                  className={`w-full px-4 py-3 border transition-colors ${errors.nombre
+                      ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-[#802223]'
-                  } focus:outline-none`}
+                    } focus:outline-none`}
                   aria-invalid={!!errors.nombre}
                   aria-describedby={errors.nombre ? 'nombre-error' : undefined}
                 />
@@ -258,11 +256,10 @@ export default function ContactoPage() {
                   onBlur={handleBlur}
                   required
                   maxLength={254}
-                  className={`w-full px-4 py-3 border transition-colors ${
-                    errors.email 
-                      ? 'border-red-300 focus:border-red-500' 
+                  className={`w-full px-4 py-3 border transition-colors ${errors.email
+                      ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-[#802223]'
-                  } focus:outline-none`}
+                    } focus:outline-none`}
                   aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? 'email-error' : undefined}
                 />
@@ -290,11 +287,10 @@ export default function ContactoPage() {
                   required
                   maxLength={15}
                   placeholder="+56 9 1234 5678"
-                  className={`w-full px-4 py-3 border transition-colors ${
-                    errors.telefono 
-                      ? 'border-red-300 focus:border-red-500' 
+                  className={`w-full px-4 py-3 border transition-colors ${errors.telefono
+                      ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-[#802223]'
-                  } focus:outline-none`}
+                    } focus:outline-none`}
                   aria-invalid={!!errors.telefono}
                   aria-describedby={errors.telefono ? 'telefono-error' : undefined}
                 />
@@ -322,11 +318,10 @@ export default function ContactoPage() {
                   rows={6}
                   maxLength={1000}
                   placeholder="Cuéntanos qué tipo de vehículo buscas..."
-                  className={`w-full px-4 py-3 border transition-colors resize-none ${
-                    errors.mensaje 
-                      ? 'border-red-300 focus:border-red-500' 
+                  className={`w-full px-4 py-3 border transition-colors resize-none ${errors.mensaje
+                      ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-[#802223]'
-                  } focus:outline-none`}
+                    } focus:outline-none`}
                   aria-invalid={!!errors.mensaje}
                   aria-describedby={errors.mensaje ? 'mensaje-error' : undefined}
                 />
@@ -345,11 +340,10 @@ export default function ContactoPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-4 text-sm font-medium tracking-wider uppercase transition-all ${
-                  isSubmitting
+                className={`w-full py-4 text-sm font-medium tracking-wider uppercase transition-all ${isSubmitting
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-[#802223] hover:bg-[#6b1d1e]'
-                } text-white`}
+                  } text-white`}
               >
                 {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </button>

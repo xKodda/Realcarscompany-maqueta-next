@@ -105,8 +105,6 @@ export async function DELETE(
       where: { id },
     })
 
-    console.log(`Vehículo ${id} eliminado exitosamente`)
-
     return NextResponse.json({
       success: true,
       message: 'Vehículo eliminado exitosamente'

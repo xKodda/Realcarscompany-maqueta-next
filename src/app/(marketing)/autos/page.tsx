@@ -117,27 +117,18 @@ async function getAutos(searchParams: any) {
     }
   } catch (error) {
     console.error('Error fetching autos:', error)
-    // En caso de error, retornar datos vacíos para que la página siga funcionando
-    return {
-      autos: [],
-      total: 0,
-      currentPage: 1,
-      totalPages: 0,
-    }
+    return null
   }
 }
 
 export default async function AutosPage({ searchParams }: PageProps) {
   const params = await searchParams
-  const { autos, total, currentPage, totalPages } = await getAutos(params)
+  const result = await getAutos(params)
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AutosPageClient
-        initialAutos={autos}
-        total={total}
-        currentPage={currentPage}
-        totalPages={totalPages}
+        initialData={result}
         itemsPerPage={ITEMS_PER_PAGE}
       />
     </Suspense>

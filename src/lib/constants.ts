@@ -30,9 +30,9 @@ export const SOCIAL_LINKS = {
 }
 
 export const CONTACTO = {
-  email: 'contacto@realcarscompany.cl',
-  telefono: '+56 9 8777 5463',
-  whatsapp: '+56987775463',
+  email: 'Realcarscompanyspa@gmail.com',
+  telefono: '+56 9 6130 4115',
+  whatsapp: '+56961304115',
   direccion: 'Santiago, Chile',
   horario: {
     lunesViernes: '9:00 - 17:00',

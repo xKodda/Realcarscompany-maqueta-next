@@ -82,22 +82,16 @@ export default function Footer() {
 
         {/* Copyright y créditos */}
         <div className="border-t border-white/10 pt-6 sm:pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-              <p className="text-white/60 text-xs sm:text-sm font-light">
-                &copy; {new Date().getFullYear()} RealCars Company. Todos los derechos reservados.
-              </p>
-              <span className="hidden sm:block text-white/20">•</span>
-              <p className="text-white/40 text-xs font-light">
-                Preview - Maqueta para Real Cars Company
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-              <p className="text-white/60 text-xs sm:text-sm font-light">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-white/60 text-xs sm:text-sm font-light">
+              &copy; {new Date().getFullYear()} RealCars Company. Todos los derechos reservados.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <p className="text-white/50 text-xs font-light italic">
                 Diseñado para la excelencia
               </p>
-              <div className="hidden sm:block h-4 w-px bg-white/20"></div>
-
+              <span className="hidden sm:block text-white/20">•</span>
               <a
                 href="https://clikium.cl/"
                 target="_blank"

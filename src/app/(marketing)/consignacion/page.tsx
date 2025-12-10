@@ -172,7 +172,7 @@ ${sanitizedData.mensaje}
     })
 
     if (!success) {
-      console.log('Formulario no válido:', errors)
+      //
     }
   }
 

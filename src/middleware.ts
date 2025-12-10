@@ -37,12 +37,9 @@ export function middleware(request: NextRequest) {
     response.headers.set('X-Frame-Options', 'DENY')
   }
 
-  // Rate limiting básico (simulado)
+  // Simulacion de Rate Limiting
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
   const userAgent = request.headers.get('user-agent') || 'unknown'
-  
-  // Log de acceso para monitoreo
-  console.log(`[${new Date().toISOString()}] ${request.method} ${request.nextUrl.pathname} - IP: ${ip}`)
 
   // Validar User-Agent malicioso
   const maliciousPatterns = [
@@ -55,8 +52,7 @@ export function middleware(request: NextRequest) {
   ]
 
   if (maliciousPatterns.some(pattern => pattern.test(userAgent))) {
-    // Permitir bots legítimos pero loggear
-    console.log(`[SECURITY] Potential bot detected: ${userAgent}`)
+    // Permitir bots legítimos (acción silenciosa)
   }
 
   // Protección contra ataques de path traversal

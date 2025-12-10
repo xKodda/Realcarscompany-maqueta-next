@@ -11,13 +11,13 @@ export default function SplashScreen() {
   useEffect(() => {
     // Mostrar siempre al recargar
     setShouldShow(true)
-    
+
     // Bloquear scroll del body cuando el splash está visible
     if (shouldShow && isVisible) {
       document.body.style.overflow = 'hidden'
       document.body.classList.add('no-scroll')
     }
-    
+
     // Ocultar después de 2.5 segundos
     const timer = setTimeout(() => {
       setIsVisible(false)
@@ -38,20 +38,25 @@ export default function SplashScreen() {
   if (!shouldShow) return null
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white overflow-hidden"
-          style={{ 
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-white"
+          style={{
             position: 'fixed',
             top: 0,
             left: 0,
+            right: 0,
+            bottom: 0,
             width: '100vw',
-            height: '100vh',
-            overflow: 'hidden'
+            height: '100dvh', // Dynamic viewport height for mobile
+            overflow: 'hidden',
+            isolation: 'isolate', // Create new stacking context
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
           }}
         >
           <div className="text-center px-6">
