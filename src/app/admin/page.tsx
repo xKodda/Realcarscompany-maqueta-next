@@ -15,7 +15,7 @@ const ITEMS_PER_PAGE = 10
 
 export default async function AdminDashboard({ searchParams }: PageProps) {
   const user = await getCurrentUser()
-  
+
   if (!user) {
     redirect('/admin/login')
   }
@@ -33,39 +33,34 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
   let totalCount = 0
 
   try {
-    // Verificar que DATABASE_URL esté disponible
-    if (!process.env.DATABASE_URL) {
-      console.warn('DATABASE_URL not configured')
-    } else {
-      const results = await Promise.all([
-        prisma.auto.count(),
-        prisma.auto.count({ where: { estado: 'disponible' } }),
-        prisma.auto.count({ where: { estado: 'reservado' } }),
-        prisma.auto.count({ where: { estado: 'vendido' } }),
-        prisma.auto.findMany({
-          skip,
-          take: ITEMS_PER_PAGE,
-          orderBy: { createdAt: 'desc' },
-          select: {
-            id: true,
-            marca: true,
-            modelo: true,
-            anio: true,
-            precio: true,
-            estado: true,
-            imagen: true,
-          },
-        }),
-        prisma.auto.count(),
-      ])
+    const results = await Promise.all([
+      prisma.auto.count(),
+      prisma.auto.count({ where: { estado: 'disponible' } }),
+      prisma.auto.count({ where: { estado: 'reservado' } }),
+      prisma.auto.count({ where: { estado: 'vendido' } }),
+      prisma.auto.findMany({
+        skip,
+        take: ITEMS_PER_PAGE,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          marca: true,
+          modelo: true,
+          anio: true,
+          precio: true,
+          estado: true,
+          imagen: true,
+        },
+      }),
+      prisma.auto.count(),
+    ])
 
-      totalAutos = results[0]
-      autosDisponibles = results[1]
-      autosReservados = results[2]
-      autosVendidos = results[3]
-      recentAutos = results[4]
-      totalCount = results[5]
-    }
+    totalAutos = results[0]
+    autosDisponibles = results[1]
+    autosReservados = results[2]
+    autosVendidos = results[3]
+    recentAutos = results[4]
+    totalCount = results[5]
   } catch (error) {
     console.error('Error fetching admin dashboard data:', error)
     // Continuar con valores por defecto (0 y arrays vacíos)
@@ -144,9 +139,9 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
         {/* Acciones rápidas - Prioridad móvil */}
         <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 relative overflow-hidden group">
           <div className="absolute inset-0">
-            <Image 
-              src="/images/brand/showroom3.jpeg" 
-              alt="Showroom" 
+            <Image
+              src="/images/brand/showroom3.jpeg"
+              alt="Showroom"
               fill
               className="object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300"
               sizes="(max-width: 768px) 100vw, 50vw"

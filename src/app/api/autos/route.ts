@@ -18,7 +18,7 @@ function toNumber(value: string | null): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined
 }
 
-function serializeAuto(auto: Auto) {
+function serializeAuto(auto: any) {
   return {
     id: auto.id,
     marca: auto.marca,
@@ -30,7 +30,7 @@ function serializeAuto(auto: Auto) {
     combustible: auto.combustible,
     color: auto.color,
     imagen: auto.imagen,
-    imagenes: auto.imagenes,
+    vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas,
     estado: auto.estado,
@@ -133,6 +133,7 @@ export async function GET(request: Request) {
         orderBy: { [sortBy]: sortOrder },
         skip,
         take: limit,
+        include: { vehicleImages: { orderBy: { position: 'asc' } } },
       }),
     ])
 
@@ -196,6 +197,8 @@ export async function POST(request: Request) {
       suffix += 1
     }
 
+    const images = Array.isArray(body.imagenes) ? body.imagenes : []
+
     const created = await prisma.auto.create({
       data: {
         slug,
@@ -208,11 +211,19 @@ export async function POST(request: Request) {
         combustible: body.combustible,
         color: body.color,
         imagen: body.imagen,
-        imagenes: Array.isArray(body.imagenes) ? body.imagenes : [],
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas) ? body.caracteristicas : [],
         estado: body.estado ?? 'disponible',
         destacado: Boolean(body.destacado),
+        vehicleImages: {
+          create: images.map((url: string, index: number) => ({
+            imageUrl: url,
+            position: index,
+          })),
+        },
+      },
+      include: {
+        vehicleImages: true,
       },
     })
 

@@ -12,7 +12,7 @@ export interface Auto {
   litrosMotor?: string
   color: string
   imagen: string
-  imagenes?: string[]
+  vehicleImages?: { id: number; imageUrl: string; position: number }[]
   descripcion: string
   caracteristicas: string[]
   estado: 'disponible' | 'vendido' | 'reservado'

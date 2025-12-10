@@ -76,7 +76,7 @@ function serializeAuto(auto: any): Auto {
     litrosMotor: auto.litrosMotor || undefined,
     color: auto.color,
     imagen: auto.imagen,
-    imagenes: auto.imagenes || [],
+    vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas || [],
     estado: auto.estado as 'disponible' | 'vendido' | 'reservado',
@@ -88,12 +88,6 @@ function serializeAuto(auto: any): Auto {
 
 async function getLatestAutos() {
   try {
-    // Verificar que DATABASE_URL esté disponible
-    if (!process.env.DATABASE_URL) {
-      console.warn('DATABASE_URL not configured, returning empty latest autos')
-      return []
-    }
-
     // Obtener los últimos 4 vehículos agregados a la base de datos
     const autos = await prisma.auto.findMany({
       where: {
@@ -101,6 +95,11 @@ async function getLatestAutos() {
       },
       orderBy: { createdAt: 'desc' },
       take: 4,
+      include: {
+        vehicleImages: {
+          orderBy: { position: 'asc' },
+        },
+      },
     })
 
     return autos.map(serializeAuto)

@@ -16,7 +16,9 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
-  const imageGallery = auto.imagenes || [auto.imagen]
+  const imageGallery = auto.vehicleImages && auto.vehicleImages.length > 0
+    ? [auto.imagen, ...auto.vehicleImages.map(img => img.imageUrl)]
+    : [auto.imagen]
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) =>
@@ -173,11 +175,10 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                   <motion.button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`relative h-20 overflow-hidden rounded-sm transition-all duration-300 ${
-                      selectedImageIndex === index
+                    className={`relative h-20 overflow-hidden rounded-sm transition-all duration-300 ${selectedImageIndex === index
                         ? 'ring-2 ring-[#802223] ring-offset-2 ring-offset-white shadow-lg shadow-[#802223]/20 scale-105 opacity-100'
                         : 'opacity-60 hover:opacity-90 hover:ring-1 hover:ring-gray-300'
-                    }`}
+                      }`}
                     whileHover={{ scale: selectedImageIndex === index ? 1.05 : 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -185,9 +186,8 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                       src={img}
                       alt={`${auto.marca} ${auto.modelo} - miniatura ${index + 1}`}
                       fill
-                      className={`object-cover transition-transform duration-300 ${
-                        selectedImageIndex === index ? 'brightness-110' : ''
-                      }`}
+                      className={`object-cover transition-transform duration-300 ${selectedImageIndex === index ? 'brightness-110' : ''
+                        }`}
                       sizes="100px"
                     />
                     {selectedImageIndex === index && (
@@ -237,19 +237,18 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
                 className="flex items-center gap-2 text-sm text-gray-600"
               >
                 <span
-                  className={`px-3 py-1 text-xs font-medium tracking-wider uppercase ${
-                    auto.estado === 'disponible'
+                  className={`px-3 py-1 text-xs font-medium tracking-wider uppercase ${auto.estado === 'disponible'
                       ? 'bg-green-100 text-green-700'
                       : auto.estado === 'reservado'
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-red-100 text-red-700'
-                  }`}
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
                 >
                   {auto.estado === 'disponible'
                     ? 'Disponible'
                     : auto.estado === 'reservado'
-                    ? 'Reservado'
-                    : 'Vendido'}
+                      ? 'Reservado'
+                      : 'Vendido'}
                 </span>
               </motion.div>
             </div>

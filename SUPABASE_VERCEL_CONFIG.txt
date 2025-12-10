@@ -1,33 +1,34 @@
-# GUÍA DE CONFIGURACIÓN SUPABASE + VERCEL
+# CONFIGURACIÓN ACTUALIZADA (INTEGRACIÓN VERCEL)
 
-## 1. Archivo .env (Local)
+¡Buenas noticias! La integración automática de Vercel ha hecho el trabajo difícil por ti.
 
-Copia y pega el siguiente contenido en tu archivo `.env` (reemplazando lo que tengas):
+## 1. Qué ha pasado
+Al conectar Supabase con Vercel, se han creado automáticamente las variables de entorno correctas para el proyecto `biygbkzzjeijfynrfjrj`.
+* `POSTGRES_PRISMA_URL`: Es la conexión optimizada (Pooler).
+* `POSTGRES_URL_NON_POOLING`: Es la conexión directa.
+
+## 2. Qué hemos hecho
+1. **Actualizado `prisma/schema.prisma`**: Ahora busca las variables `POSTGRES_PRISMA_URL` y `POSTGRES_URL_NON_POOLING` en lugar de `DATABASE_URL`.
+2. **Actualizado `.env` (Instrucciones)**: Debes actualizar tu `.env` local para usar estos mismos nombres, así tu entorno local coincide con el de Vercel.
+
+## 3. Pasos para ti
+
+### A. Actualiza tu .env local
+Copia esto en tu archivo `.env`:
 
 ```env
-# --- CONFIGURACIÓN DE SUPABASE (PROYECTO: biygbkzzjeijfynrfjrj) ---
-
-# 1. DIRECT_URL: Conexión directa (Puerto 5432).
-# Usada por Prisma Migrate.
-DIRECT_URL="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
-
-# 2. DATABASE_URL: Conexión de la aplicación.
-# Para desarrollo local, usamos la misma conexión directa para evitar problemas.
-DATABASE_URL="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
-
-# NOTA: Si quisieras usar el Pooler localmente, sería algo como:
-# DATABASE_URL="postgresql://postgres.biygbkzzjeijfynrfjrj:Realcarscompany2025*@aws-0-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+# --- CONFIGURACIÓN LOCAL (Coincide con Vercel) ---
+POSTGRES_URL_NON_POOLING="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
+POSTGRES_PRISMA_URL="postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres"
 ```
 
-## 2. Configuración en Vercel (Producción)
+### B. En Vercel
+**No tienes que hacer nada.**
+Las variables que mostraste en la imagen (`POSTGRES_PRISMA_URL`, etc.) son exactamente las que necesitamos.
+El hecho de que haya un `DATABASE_URL` antiguo al final de la lista no importa, porque ya no lo estamos usando en el código.
 
-Al desplegar, configura estas variables en Vercel (Settings > Environment Variables):
-
-| Variable | Valor |
-|----------|-------|
-| `DIRECT_URL` | `postgresql://postgres:Realcarscompany2025*@db.biygbkzzjeijfynrfjrj.supabase.co:5432/postgres` |
-| `DATABASE_URL` | **IMPORTANTE:** Usa la URL del Pooler (Puerto 6543).<br>Debería ser similar a:<br>`postgresql://postgres.biygbkzzjeijfynrfjrj:Realcarscompany2025*@aws-0-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1`<br>*(Verifica el host exacto en Supabase > Settings > Database)* |
-
-## 3. Explicación
-* Hemos detectado dos proyectos diferentes en tus archivos. Hemos asumido que el correcto es el que termina en `...biygbkzzjeijfynrfjrj` ya que es el que tenías activo en `.env.local`.
-* El otro proyecto (`...bgtthymbhuihucjkcpj`) parece ser antiguo o incorrecto.
+### C. Generar Cliente
+Ejecuta esto en tu terminal para que Prisma reconozca los cambios:
+```bash
+npx prisma generate
+```

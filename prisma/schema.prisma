@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url       = env("POSTGRES_PRISMA_URL") // Uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // Uses direct connection
 }
 
 enum AutoEstado {
@@ -70,7 +70,7 @@ model Auto {
   litrosMotor     String?
   color           String
   imagen          String
-  imagenes        String[]      @default([])
+
   descripcion     String
   caracteristicas String[]      @default([])
   estado          AutoEstado    @default(disponible)
@@ -78,26 +78,7 @@ model Auto {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   
-  // Extended fields for Vehicle model compatibility
-  title            String?       // Can be derived from marca + modelo
-  brand            String?       // Alias for marca
-  model            String?       // Alias for modelo
-  year             Int?          // Alias for anio
-  price            Decimal?      // Alias for precio
-  currency         String        @default("CLP")
-  mileageKm        Int?          // Alias for kilometraje
-  fuelType         String?       // Alias for combustible
-  transmission     String?       // Alias for transmision
-  bodyType         String?
-  engine           String?
-  traction         String?
-  locationCity     String?
-  condition        String?
-  status           String        @default("available")
-  mainImageUrl     String?       // Alias for imagen
-  shortDescription String?
-  isFeatured       Boolean       @default(false)
-  
+
   // Relations
   createdById      Int?
   createdBy        User?         @relation("UserVehicles", fields: [createdById], references: [id])

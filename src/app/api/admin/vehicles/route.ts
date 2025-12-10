@@ -64,7 +64,6 @@ export async function POST(request: Request) {
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
         imagen: body.imagen,
-        imagenes: Array.isArray(body.imagenes) ? body.imagenes : [],
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
@@ -155,7 +154,6 @@ export async function PUT(request: Request) {
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
         imagen: body.imagen,
-        imagenes: Array.isArray(body.imagenes) ? body.imagenes : [],
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas

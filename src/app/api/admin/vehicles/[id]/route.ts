@@ -36,7 +36,6 @@ export async function PUT(
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
         imagen: body.imagen,
-        imagenes: Array.isArray(body.imagenes) ? body.imagenes : [],
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
@@ -126,13 +125,13 @@ export async function DELETE(
 
     console.log(`Vehículo ${id} eliminado exitosamente`)
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Vehículo eliminado exitosamente'
     })
   } catch (error) {
     console.error('Delete vehicle error:', error)
-    
+
     // Proporcionar más información sobre el error
     let errorMessage = 'Error al eliminar el vehículo'
     if (error instanceof Error) {

@@ -37,7 +37,7 @@ function serializeAuto(auto: any): Auto {
     litrosMotor: auto.litrosMotor || undefined,
     color: auto.color,
     imagen: auto.imagen,
-    imagenes: auto.imagenes || [],
+    vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas || [],
     estado: auto.estado as 'disponible' | 'vendido' | 'reservado',
@@ -48,16 +48,7 @@ function serializeAuto(auto: any): Auto {
 
 async function getAutos(searchParams: any) {
   try {
-    // Verificar que DATABASE_URL esté disponible
-    if (!process.env.DATABASE_URL) {
-      console.warn('DATABASE_URL not configured, returning empty autos')
-      return {
-        autos: [],
-        total: 0,
-        currentPage: 1,
-        totalPages: 0,
-      }
-    }
+
 
     const page = parseInt(searchParams.page || '1', 10)
     const skip = (page - 1) * ITEMS_PER_PAGE
@@ -108,6 +99,11 @@ async function getAutos(searchParams: any) {
         },
         skip,
         take: ITEMS_PER_PAGE,
+        include: {
+          vehicleImages: {
+            orderBy: { position: 'asc' },
+          },
+        },
       }),
     ])
 
