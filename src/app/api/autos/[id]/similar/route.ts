@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import type { Auto } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-function serializeAuto(auto: Auto) {
+function serializeAuto(auto: any) {
   return {
     id: auto.id,
     marca: auto.marca,
@@ -14,7 +13,8 @@ function serializeAuto(auto: Auto) {
     combustible: auto.combustible,
     color: auto.color,
     imagen: auto.imagen,
-    imagenes: auto.imagenes,
+    imagenes: auto.vehicleImages ? auto.vehicleImages.map((img: any) => img.imageUrl) : [],
+    vehicleImages: auto.vehicleImages || [],
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas,
     estado: auto.estado,
@@ -63,6 +63,11 @@ export async function GET(
       },
       orderBy: { createdAt: 'desc' },
       take: limit,
+      include: {
+        vehicleImages: {
+          orderBy: { position: 'asc' },
+        },
+      },
     })
 
     return NextResponse.json({

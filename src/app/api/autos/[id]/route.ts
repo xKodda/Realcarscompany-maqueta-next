@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import type { Auto } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-function serializeAuto(auto: Auto) {
+function serializeAuto(auto: any) {
   return {
     id: auto.id,
     marca: auto.marca,
@@ -14,7 +13,12 @@ function serializeAuto(auto: Auto) {
     combustible: auto.combustible,
     color: auto.color,
     imagen: auto.imagen,
-    imagenes: auto.imagenes,
+    // Map vehicleImages to simple array of strings for compatibility if needed, 
+    // or just pass the objects. The frontend likely expects 'imagenes' as strings based on legacy code,
+    // but the new admin form sends 'vehicleImages'.
+    // Let's provide both for maximum compatibility.
+    imagenes: auto.vehicleImages ? auto.vehicleImages.map((img: any) => img.imageUrl) : [],
+    vehicleImages: auto.vehicleImages || [],
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas,
     estado: auto.estado,
@@ -33,6 +37,11 @@ export async function GET(
     const { id } = await params
     const auto = await prisma.auto.findUnique({
       where: { id },
+      include: {
+        vehicleImages: {
+          orderBy: { position: 'asc' },
+        },
+      },
     })
 
     if (!auto) {
@@ -63,6 +72,7 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
+    // First update the scalar fields
     const auto = await prisma.auto.update({
       where: { id },
       data: {
@@ -76,7 +86,6 @@ export async function PUT(
         combustible: body.combustible,
         color: body.color,
         imagen: body.imagen,
-        imagenes: Array.isArray(body.imagenes) ? body.imagenes : undefined,
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
@@ -86,9 +95,38 @@ export async function PUT(
       },
     })
 
+    // Handle images if provided
+    if (Array.isArray(body.imagenes)) {
+      // 1. Delete existing images
+      await prisma.vehicleImage.deleteMany({
+        where: { vehicleId: id },
+      })
+
+      // 2. Create new images
+      if (body.imagenes.length > 0) {
+        await prisma.vehicleImage.createMany({
+          data: body.imagenes.map((url: string, index: number) => ({
+            vehicleId: id,
+            imageUrl: url,
+            position: index,
+          })),
+        })
+      }
+    }
+
+    // Fetch updated auto with images
+    const updatedAuto = await prisma.auto.findUnique({
+      where: { id },
+      include: {
+        vehicleImages: {
+          orderBy: { position: 'asc' },
+        },
+      },
+    })
+
     return NextResponse.json({
       success: true,
-      data: serializeAuto(auto),
+      data: serializeAuto(updatedAuto),
     })
   } catch (error) {
     console.error('Auto PUT error:', error)
@@ -105,6 +143,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
+
+    // Images will be deleted by cascade usually, but explicit delete is safer if cascade isn't set up
+    await prisma.vehicleImage.deleteMany({
+      where: { vehicleId: id },
+    })
+
     await prisma.auto.delete({
       where: { id },
     })
