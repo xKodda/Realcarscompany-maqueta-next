@@ -119,6 +119,47 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     setDisplayLitrosMotor(value)
   }
 
+  const handlePrincipalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingImages(true)
+    setError('')
+
+    try {
+      // Validar tamaño (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError(`La imagen excede los 5MB`)
+        setIsUploadingImages(false)
+        return
+      }
+
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al subir la imagen')
+      }
+
+      const data = await response.json()
+      if (data.success && data.url) {
+        setFormData((prev) => ({ ...prev, imagen: data.url }))
+      }
+    } catch (error) {
+      console.error('Error uploading principal image:', error)
+      setError('Error al subir la imagen principal. Intenta nuevamente.')
+    } finally {
+      setIsUploadingImages(false)
+      // Reset input
+      e.target.value = ''
+    }
+  }
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -508,14 +549,83 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
           </p>
         </div>
 
-        {/* Imágenes */}
+        {/* Imagen Principal */}
         <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Imágenes del Vehículo
+          Imagen Principal
         </h2>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Galería de Imágenes
+            Imagen Principal del Vehículo <span className="text-red-500">*</span>
+          </label>
+          <div className="space-y-4">
+            {/* Preview of principal image */}
+            {formData.imagen && (
+              <div className="relative w-full max-w-md aspect-video bg-gray-100 rounded-lg overflow-hidden border-2 border-[#802223]">
+                <img
+                  src={formData.imagen}
+                  alt="Imagen principal"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, imagen: '' })}
+                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                  title="Eliminar imagen principal"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                  Imagen Principal
+                </div>
+              </div>
+            )}
+
+            {/* Upload button for principal image */}
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePrincipalImageUpload}
+                disabled={isUploadingImages}
+                className="hidden"
+                id="principal-image-upload"
+              />
+              <label
+                htmlFor="principal-image-upload"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#802223] hover:bg-[#6b1d1e] text-white text-sm font-medium tracking-wider uppercase transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUploadingImages ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {formData.imagen ? 'Cambiar Imagen Principal' : 'Subir Imagen Principal'}
+                  </>
+                )}
+              </label>
+              <p className="mt-2 text-xs text-gray-500">
+                Esta será la imagen destacada del vehículo. Formato: JPG, PNG, WebP (máx 5MB)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Galería de Imágenes */}
+        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
+          Galería de Imágenes Adicionales
+        </h2>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Galería de Imágenes (Opcional)
           </label>
           <div className="space-y-4">
             {/* Upload button */}

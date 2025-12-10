@@ -8,7 +8,12 @@ export async function POST(request: Request) {
     await requireAuth()
 
     const form = await request.formData()
-    const files = form.getAll('files') as File[]
+
+    // Intentar obtener archivos de ambas formas: 'file' (singular) y 'files' (plural)
+    const singleFile = form.get('file') as File | null
+    const multipleFiles = form.getAll('files') as File[]
+
+    const files = singleFile ? [singleFile] : multipleFiles
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No se enviaron archivos' }, { status: 400 })
@@ -34,10 +39,14 @@ export async function POST(request: Request) {
       urls.push(`/uploads/${uniqueName}`)
     }
 
-    return NextResponse.json({ success: true, urls })
+    // Si fue un solo archivo, devolver { url }, si fueron varios, devolver { urls }
+    if (singleFile) {
+      return NextResponse.json({ success: true, url: urls[0] })
+    } else {
+      return NextResponse.json({ success: true, urls })
+    }
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Error al subir archivo' }, { status: 500 })
   }
 }
-
