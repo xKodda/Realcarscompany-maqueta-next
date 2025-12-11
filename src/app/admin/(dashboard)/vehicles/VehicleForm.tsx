@@ -217,9 +217,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     setIsSubmitting(true)
 
     try {
-      // Autoasignar imagen principal desde la galería si está vacía
-      if (!formData.imagen && imageUrls.length > 0) {
-        setFormData((prev) => ({ ...prev, imagen: imageUrls[0] }))
+      // Preparar imagen principal - si está vacía, usar la primera de la galería
+      let imagenPrincipal = formData.imagen
+      if (!imagenPrincipal && imageUrls.length > 0) {
+        imagenPrincipal = imageUrls[0]
       }
 
       // Validaciones del formulario (cliente) para feedback inmediato
@@ -237,7 +238,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
       if (isEmpty(formData.combustible)) missing.push('Combustible')
       if (isEmpty(formData.color)) missing.push('Color')
       if (isEmpty(formData.descripcion)) missing.push('Descripción')
-      if (!formData.imagen && imageUrls.length === 0) missing.push('Imagen principal')
+      if (!imagenPrincipal && imageUrls.length === 0) missing.push('Imagen principal')
 
       // Límite razonable de galería
       if (imageUrls.length > 12) {
@@ -259,19 +260,29 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
         : '/api/admin/vehicles'
       const method = isEditing ? 'PUT' : 'POST'
 
+      // Datos a enviar
+      const dataToSend = {
+        ...formData,
+        imagen: imagenPrincipal,
+        imagenes: imageUrls,
+        caracteristicas: caracteristicas
+          .split(',')
+          .map((c) => c.trim())
+          .filter((c) => c.length > 0),
+      }
+
+      console.log('Enviando datos:', {
+        imagenPrincipal: dataToSend.imagen,
+        cantidadImagenes: dataToSend.imagenes.length,
+        imagenes: dataToSend.imagenes
+      })
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          imagenes: imageUrls,
-          caracteristicas: caracteristicas
-            .split(',')
-            .map((c) => c.trim())
-            .filter((c) => c.length > 0),
-        }),
+        body: JSON.stringify(dataToSend),
       })
 
       const data = await response.json()
@@ -570,10 +581,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, imagen: '' })}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors shadow-lg"
                   title="Eliminar imagen principal"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -678,7 +689,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all shadow-lg"
                       title="Eliminar imagen"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

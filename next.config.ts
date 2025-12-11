@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   productionBrowserSourceMaps: false,
+  // Configuración de scroll para siempre volver al inicio
+  experimental: {
+    scrollRestoration: false,
+  },
 };
 
 export default nextConfig;

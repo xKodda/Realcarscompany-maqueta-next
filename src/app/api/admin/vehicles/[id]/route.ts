@@ -52,6 +52,11 @@ export async function PUT(
       where: { vehicleId: vehicle.id },
     })
 
+    console.log('Imágenes recibidas:', {
+      cantidad: body.imagenes?.length || 0,
+      urls: body.imagenes
+    })
+
     if (Array.isArray(body.imagenes) && body.imagenes.length > 0) {
       await prisma.vehicleImage.createMany({
         data: body.imagenes

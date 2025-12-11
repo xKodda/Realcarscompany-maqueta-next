@@ -2,6 +2,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SplashScreen from '@/components/SplashScreen'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import BackToTopButton from '@/components/BackToTopButton'
 
 export default function MarketingLayout({
   children,
@@ -19,6 +20,7 @@ export default function MarketingLayout({
         <Footer />
       </div>
       <WhatsAppButton />
+      <BackToTopButton />
     </>
   )
 }

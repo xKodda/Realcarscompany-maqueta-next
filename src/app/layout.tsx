@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
+import ScrollToTop from '@/components/ScrollToTop'
 import './global.css'
 
 
@@ -117,6 +118,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-white text-[#161b39]">
+        <ScrollToTop />
         {children}
         <Analytics />
       </body>
