@@ -75,7 +75,7 @@ function serializeAuto(auto: any): Auto {
     combustible: auto.combustible as 'Gasolina' | 'Diesel' | 'Eléctrico' | 'Híbrido',
     litrosMotor: auto.litrosMotor || undefined,
     color: auto.color,
-    imagen: auto.imagen,
+    imagen: auto.vehicleImages?.[0]?.imageUrl || '',
     vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas || [],
