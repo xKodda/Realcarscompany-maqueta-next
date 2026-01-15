@@ -41,6 +41,7 @@ export default async function EditVehiclePage({ params }: PageProps) {
       ...img,
       createdAt: img.createdAt.toISOString(),
     })),
+    imagen: vehicle.vehicleImages?.[0]?.imageUrl || '',
     imagenes: [], // Legacy field requirement
   }
 
