@@ -12,7 +12,7 @@ function serializeAuto(auto: any) {
     transmision: auto.transmision,
     combustible: auto.combustible,
     color: auto.color,
-    imagen: auto.imagen,
+    imagen: auto.vehicleImages?.[0]?.imageUrl || '',
     // Map vehicleImages to simple array of strings for compatibility if needed, 
     // or just pass the objects. The frontend likely expects 'imagenes' as strings based on legacy code,
     // but the new admin form sends 'vehicleImages'.
@@ -85,7 +85,7 @@ export async function PUT(
         transmision: body.transmision,
         combustible: body.combustible,
         color: body.color,
-        imagen: body.imagen,
+
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
