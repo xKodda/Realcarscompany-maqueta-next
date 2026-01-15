@@ -49,7 +49,11 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
           anio: true,
           precio: true,
           estado: true,
-          imagen: true,
+          vehicleImages: {
+            take: 1,
+            orderBy: { position: 'asc' },
+            select: { imageUrl: true }
+          },
         },
       }),
       prisma.auto.count(),
@@ -59,7 +63,10 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
     autosDisponibles = results[1]
     autosReservados = results[2]
     autosVendidos = results[3]
-    recentAutos = results[4]
+    recentAutos = results[4].map((auto: any) => ({
+      ...auto,
+      imagen: auto.vehicleImages?.[0]?.imageUrl || ''
+    }))
     totalCount = results[5]
   } catch (error) {
     console.error('Error fetching admin dashboard data:', error)
