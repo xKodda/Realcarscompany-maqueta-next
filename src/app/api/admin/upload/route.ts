@@ -58,8 +58,16 @@ export async function POST(request: Request) {
     } else {
       return NextResponse.json({ success: true, urls })
     }
-  } catch (error) {
-    console.error('Upload error:', error)
-    return NextResponse.json({ error: 'Error al subir archivo a Storage' }, { status: 500 })
+  } catch (error: any) {
+    console.error('Upload error details:', {
+      message: error.message,
+      cause: error.cause,
+      stack: error.stack,
+      fullError: error
+    })
+    return NextResponse.json(
+      { error: `Error al subir archivo a Storage: ${error.message || 'Error desconocido'}` },
+      { status: 500 }
+    )
   }
 }
