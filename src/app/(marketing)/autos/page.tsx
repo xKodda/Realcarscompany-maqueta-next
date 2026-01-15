@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
 import AutosPageClient from './AutosPageClient'
@@ -6,6 +7,16 @@ import type { Auto } from '@/lib/types'
 // Forzar renderizado dinámico
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+export const metadata: Metadata = {
+  title: 'Catálogo de Autos Usados Premium | RealCars Company',
+  description: 'Explora nuestro exclusivo stock de autos usados de lujo en Chile. Marcas premium, calidad garantizada y atención personalizada.',
+  openGraph: {
+    title: 'Catálogo de Autos Usados Premium - RealCars Company',
+    description: 'Encuentra tu próximo vehículo de lujo. Stock actualizado de marcas premium revisadas y garantizadas.',
+    images: ['/images/showroom-default.jpg'],
+  },
+}
 
 interface PageProps {
   searchParams: Promise<{
@@ -36,7 +47,7 @@ function serializeAuto(auto: any): Auto {
     combustible: auto.combustible as 'Gasolina' | 'Diesel' | 'Eléctrico' | 'Híbrido',
     litrosMotor: auto.litrosMotor || undefined,
     color: auto.color,
-    imagen: auto.imagen,
+    imagen: auto.vehicleImages?.[0]?.imageUrl || '',
     vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas || [],
