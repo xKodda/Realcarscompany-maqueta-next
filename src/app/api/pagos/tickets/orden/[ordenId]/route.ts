@@ -11,7 +11,7 @@ export async function GET(
       where: { id: ordenId },
       include: {
         tickets: true,
-        pagos: true,
+        // pagos: true, // Legacy relation removed
       },
     })
 
@@ -39,10 +39,11 @@ export async function GET(
           telefono: orden.compradorTelefono,
           rut: orden.compradorRut,
         },
-        khipuPaymentUrl: orden.khipuPaymentUrl,
-        khipuSimplifiedTransferUrl: orden.khipuSimplifiedTransferUrl,
-        khipuTransferUrl: orden.khipuTransferUrl,
-        khipuAppUrl: orden.khipuAppUrl,
+        // These fields might also be missing if Khipu update wasn't applied, keeping them for now if they exist on model
+        // khipuPaymentUrl: orden.khipuPaymentUrl, 
+        // khipuSimplifiedTransferUrl: orden.khipuSimplifiedTransferUrl,
+        // khipuTransferUrl: orden.khipuTransferUrl,
+        // khipuAppUrl: orden.khipuAppUrl,
         fechaPago: orden.fechaPago,
         createdAt: orden.createdAt,
         updatedAt: orden.updatedAt,
@@ -53,16 +54,7 @@ export async function GET(
           estado: ticket.estado,
           fechaCompra: ticket.fechaCompra,
         })),
-        pagos: orden.pagos.map((pago) => ({
-          id: pago.id,
-          transactionId: pago.transactionId,
-          khipuPaymentId: pago.khipuPaymentId,
-          amount: pago.amount,
-          status: pago.status,
-          statusDetail: pago.statusDetail,
-          createdAt: pago.createdAt,
-          updatedAt: pago.updatedAt,
-        })),
+        pagos: [],
       },
     })
   } catch (error) {
@@ -73,5 +65,6 @@ export async function GET(
     )
   }
 }
+
 
 
