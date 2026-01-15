@@ -29,7 +29,7 @@ function serializeAuto(auto: any) {
     transmision: auto.transmision,
     combustible: auto.combustible,
     color: auto.color,
-    imagen: auto.imagen,
+    imagen: auto.vehicleImages?.[0]?.imageUrl || '',
     vehicleImages: auto.vehicleImages,
     descripcion: auto.descripcion,
     caracteristicas: auto.caracteristicas,
@@ -169,7 +169,7 @@ export async function POST(request: Request) {
       'transmision',
       'combustible',
       'color',
-      'imagen',
+
       'descripcion',
     ]
 
@@ -210,7 +210,7 @@ export async function POST(request: Request) {
         transmision: body.transmision,
         combustible: body.combustible,
         color: body.color,
-        imagen: body.imagen,
+
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas) ? body.caracteristicas : [],
         estado: body.estado ?? 'disponible',
