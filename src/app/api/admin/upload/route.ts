@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
-import path from 'path'
-import fs from 'fs/promises'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: Request) {
   try {
@@ -19,9 +18,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No se enviaron archivos' }, { status: 400 })
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-    await fs.mkdir(uploadDir, { recursive: true })
-
     const urls: string[] = []
 
     for (const file of files) {
@@ -31,12 +27,29 @@ export async function POST(request: Request) {
       const safeName = (file.name || 'image')
         .replace(/[^a-zA-Z0-9.\-_]/g, '_')
         .toLowerCase()
+      // Generate a unique file path
       const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`
 
-      const filePath = path.join(uploadDir, uniqueName)
-      await fs.writeFile(filePath, buffer)
+      // Upload to Supabase Storage
+      // Using 'VehiclesImage' bucket as specified by user
+      const { data, error } = await supabase.storage
+        .from('VehiclesImage')
+        .upload(uniqueName, buffer, {
+          contentType: file.type,
+          upsert: false
+        })
 
-      urls.push(`/uploads/${uniqueName}`)
+      if (error) {
+        console.error('Supabase upload error:', error)
+        throw error
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('VehiclesImage')
+        .getPublicUrl(data.path)
+
+      urls.push(publicUrl)
     }
 
     // Si fue un solo archivo, devolver { url }, si fueron varios, devolver { urls }
@@ -47,6 +60,6 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error('Upload error:', error)
-    return NextResponse.json({ error: 'Error al subir archivo' }, { status: 500 })
+    return NextResponse.json({ error: 'Error al subir archivo a Storage' }, { status: 500 })
   }
 }
