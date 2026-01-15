@@ -69,7 +69,7 @@ model Auto {
   combustible     String
   litrosMotor     String?
   color           String
-  imagen          String
+
 
   descripcion     String
   caracteristicas String[]      @default([])
@@ -121,15 +121,11 @@ model OrdenCompra {
   compradorTelefono         String
   compradorRut              String?
   estado                    OrdenEstado          @default(pendiente)
-  khipuPaymentUrl           String?
-  khipuSimplifiedTransferUrl String?
-  khipuTransferUrl          String?
-  khipuAppUrl               String?
   fechaPago                 DateTime?
   createdAt                 DateTime             @default(now())
   updatedAt                 DateTime             @updatedAt
   tickets                   TicketSorteo[]
-  pagos                     PagoKhipu[]
+  flowTransactions          FlowTransaction[]
 }
 
 model TicketSorteo {
@@ -143,32 +139,50 @@ model TicketSorteo {
   ordenId      String
 }
 
-model PagoKhipu {
-  id                     String      @id @default(cuid())
-  transactionId          String      @unique
-  khipuPaymentId         String?     @unique
-  subject                String?
-  amount                 Int
-  currency               String      @default("CLP")
-  status                 PagoEstado  @default(pending)
-  statusDetail           String?
-  returnUrl              String?
-  cancelUrl              String?
-  notificationToken      String?
-  receiverId             String?
-  readyForTerminal       Boolean     @default(false)
-  conciliationDate       DateTime?
-  payerEmail             String?
-  payerName              String?
-  customData             Json?
-  expiresAt              DateTime?
-  paymentUrl             String?
-  simplifiedTransferUrl  String?
-  transferUrl            String?
-  appUrl                 String?
-  metadata               Json?
-  createdAt              DateTime    @default(now())
-  updatedAt              DateTime    @updatedAt
-  orden                  OrdenCompra? @relation(fields: [ordenId], references: [id], onDelete: SetNull)
-  ordenId                String?
+
+model FlowTransaction {
+  id              String      @id @default(cuid())
+  token           String      @unique // Token entregado por Flow
+  flowOrder       Int?        // Número de orden de Flow (se obtiene al confirmar)
+  commerceOrder   String      // Nuestro ID de OrdenCompra
+  
+  status          Int         @default(1) // 1: Pendiente, 2: Pagada, 3: Rechazada, 4: Anulada
+  amount          Int
+  subject         String
+  payerEmail      String?
+  
+  paymentMethod   String?     // webpay, servipag, oneclick, etc
+  paymentDate     DateTime?   // Fecha real del pago
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  orden           OrdenCompra @relation(fields: [commerceOrder], references: [id], onDelete: Cascade)
+}
+
+// CRM Models
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  interactions Interaction[]
+}
+
+model Interaction {
+  id        String   @id @default(cuid())
+  type      String   // 'general', 'consignacion', 'auto', 'sorteo'
+  status    String   @default("new") // 'new', 'contacted', 'closed', 'archived'
+  subject   String?
+  content   String   // The message content
+  metadata  Json?    // For storing extra data like vehicleId, images, etc.
+  
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
