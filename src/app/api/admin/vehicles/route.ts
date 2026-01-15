@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       'transmision',
       'combustible',
       'color',
-      'imagen',
+
       'descripcion',
     ]
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         combustible: body.combustible,
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
-        imagen: body.imagen,
+
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
@@ -135,7 +135,7 @@ export async function PUT(request: Request) {
         combustible: body.combustible,
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
-        imagen: body.imagen,
+
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
