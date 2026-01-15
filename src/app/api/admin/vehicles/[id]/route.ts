@@ -35,7 +35,7 @@ export async function PUT(
         combustible: body.combustible,
         litrosMotor: (body.litrosMotor && body.litrosMotor.trim() !== '') ? body.litrosMotor.trim() : null,
         color: body.color,
-        imagen: body.imagen,
+
         descripcion: body.descripcion,
         caracteristicas: Array.isArray(body.caracteristicas)
           ? body.caracteristicas
