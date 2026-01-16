@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   // Configuración de scroll para siempre volver al inicio
   experimental: {
     scrollRestoration: false,
+    optimizePackageImports: ['framer-motion', 'lucide-react', 'date-fns', 'lodash'],
   },
 };
 

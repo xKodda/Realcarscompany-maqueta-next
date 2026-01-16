@@ -80,16 +80,9 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
 
   const [isUploadingImages, setIsUploadingImages] = useState(false)
 
-  // Available models for the selected brand
-  const [availableModels, setAvailableModels] = useState<string[]>([])
 
-  useEffect(() => {
-    if (formData.marca && BRAND_MODELS[formData.marca]) {
-      setAvailableModels(BRAND_MODELS[formData.marca])
-    } else {
-      setAvailableModels([])
-    }
-  }, [formData.marca])
+
+
 
   const brandOptions = Object.keys(BRAND_MODELS).sort();
 
@@ -403,17 +396,11 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
                 <input
                   type="text"
                   required
-                  list="model-options"
                   value={formData.modelo}
                   onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
                   placeholder="Ej. X5, Clase C, 911"
                 />
-                <datalist id="model-options">
-                  {availableModels.map((model) => (
-                    <option key={model} value={model} />
-                  ))}
-                </datalist>
               </div>
 
               <div>
@@ -522,8 +509,8 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
                     <label
                       key={feature}
                       className={`flex items-center p-3 text-sm rounded-lg cursor-pointer transition-all border ${selectedFeatures.includes(feature)
-                          ? 'border-[#802223] bg-[#802223]/5 text-[#802223] font-medium shadow-sm'
-                          : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
+                        ? 'border-[#802223] bg-[#802223]/5 text-[#802223] font-medium shadow-sm'
+                        : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
                         }`}
                     >
                       <input
@@ -609,9 +596,9 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
                       type="button"
                       onClick={() => setFormData({ ...formData, estado: status })}
                       className={`flex-1 py-2 text-xs font-medium uppercase tracking-wide rounded-md transition-all ${formData.estado === status
-                          ? status === 'disponible' ? 'bg-green-100 text-green-700 shadow-sm' :
-                            status === 'reservado' ? 'bg-yellow-100 text-yellow-700 shadow-sm' : 'bg-red-100 text-red-700 shadow-sm'
-                          : 'text-gray-500 hover:text-gray-700'
+                        ? status === 'disponible' ? 'bg-green-100 text-green-700 shadow-sm' :
+                          status === 'reservado' ? 'bg-yellow-100 text-yellow-700 shadow-sm' : 'bg-red-100 text-red-700 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
                         }`}
                     >
                       {status}
