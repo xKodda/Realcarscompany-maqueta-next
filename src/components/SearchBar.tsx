@@ -47,7 +47,7 @@ export default function SearchBar() {
         document.body.style.top = `-${scrollY}px`
         document.body.style.width = '100%'
         document.body.style.overflow = 'hidden'
-        
+
         return () => {
           const scrollYRestored = parseInt(document.body.style.top || '0', 10) * -1
           document.body.style.position = ''
@@ -77,6 +77,14 @@ export default function SearchBar() {
       currency: 'CLP',
       minimumFractionDigits: 0,
     }).format(precio)
+  }
+
+  const getImageUrl = (auto: Auto): string => {
+    if (auto.imagen) return auto.imagen
+    if (auto.vehicleImages && auto.vehicleImages.length > 0) {
+      return auto.vehicleImages[0].imageUrl
+    }
+    return '/images/brand/realcarscompanylogo.png'
   }
 
   return (
@@ -175,7 +183,7 @@ export default function SearchBar() {
                     <div className="flex items-center gap-3">
                       <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                         <Image
-                          src={auto.imagen}
+                          src={getImageUrl(auto)}
                           alt={`${auto.marca} ${auto.modelo}`}
                           fill
                           className="object-cover"
@@ -350,7 +358,7 @@ export default function SearchBar() {
                         <div className="flex items-center gap-3">
                           <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                             <Image
-                              src={auto.imagen}
+                              src={getImageUrl(auto)}
                               alt={`${auto.marca} ${auto.modelo}`}
                               fill
                               className="object-cover"

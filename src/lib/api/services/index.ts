@@ -2,7 +2,7 @@
 
 export * from './autos.service'
 export * from './consultas.service'
-// export * from './sorteos.service'
+export * from './sorteos.service'
 // export * from './pagos.service'
 // export * from './flow.service'
 
