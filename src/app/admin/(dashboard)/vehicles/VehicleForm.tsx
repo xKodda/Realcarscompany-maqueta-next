@@ -262,7 +262,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
       if (missing.length > 0) {
         setIsSubmitting(false)
         setError(
-          `Faltan campos obligatorios: ${missing.join(', ')}. Por favor complétalos.`
+          `Para publicar la unidad, completa: ${missing.join(', ')}.`
         )
         return
       }
@@ -327,473 +327,431 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
 
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Basic Information */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2">
-          Información Básica
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Marca <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.marca}
-              onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.marca
-                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-                }`}
-            >
-              <option value="">Selecciona una marca</option>
-              {brandOptions.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Modelo <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              list="model-options"
-              value={formData.modelo}
-              onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-              placeholder="Escribe o selecciona..."
-            />
-            <datalist id="model-options">
-              {availableModels.map((model) => (
-                <option key={model} value={model} />
-              ))}
-            </datalist>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Año <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.anio}
-              onChange={(e) => setFormData({ ...formData, anio: parseInt(e.target.value) })}
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Precio (CLP) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              required
-              value={displayPrecio}
-              onChange={handlePrecioChange}
-              placeholder="0"
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Kilometraje <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              required
-              value={displayKilometraje}
-              onChange={handleKilometrajeChange}
-              placeholder="0"
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Transmisión <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.transmision}
-              onChange={(e) =>
-                setFormData({ ...formData, transmision: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.transmision
-                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-                }`}
-            >
-              <option value="Automática">Automática</option>
-              <option value="Manual">Manual</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Combustible <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.combustible}
-              onChange={(e) =>
-                setFormData({ ...formData, combustible: e.target.value })
-              }
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.combustible
-                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-                }`}
-            >
-              <option value="Gasolina">Gasolina</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Eléctrico">Eléctrico</option>
-              <option value="Híbrido">Híbrido</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Color <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.color
-                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-                }`}
-            >
-              <option value="" disabled>Selecciona un color</option>
-              {colorOptions.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Additional Information */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Información del Motor
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Litros del Motor
-            </label>
-            <input
-              type="text"
-              inputMode="text"
-              value={displayLitrosMotor}
-              onChange={handleLitrosMotorChange}
-              placeholder="Ej: 2.0T, 3.0, 4.0L"
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
-            />
-            <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5</p>
-          </div>
-        </div>
-
-        {/* Características */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Características y Especificaciones
-        </h2>
-
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Equipamiento Común
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {COMMON_FEATURES.map((feature) => (
-              <label
-                key={feature}
-                className={`flex items-center p-3 text-sm border rounded-lg cursor-pointer transition-all ${selectedFeatures.includes(feature)
-                    ? 'border-[#802223] bg-[#802223]/5 text-[#802223] font-medium'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                  }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedFeatures.includes(feature)}
-                  onChange={() => toggleFeature(feature)}
-                  className="w-4 h-4 text-[#802223] border-gray-300 rounded focus:ring-[#802223] mr-2"
-                />
-                {feature}
-              </label>
-            ))}
-          </div>
-
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Otras características (separadas por coma)
-            </label>
-            <textarea
-              value={customFeatures}
-              onChange={(e) => setCustomFeatures(e.target.value)}
-              rows={3}
-              placeholder="Características adicionales no listadas arriba..."
-              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
-            />
-          </div>
-        </div>
-
-        {/* Descripción */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8 flex justify-between items-center">
-          <span>Descripción</span>
-          <button
-            type="button"
-            onClick={handleGenerateDescription}
-            className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md border border-gray-300 transition-colors flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Generar Automáticamente
-          </button>
-        </h2>
-
+    <form onSubmit={handleSubmit} className="max-w-7xl mx-auto pb-20">
+      {/* Header flotante con acciones principales */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Descripción del Vehículo <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            required
-            value={formData.descripcion}
-            onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-            rows={6}
-            placeholder="Describe el vehículo detalladamente o usa el botón para generar una descripción básica..."
-            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
-          />
+          <h1 className="text-3xl font-light text-[#161b39] tracking-tight">
+            {isEditing ? 'Gestión de Unidad' : 'Nuevo Ingreso'}
+          </h1>
+          <p className="text-gray-500 mt-1 font-light text-sm">
+            {isEditing
+              ? `Editando ficha técnica: ${vehicle.marca} ${vehicle.modelo}`
+              : 'Completa la ficha técnica para publicar un vehículo en el catálogo.'}
+          </p>
         </div>
-
-        {/* Imagen Principal */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Imagen Principal
-        </h2>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Imagen Principal del Vehículo <span className="text-red-500">*</span>
-          </label>
-          <div className="space-y-4">
-            {/* Preview of principal image */}
-            {formData.imagen && (
-              <div className="relative w-full max-w-md aspect-video bg-gray-100 rounded-lg overflow-hidden border-2 border-[#802223]">
-                <img
-                  src={formData.imagen}
-                  alt="Imagen principal"
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, imagen: '' })}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors shadow-lg"
-                  title="Eliminar imagen principal"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  Imagen Principal
-                </div>
-              </div>
-            )}
-
-            {/* Upload button for principal image */}
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePrincipalImageUpload}
-                disabled={isUploadingImages}
-                className="hidden"
-                id="principal-image-upload"
-              />
-              <label
-                htmlFor="principal-image-upload"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#802223] hover:bg-[#6b1d1e] text-white text-sm font-medium tracking-wider uppercase transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUploadingImages ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Subiendo...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {formData.imagen ? 'Cambiar Imagen Principal' : 'Subir Imagen Principal'}
-                  </>
-                )}
-              </label>
-              <p className="mt-2 text-xs text-gray-500">
-                Esta será la imagen destacada del vehículo. Formato: JPG, PNG, WebP (máx 5MB)
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Galería de Imágenes */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Galería de Imágenes Adicionales
-        </h2>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Galería de Imágenes (Opcional)
-          </label>
-          <div className="space-y-4">
-            {/* Upload button */}
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageUpload}
-                disabled={isUploadingImages}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#161b39] hover:bg-[#802223] text-white text-sm font-medium tracking-wider uppercase transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUploadingImages ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Subiendo...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Agregar Imágenes
-                  </>
-                )}
-              </label>
-              <p className="mt-2 text-xs text-gray-500">
-                Puedes seleccionar múltiples imágenes. Formatos: JPG, PNG, WebP (máx 5MB cada una)
-              </p>
-            </div>
-
-            {/* Image preview grid */}
-            {imageUrls.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {imageUrls.map((url, index) => (
-                  <div
-                    key={index}
-                    className="relative group aspect-video bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent hover:border-[#802223] transition-colors"
-                  >
-                    <img
-                      src={url}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all shadow-lg"
-                      title="Eliminar imagen"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                    <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                      #{index + 1}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Status & Options */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Estado y Opciones
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Estado <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={formData.estado}
-              onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-              className={`w-full px-4 py-3 border transition-all duration-200 outline-none text-sm font-light ${formData.estado
-                ? 'border-[#802223] bg-[#802223]/5 text-[#161b39] shadow-sm'
-                : 'border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] text-gray-700'
-                }`}
-            >
-              <option value="disponible">Disponible</option>
-              <option value="reservado">Reservado</option>
-              <option value="vendido">Vendido</option>
-            </select>
-          </div>
-
-          <div className="flex items-center pt-8">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.destacado}
-                onChange={(e) =>
-                  setFormData({ ...formData, destacado: e.target.checked })
-                }
-                className="w-4 h-4 text-[#802223] border-gray-300 rounded focus:ring-[#802223]"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Marcar como destacado
-              </span>
-            </label>
-          </div>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1 bg-[#161b39] hover:bg-[#802223] text-white py-3 px-6 text-sm font-medium tracking-wider uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting
-              ? 'Guardando...'
-              : isEditing
-                ? 'Actualizar Vehículo'
-                : 'Crear Vehículo'}
-          </button>
+        <div className="flex items-center gap-3">
           <Link
             href="/admin/vehicles"
-            className="flex-1 border-2 border-gray-300 text-gray-700 hover:border-[#802223] hover:text-[#802223] text-center py-3 px-6 text-sm font-medium tracking-wider uppercase transition-all"
+            className="text-gray-500 hover:text-[#161b39] px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancelar
           </Link>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-[#161b39] hover:bg-[#2a3055] text-white px-6 py-2.5 rounded-full text-sm font-medium tracking-wide shadow-lg shadow-[#161b39]/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Procesando...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{isEditing ? 'Guardar Cambios' : 'Publicar Unidad'}</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* COLUMNA PRINCIPAL (Izquierda) */}
+        <div className="lg:col-span-2 space-y-6">
+
+          {/* CARD 1: Información Esencial */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+            <div className="bg-gray-50/50 px-8 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-medium text-[#161b39]">Datos del Vehículo</h2>
+            </div>
+
+            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="col-span-1 sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Marca del Vehículo</label>
+                <select
+                  required
+                  value={formData.marca}
+                  onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                >
+                  <option value="">Seleccionar Fabricante</option>
+                  {brandOptions.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Modelo</label>
+                <input
+                  type="text"
+                  required
+                  list="model-options"
+                  value={formData.modelo}
+                  onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                  placeholder="Ej. X5, Clase C, 911"
+                />
+                <datalist id="model-options">
+                  {availableModels.map((model) => (
+                    <option key={model} value={model} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Año</label>
+                <select
+                  required
+                  value={formData.anio}
+                  onChange={(e) => setFormData({ ...formData, anio: parseInt(e.target.value) })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                >
+                  {years.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Transmisión</label>
+                <select
+                  required
+                  value={formData.transmision}
+                  onChange={(e) => setFormData({ ...formData, transmision: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                >
+                  <option value="Automática">Automática</option>
+                  <option value="Manual">Manual</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Combustible</label>
+                <select
+                  required
+                  value={formData.combustible}
+                  onChange={(e) => setFormData({ ...formData, combustible: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                >
+                  <option value="Gasolina">Gasolina</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Eléctrico">Eléctrico</option>
+                  <option value="Híbrido">Híbrido</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Color Exterior</label>
+                <select
+                  required
+                  value={formData.color}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                >
+                  <option value="" disabled>Seleccionar color</option>
+                  {colorOptions.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Motor (cc / litros)</label>
+                <input
+                  type="text"
+                  value={displayLitrosMotor}
+                  onChange={handleLitrosMotorChange}
+                  placeholder="Ej: 3.0 Turbo"
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 2: Descripción y Equipamiento */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+            <div className="bg-gray-50/50 px-8 py-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-lg font-medium text-[#161b39]">Detalle y Equipamiento</h2>
+              <button
+                type="button"
+                onClick={handleGenerateDescription}
+                className="text-xs text-[#802223] hover:text-[#5e191a] font-medium flex items-center gap-1 bg-[#802223]/5 px-3 py-1.5 rounded-full transition-colors"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Generar con IA
+              </button>
+            </div>
+
+            <div className="p-8 space-y-6">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Descripción Comercial</label>
+                <textarea
+                  required
+                  value={formData.descripcion}
+                  onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                  rows={6}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none resize-y text-sm leading-relaxed"
+                  placeholder="Redacta una descripción atractiva del vehículo..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Equipamiento Destacado</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {COMMON_FEATURES.map((feature) => (
+                    <label
+                      key={feature}
+                      className={`flex items-center p-3 text-sm rounded-lg cursor-pointer transition-all border ${selectedFeatures.includes(feature)
+                          ? 'border-[#802223] bg-[#802223]/5 text-[#802223] font-medium shadow-sm'
+                          : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
+                        }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFeatures.includes(feature)}
+                        onChange={() => toggleFeature(feature)}
+                        className="hidden"
+                      />
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center mr-2 ${selectedFeatures.includes(feature) ? 'bg-[#802223] border-[#802223]' : 'border-gray-300'
+                        }`}>
+                        {selectedFeatures.includes(feature) && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        )}
+                      </div>
+                      {feature}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Equipamiento Adicional</label>
+                <input
+                  type="text"
+                  value={customFeatures}
+                  onChange={(e) => setCustomFeatures(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none text-sm"
+                  placeholder="Techo panorámico, Audio Bose, Llantas 20... (separar por comas)"
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* COLUMNA LATERAL (Derecha) */}
+        <div className="space-y-6">
+
+          {/* CARD 3: Valoración y Estado */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+            <div className="bg-gray-50/50 px-6 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-medium text-[#161b39]">Comercialización</h2>
+            </div>
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Precio de Venta (CLP)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    required
+                    value={displayPrecio}
+                    onChange={handlePrecioChange}
+                    placeholder="0"
+                    className="w-full pl-8 pr-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none font-medium text-lg text-[#161b39]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kilometraje Actual</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    required
+                    value={displayKilometraje}
+                    onChange={handleKilometrajeChange}
+                    placeholder="0"
+                    className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none font-medium"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">km</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Estado de Publicación</label>
+                <div className="flex bg-gray-100 p-1 rounded-lg">
+                  {['disponible', 'reservado', 'vendido'].map(status => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, estado: status })}
+                      className={`flex-1 py-2 text-xs font-medium uppercase tracking-wide rounded-md transition-all ${formData.estado === status
+                          ? status === 'disponible' ? 'bg-green-100 text-green-700 shadow-sm' :
+                            status === 'reservado' ? 'bg-yellow-100 text-yellow-700 shadow-sm' : 'bg-red-100 text-red-700 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors">
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.destacado ? 'bg-[#161b39] border-[#161b39]' : 'bg-white border-gray-300'}`}>
+                    {formData.destacado && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={formData.destacado}
+                    onChange={(e) => setFormData({ ...formData, destacado: e.target.checked })}
+                    className="hidden"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Destacar en Portada</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 4: Multimedia */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+            <div className="bg-gray-50/50 px-6 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-medium text-[#161b39]">Galería de Fotos</h2>
+            </div>
+            <div className="p-6 space-y-6">
+
+              {/* Imagen Principal */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Foto de Portada</label>
+
+                {formData.imagen ? (
+                  <div className="relative aspect-video rounded-lg overflow-hidden group shadow-md">
+                    <img src={formData.imagen} alt="Portada" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, imagen: '' })}
+                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-transform hover:scale-110"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="border-2 border-dashed border-gray-300 hover:border-[#802223] rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-50 hover:bg-gray-100 gap-2 group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePrincipalImageUpload}
+                      disabled={isUploadingImages}
+                      className="hidden"
+                    />
+                    <div className="w-10 h-10 rounded-full bg-gray-200 group-hover:bg-[#802223]/10 flex items-center justify-center transition-colors">
+                      <svg className="w-5 h-5 text-gray-500 group-hover:text-[#802223]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <span className="text-sm text-gray-500 font-medium">Subir Portada</span>
+                  </label>
+                )}
+              </div>
+
+              {/* Galería Restante */}
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Galería ({imageUrls.length})</label>
+                  <label className="text-xs text-[#802223] font-medium cursor-pointer hover:underline flex items-center gap-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImages}
+                      className="hidden"
+                    />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    Agregar Fotos
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {imageUrls.map((url, index) => (
+                    <div key={index} className="relative aspect-square rounded-md overflow-hidden group bg-gray-100">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                          className="text-white hover:text-red-400"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {imageUrls.length === 0 && (
+                    <div className="col-span-3 text-center py-6 text-gray-400 text-xs italic bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                      Sin imágenes adicionales
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Error Message Floating */}
+      {error && (
+        <div className="fixed bottom-6 right-6 max-w-sm bg-white border-l-4 border-red-500 shadow-xl rounded-lg p-4 animate-slide-up z-50">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-red-800">Atención</p>
+              <p className="mt-1 text-xs text-red-700">{error}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button onClick={() => setError('')} className="inline-flex rounded-md p-1.5 text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                  <span className="sr-only">Cerrar</span>
+                  <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </form>
   )
 }

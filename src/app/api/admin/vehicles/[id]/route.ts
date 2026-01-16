@@ -119,13 +119,7 @@ export async function DELETE(
       return parts.length > 1 ? parts[1] : null
     }).filter(path => path !== null) as string[]
 
-    // También verificar si el campo antiguo 'imagen' tiene algo y agregarlo si es de supabase
-    if (vehicle.imagen && vehicle.imagen.includes('/VehiclesImage/')) {
-      const parts = vehicle.imagen.split('/VehiclesImage/')
-      if (parts.length > 1) {
-        imagePaths.push(parts[1])
-      }
-    }
+
 
     // Eliminar de Supabase Storage
     if (imagePaths.length > 0) {

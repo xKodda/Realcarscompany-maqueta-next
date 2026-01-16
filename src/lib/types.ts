@@ -11,7 +11,7 @@ export interface Auto {
   combustible: 'Gasolina' | 'Diesel' | 'Eléctrico' | 'Híbrido'
   litrosMotor?: string
   color: string
-  imagen: string
+  imagen?: string | null
   vehicleImages?: { id: number; imageUrl: string; position: number }[]
   descripcion: string
   caracteristicas: string[]
