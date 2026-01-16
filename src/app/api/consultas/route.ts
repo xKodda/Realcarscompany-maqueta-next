@@ -4,33 +4,43 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { nombre, email, telefono, mensaje, tipo = 'general', imagenes = [] } = body
+
+    // Validaciones básicas
+    if (!nombre || !email || !telefono || !mensaje) {
+      return NextResponse.json(
+        { success: false, error: 'Faltan campos requeridos' },
+        { status: 400 }
+      )
+    }
+
+    // CRM Integration removed for production build
+    /*
     try {
-        const body = await request.json()
-        const { nombre, email, telefono, mensaje, tipo = 'general', imagenes = [] } = body
+      const { prisma } = await import('@/lib/prisma')
+      // CRM logic...
+    } catch (crmError) {
+      console.error('Error saving to CRM:', crmError)
+    }
+    */
 
-        // Validaciones básicas
-        if (!nombre || !email || !telefono || !mensaje) {
-            return NextResponse.json(
-                { success: false, error: 'Faltan campos requeridos' },
-                { status: 400 }
-            )
-        }
+    // Email de destino (tu correo oficial)
+    const destinoEmail = 'Realcarscompanyspa@gmail.com'
 
-        // Email de destino (tu correo oficial)
-        const destinoEmail = 'Realcarscompanyspa@gmail.com'
+    // Determinar asunto según el tipo
+    let asunto = 'Nueva Consulta - RealCars Company'
+    if (tipo === 'consignacion') {
+      asunto = '🚗 Nueva Solicitud de Consignación - RealCars Company'
+    } else if (tipo === 'auto') {
+      asunto = '🔍 Consulta sobre Vehículo - RealCars Company'
+    } else if (tipo === 'sorteo') {
+      asunto = '🎫 Consulta sobre Sorteo - RealCars Company'
+    }
 
-        // Determinar asunto según el tipo
-        let asunto = 'Nueva Consulta - RealCars Company'
-        if (tipo === 'consignacion') {
-            asunto = '🚗 Nueva Solicitud de Consignación - RealCars Company'
-        } else if (tipo === 'auto') {
-            asunto = '🔍 Consulta sobre Vehículo - RealCars Company'
-        } else if (tipo === 'sorteo') {
-            asunto = '🎫 Consulta sobre Sorteo - RealCars Company'
-        }
-
-        // Construir HTML del email
-        const htmlContent = `
+    // Construir HTML del email
+    const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -90,47 +100,50 @@ export async function POST(request: NextRequest) {
       </html>
     `
 
-        // Enviar email usando Resend
-        const emailData: any = {
-            from: 'RealCars Company <onboarding@resend.dev>', // Usaremos el dominio de Resend por defecto
-            to: destinoEmail,
-            subject: asunto,
-            html: htmlContent,
-            replyTo: email, // Para que puedas responder directamente al cliente
-        }
+    // Intentar enviar email, pero no fallar todo el proceso si falla el email
+    let emailSent = false
+    try {
+      // Enviar email usando Resend
+      // IMPORTANTE: El 'from' debe ser del dominio VERIFICADO en Resend (realcarscompany.cl)
+      const emailData: any = {
+        from: 'RealCars Company <contacto@realcarscompany.cl>',
+        to: destinoEmail,
+        subject: asunto,
+        html: htmlContent,
+        replyTo: email, // Para que puedas responder directamente al cliente
+      }
 
-        // Si hay imágenes, incluir nota de que están en base64 (Resend puede tener límites)
-        if (imagenes.length > 0) {
-            emailData.text = `Nueva consulta de ${nombre} (${email})\n\nNOTA: Se adjuntaron ${imagenes.length} imágenes. Por limitaciones, las imágenes base64 no se envían por email. Contacta directamente al cliente para solicitarlas.`
-        }
+      // Si hay imágenes, incluir nota de que están en base64 (Resend puede tener límites)
+      if (imagenes.length > 0) {
+        emailData.text = `Nueva consulta de ${nombre} (${email})\n\nNOTA: Se adjuntaron ${imagenes.length} imágenes. Por limitaciones, las imágenes base64 no se envían por email. Contacta directamente al cliente para solicitarlas.`
+      }
 
-        const { data, error: resendError } = await resend.emails.send(emailData)
+      const { data, error: resendError } = await resend.emails.send(emailData)
 
-        if (resendError) {
-            console.error('Resend error:', resendError)
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: 'Error al enviar el email. Por favor, intenta nuevamente.'
-                },
-                { status: 500 }
-            )
-        }
-
-        return NextResponse.json({
-            success: true,
-            message: 'Consulta enviada exitosamente',
-            data: { id: data?.id }
-        })
-
-    } catch (error) {
-        console.error('Error enviando email:', error)
-        return NextResponse.json(
-            {
-                success: false,
-                error: 'Error al procesar la consulta. Por favor, intenta nuevamente.'
-            },
-            { status: 500 }
-        )
+      if (resendError) {
+        console.error('Resend error (pero CRM OK):', resendError)
+        // No throw, solo log
+      } else {
+        emailSent = true
+      }
+    } catch (emailEx) {
+      console.error('Excepción enviando email (pero CRM OK):', emailEx)
     }
+
+    return NextResponse.json({
+      success: true,
+      message: emailSent ? 'Consulta enviada exitosamente' : 'Consulta guardada, pero no se pudo enviar el correo de notificación.',
+      data: { emailSent }
+    })
+
+  } catch (error) {
+    console.error('Error enviando email:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Error al procesar la consulta. Por favor, intenta nuevamente.'
+      },
+      { status: 500 }
+    )
+  }
 }

@@ -1,5 +1,5 @@
-// Servicio de Pagos con Khipu
-// Integración con la pasarela de pagos chilena
+// Servicio de Pagos
+// Integración con pasarelas de pago
 
 import { apiClient, type ApiResponse } from '../client'
 
@@ -33,10 +33,6 @@ export interface OrdenCompra {
   }
   tickets?: string[]
   estado: 'pendiente' | 'pagado' | 'expirado' | 'cancelado'
-  khipuPaymentUrl?: string
-  khipuSimplifiedTransferUrl?: string
-  khipuTransferUrl?: string
-  khipuAppUrl?: string
   createdAt: string
   updatedAt: string
   fechaPago?: string
@@ -52,24 +48,6 @@ export interface TicketSorteo {
   fechaCompra: string
 }
 
-export interface PagoKhipuResumen {
-  id: string
-  transactionId: string
-  khipuPaymentId?: string | null
-  amount: number
-  currency: string
-  status: string
-  statusDetail?: string | null
-  receiverId?: string | null
-  notificationToken?: string | null
-  paymentUrl?: string | null
-  simplifiedTransferUrl?: string | null
-  transferUrl?: string | null
-  appUrl?: string | null
-  createdAt: string
-  updatedAt: string
-}
-
 export interface CrearOrdenResponse {
   orden: OrdenCompra
   tickets: TicketSorteo[]
@@ -77,7 +55,6 @@ export interface CrearOrdenResponse {
 
 export interface OrdenCompraDetalle extends Omit<OrdenCompra, 'tickets'> {
   tickets: TicketSorteo[]
-  pagos: PagoKhipuResumen[]
 }
 
 class PagosService {
@@ -88,35 +65,6 @@ class PagosService {
    */
   async crearOrden(data: CompraTicketData): Promise<ApiResponse<CrearOrdenResponse>> {
     return apiClient.post<CrearOrdenResponse>(`${this.endpoint}/tickets/orden`, data)
-  }
-
-  /**
-   * Iniciar pago con Khipu
-   */
-  async iniciarPagoKhipu(
-    ordenId: string,
-    returnUrl?: string,
-    cancelUrl?: string
-  ): Promise<ApiResponse<any>> {
-    return apiClient.post(
-      `${this.endpoint}/khipu/iniciar`,
-      {
-        ordenId,
-        returnUrl: returnUrl || `${window.location.origin}/sorteos/pago/exito`,
-        cancelUrl: cancelUrl || `${window.location.origin}/sorteos/pago/cancelado`,
-      }
-    )
-  }
-
-  /**
-   * Verificar estado del pago en Khipu
-   */
-  async verificarPago(
-    paymentId: string
-  ): Promise<ApiResponse<any>> {
-    return apiClient.get(
-      `${this.endpoint}/khipu/verificar/${paymentId}`
-    )
   }
 
   /**
@@ -157,15 +105,7 @@ class PagosService {
     })
   }
 
-  /**
-   * Webhook de Khipu (solo backend)
-   * Este endpoint es llamado por Khipu cuando cambia el estado del pago
-   */
-  async webhookKhipu(notificationToken: string): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(`${this.endpoint}/khipu/webhook`, {
-      notification_token: notificationToken,
-    })
-  }
+  // Métodos para Flow (Placeholder si se requieren implementar aquí o en otro servicio)
 }
 
 export const pagosService = new PagosService()

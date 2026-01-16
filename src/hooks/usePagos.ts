@@ -22,7 +22,7 @@ export function useComprarTickets() {
     try {
       // Crear orden real usando la API
       const ordenResponse = await pagosService.crearOrden(data)
-      
+
       if (!ordenResponse.success || !ordenResponse.data) {
         throw new Error(ordenResponse.error || 'Error al crear la orden')
       }
@@ -45,32 +45,28 @@ export function useComprarTickets() {
       }
 
       setOrden(orden)
-      
-      // Iniciar pago con Khipu
-      const pagoResponse = await pagosService.iniciarPagoKhipu(orden.id)
+
+      // Iniciar pago con Flow (Pendiente de implementar)
+      /* 
+      const pagoResponse = await pagosService.iniciarPagoFlow(orden.id)
       
       if (!pagoResponse.success || !pagoResponse.data) {
-        const errorMsg = pagoResponse.error || 'Error al iniciar el pago'
-        console.error('Error al iniciar pago Khipu:', {
-          error: errorMsg,
-          ordenId: orden.id,
-          response: pagoResponse,
-        })
-        throw new Error(errorMsg)
+        // Handle error
       }
-
-      // Redirigir a Khipu
+      
       if (pagoResponse.data.paymentUrl) {
-        window.location.href = pagoResponse.data.paymentUrl
-        // No retornar aquí porque se redirige a Khipu
-        return
-      } else {
-        throw new Error('No se recibió la URL de pago de Khipu')
+         window.location.href = pagoResponse.data.paymentUrl
+         return
       }
+      */
+
+      // Por ahora solo retornamos la orden creada para que el componente decida qué hacer
+      return orden
+
     } catch (err) {
       // Extraer mensaje de error más específico
       let errorMessage = 'Error al procesar la compra'
-      
+
       if (err instanceof Error) {
         errorMessage = err.message || errorMessage
       } else if (typeof err === 'string') {
@@ -78,7 +74,7 @@ export function useComprarTickets() {
       } else if (typeof err === 'object' && err !== null && 'message' in err) {
         errorMessage = String((err as any).message) || errorMessage
       }
-      
+
       setError(errorMessage)
       console.error('Error en comprar tickets:', {
         error: err,
@@ -106,45 +102,12 @@ export function useComprarTickets() {
   }
 }
 
+// Hook de verificación eliminado temporalmente hasta implementar Flow
+/*
 export function useVerificarPago(paymentId: string | null) {
-  const [verificando, setVerificando] = useState(false)
-  const [estado, setEstado] = useState<
-    'pending' | 'verified' | 'done' | 'expired' | null
-  >(null)
-  const [error, setError] = useState<string | null>(null)
-
-  const verificar = async () => {
-    if (!paymentId) return
-
-    setVerificando(true)
-    setError(null)
-
-    try {
-      const response = await pagosService.verificarPago(paymentId)
-
-      if (response.success && response.data) {
-        setEstado(response.data.status)
-        return response.data
-      } else {
-        setError(response.error || 'Error al verificar el pago')
-        return null
-      }
-    } catch (err) {
-      setError('Error al conectar con el servidor')
-      console.error(err)
-      return null
-    } finally {
-      setVerificando(false)
-    }
-  }
-
-  return {
-    verificar,
-    verificando,
-    estado,
-    error,
-  }
+  // ...
 }
+*/
 
 export function useMisTickets() {
   const [tickets, setTickets] = useState<TicketSorteo[]>([])

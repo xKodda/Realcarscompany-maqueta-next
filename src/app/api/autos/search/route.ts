@@ -12,7 +12,7 @@ function serializeAuto(auto: any) {
     transmision: auto.transmision,
     combustible: auto.combustible,
     color: auto.color,
-    imagen: auto.imagen,
+    imagen: auto.vehicleImages?.[0]?.imageUrl || '',
     imagenes: auto.vehicleImages ? auto.vehicleImages.map((img: any) => img.imageUrl) : [],
     vehicleImages: auto.vehicleImages || [],
     descripcion: auto.descripcion,
