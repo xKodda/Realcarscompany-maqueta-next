@@ -57,15 +57,22 @@ export async function PUT(
       urls: body.imagenes
     })
 
-    if (Array.isArray(body.imagenes) && body.imagenes.length > 0) {
+    // Create vehicle images
+    // Combine main image (body.imagen) and gallery (body.imagenes)
+    let allImages: string[] = []
+    if (body.imagen) allImages.push(body.imagen)
+    if (Array.isArray(body.imagenes)) allImages.push(...body.imagenes)
+
+    // Remove duplicates
+    allImages = [...new Set(allImages)].filter(url => url && url.trim())
+
+    if (allImages.length > 0) {
       await prisma.vehicleImage.createMany({
-        data: body.imagenes
-          .filter((url: string) => url && url.trim())
-          .map((url: string, index: number) => ({
-            vehicleId: vehicle.id,
-            imageUrl: url,
-            position: index,
-          })),
+        data: allImages.map((url: string, index: number) => ({
+          vehicleId: vehicle.id,
+          imageUrl: url,
+          position: index,
+        })),
       })
     }
 
@@ -100,7 +107,44 @@ export async function DELETE(
       )
     }
 
-    // Eliminar imágenes relacionadas primero (si hay cascade, esto no es necesario, pero es más seguro)
+    // Obtener las imágenes antes de eliminar los registros
+    const images = await prisma.vehicleImage.findMany({
+      where: { vehicleId: id },
+    })
+
+    // Extraer los paths de las URLs para eliminar de Supabase
+    // URL ejemplo: https://jrj...supabase.co/storage/v1/object/public/VehiclesImage/file.jpg
+    const imagePaths = images.map(img => {
+      const parts = img.imageUrl.split('/VehiclesImage/')
+      return parts.length > 1 ? parts[1] : null
+    }).filter(path => path !== null) as string[]
+
+    // También verificar si el campo antiguo 'imagen' tiene algo y agregarlo si es de supabase
+    if (vehicle.imagen && vehicle.imagen.includes('/VehiclesImage/')) {
+      const parts = vehicle.imagen.split('/VehiclesImage/')
+      if (parts.length > 1) {
+        imagePaths.push(parts[1])
+      }
+    }
+
+    // Eliminar de Supabase Storage
+    if (imagePaths.length > 0) {
+      const { supabaseAdmin } = await import('@/lib/supabase')
+      const storageClient = supabaseAdmin || (await import('@/lib/supabase')).supabase
+
+      const { error: storageError } = await storageClient.storage
+        .from('VehiclesImage')
+        .remove(imagePaths)
+
+      if (storageError) {
+        console.error('Error removing images from storage:', storageError)
+        // No detenemos el proceso, pero logueamos el error
+      } else {
+        console.log(`Eliminadas ${imagePaths.length} imágenes del storage.`)
+      }
+    }
+
+    // Eliminar imágenes relacionadas de la BD
     await prisma.vehicleImage.deleteMany({
       where: { vehicleId: id },
     })
@@ -133,4 +177,3 @@ export async function DELETE(
     )
   }
 }
-

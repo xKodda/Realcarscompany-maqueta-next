@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { BRAND_MODELS, COMMON_FEATURES, generateDescription } from './vehicle-data'
 
 interface VehicleImage {
   id: number
@@ -38,6 +39,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
   const router = useRouter()
   const isEditing = !!vehicle
 
+  // Initialize selected features from existing vehicle data
+  const initialCommonFeatures = vehicle?.caracteristicas?.filter(c => COMMON_FEATURES.includes(c)) || []
+  const initialCustomFeatures = vehicle?.caracteristicas?.filter(c => !COMMON_FEATURES.includes(c)).join(', ') || ''
+
   const [formData, setFormData] = useState({
     marca: vehicle?.marca || '',
     modelo: vehicle?.modelo || '',
@@ -54,6 +59,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     destacado: vehicle?.destacado || false,
   })
 
+  // Separate state for features
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(initialCommonFeatures)
+  const [customFeatures, setCustomFeatures] = useState(initialCustomFeatures)
+
   const [imageUrls, setImageUrls] = useState<string[]>(
     vehicle?.vehicleImages?.map((img) => img.imageUrl) ||
     vehicle?.imagenes ||
@@ -68,34 +77,24 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     new Intl.NumberFormat('es-CL').format(formData.kilometraje || 0)
   )
   const [displayLitrosMotor, setDisplayLitrosMotor] = useState(formData.litrosMotor || '')
-  const [caracteristicas, setCaracteristicas] = useState(
-    vehicle?.caracteristicas?.join(', ') || ''
-  )
+
   const [isUploadingImages, setIsUploadingImages] = useState(false)
-  const brandOptions = [
-    'Aston Martin',
-    'Audi',
-    'Bentley',
-    'BMW',
-    'Cadillac',
-    'Ferrari',
-    'Ford',
-    'Jaguar',
-    'JEEP',
-    'Lamborghini',
-    'Land Rover',
-    'Lexus',
-    'Maserati',
-    'McLaren',
-    'Mercedes-Benz',
-    'Porsche',
-    'Range Rover',
-    'Rolls-Royce',
-    'Tesla',
-    'Volvo'
-  ]
+
+  // Available models for the selected brand
+  const [availableModels, setAvailableModels] = useState<string[]>([])
+
+  useEffect(() => {
+    if (formData.marca && BRAND_MODELS[formData.marca]) {
+      setAvailableModels(BRAND_MODELS[formData.marca])
+    } else {
+      setAvailableModels([])
+    }
+  }, [formData.marca])
+
+  const brandOptions = Object.keys(BRAND_MODELS).sort();
+
   const colorOptions = [
-    'Blanco', 'Negro', 'Gris', 'Plata', 'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja', 'Café', 'Beige'
+    'Blanco', 'Negro', 'Gris', 'Plata', 'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja', 'Café', 'Beige', 'Bronce', 'Grafito'
   ]
   const years = Array.from({ length: (new Date().getFullYear() + 1) - 1990 + 1 }, (_, i) => (new Date().getFullYear() + 1) - i).filter(y => y >= 1990)
 
@@ -117,6 +116,19 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     const value = e.target.value
     setFormData({ ...formData, litrosMotor: value })
     setDisplayLitrosMotor(value)
+  }
+
+  const toggleFeature = (feature: string) => {
+    if (selectedFeatures.includes(feature)) {
+      setSelectedFeatures(selectedFeatures.filter(f => f !== feature))
+    } else {
+      setSelectedFeatures([...selectedFeatures, feature])
+    }
+  }
+
+  const handleGenerateDescription = () => {
+    const desc = generateDescription(formData, selectedFeatures);
+    setFormData({ ...formData, descripcion: desc });
   }
 
   const handlePrincipalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -260,21 +272,25 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
         : '/api/admin/vehicles'
       const method = isEditing ? 'PUT' : 'POST'
 
+      // Combine selected common features with custom ones
+      const combinedFeatures = [
+        ...selectedFeatures,
+        ...customFeatures.split(',').map(c => c.trim()).filter(c => c.length > 0)
+      ];
+
       // Datos a enviar
       const dataToSend = {
         ...formData,
         imagen: imagenPrincipal,
         imagenes: imageUrls,
-        caracteristicas: caracteristicas
-          .split(',')
-          .map((c) => c.trim())
-          .filter((c) => c.length > 0),
+        caracteristicas: combinedFeatures,
       }
 
       console.log('Enviando datos:', {
         imagenPrincipal: dataToSend.imagen,
         cantidadImagenes: dataToSend.imagenes.length,
-        imagenes: dataToSend.imagenes
+        imagenes: dataToSend.imagenes,
+        features: combinedFeatures
       })
 
       const response = await fetch(url, {
@@ -308,48 +324,7 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
   }
 
 
-  const uploadFiles = async (files: File[]) => {
-    const fd = new FormData()
-    files.forEach((f) => fd.append('files', f))
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    const data = await res.json()
-    if (!res.ok) {
-      throw new Error(data.error || 'Error al subir imágenes')
-    }
-    return data.urls as string[]
-  }
 
-  const handlePickMainImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return
-    try {
-      setIsSubmitting(true)
-      const urls = await uploadFiles([e.target.files[0]])
-      setFormData({ ...formData, imagen: urls[0] })
-    } catch (err: any) {
-      setError(err.message || 'No se pudo subir la imagen')
-    } finally {
-      setIsSubmitting(false)
-      e.target.value = ''
-    }
-  }
-
-  const handlePickGallery = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return
-    try {
-      setIsSubmitting(true)
-      const urls = await uploadFiles(Array.from(e.target.files))
-      setImageUrls([...(imageUrls || []), ...urls])
-    } catch (err: any) {
-      setError(err.message || 'No se pudieron subir las imágenes')
-    } finally {
-      setIsSubmitting(false)
-      e.target.value = ''
-    }
-  }
-
-  const removeImageUrl = (index: number) => {
-    setImageUrls(imageUrls.filter((_, i) => i !== index))
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -387,10 +362,17 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
             <input
               type="text"
               required
+              list="model-options"
               value={formData.modelo}
               onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
+              placeholder="Escribe o selecciona..."
             />
+            <datalist id="model-options">
+              {availableModels.map((model) => (
+                <option key={model} value={model} />
+              ))}
+            </datalist>
           </div>
 
           <div>
@@ -520,13 +502,66 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
               placeholder="Ej: 2.0T, 3.0, 4.0L"
               className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors"
             />
-            <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5 (puede usar punto o coma)</p>
+            <p className="mt-1 text-xs text-gray-500">Formato: 2.0T, 3.0, 4.0L, 2.5</p>
+          </div>
+        </div>
+
+        {/* Características */}
+        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
+          Características y Especificaciones
+        </h2>
+
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Equipamiento Común
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {COMMON_FEATURES.map((feature) => (
+              <label
+                key={feature}
+                className={`flex items-center p-3 text-sm border rounded-lg cursor-pointer transition-all ${selectedFeatures.includes(feature)
+                    ? 'border-[#802223] bg-[#802223]/5 text-[#802223] font-medium'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedFeatures.includes(feature)}
+                  onChange={() => toggleFeature(feature)}
+                  className="w-4 h-4 text-[#802223] border-gray-300 rounded focus:ring-[#802223] mr-2"
+                />
+                {feature}
+              </label>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Otras características (separadas por coma)
+            </label>
+            <textarea
+              value={customFeatures}
+              onChange={(e) => setCustomFeatures(e.target.value)}
+              rows={3}
+              placeholder="Características adicionales no listadas arriba..."
+              className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
+            />
           </div>
         </div>
 
         {/* Descripción */}
-        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8">
-          Descripción
+        <h2 className="text-xl font-medium text-[#161b39] border-b border-gray-200 pb-2 mt-8 flex justify-between items-center">
+          <span>Descripción</span>
+          <button
+            type="button"
+            onClick={handleGenerateDescription}
+            className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md border border-gray-300 transition-colors flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Generar Automáticamente
+          </button>
         </h2>
 
         <div>
@@ -538,26 +573,9 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
             value={formData.descripcion}
             onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
             rows={6}
-            placeholder="Describe el vehículo detalladamente..."
+            placeholder="Describe el vehículo detalladamente o usa el botón para generar una descripción básica..."
             className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
           />
-        </div>
-
-        {/* Características */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Características
-          </label>
-          <textarea
-            value={caracteristicas}
-            onChange={(e) => setCaracteristicas(e.target.value)}
-            rows={4}
-            placeholder="Ingresa las características separadas por comas (Ej: Aire acondicionado, ABS, Airbags, etc.)"
-            className="w-full px-4 py-3 border border-gray-300 focus:border-[#802223] focus:ring-1 focus:ring-[#802223] outline-none transition-colors resize-y"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Separa cada característica con una coma
-          </p>
         </div>
 
         {/* Imagen Principal */}
@@ -779,4 +797,3 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
     </form>
   )
 }
-

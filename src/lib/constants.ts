@@ -3,7 +3,10 @@
 import type { NavigationItem } from './types'
 
 export const SITE_NAME = 'RealCars Company'
-export const SITE_URL = 'https://realcarscompany.cl'
+export const SITE_URL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:3000'
+  : 'https://realcarscompany.cl'
+export const ACTIVE_SORTEO_ID = 'MONZZA-01 - Ducati Monster' // Cambiar esto cuando inicie una nueva campaña
 
 // Array inmutable para evitar problemas de hidratación
 const navigationItemsData: NavigationItem[] = [
@@ -11,7 +14,7 @@ const navigationItemsData: NavigationItem[] = [
   { label: 'Catálogo', href: '/autos' },
   { label: 'Servicios', href: '/servicios' },
   { label: 'Consignación', href: '/consignacion' },
-  { label: 'Monzza', href: '/sorteos' },
+  { label: 'Colección Monzza', href: '/monzza' },
   { label: 'Contacto', href: '/contacto' },
 ]
 
@@ -19,9 +22,9 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = Object.freeze(navigat
 
 export const ADMIN_NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Dashboard', href: '/admin' },
+  // { label: 'CRM / Leads', href: '/admin/crm' },
   { label: 'Vehículos', href: '/admin/vehicles' },
-  { label: 'Sorteos', href: '/admin/sorteos', comingSoon: true },
-  { label: 'Usuarios', href: '/admin/usuarios', comingSoon: true },
+  // { label: 'Ventas Monzza', href: '/admin/monzza' },
 ]
 
 export const SOCIAL_LINKS = {

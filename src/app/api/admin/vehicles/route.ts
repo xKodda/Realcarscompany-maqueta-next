@@ -76,23 +76,34 @@ export async function POST(request: Request) {
     })
 
     // Create vehicle images
-    if (Array.isArray(body.imagenes) && body.imagenes.length > 0) {
+    // Create vehicle images
+    // Combine main image (body.imagen) and gallery (body.imagenes)
+    let allImages: string[] = []
+    if (body.imagen) allImages.push(body.imagen)
+    if (Array.isArray(body.imagenes)) allImages.push(...body.imagenes)
+
+    // Remove duplicates
+    allImages = [...new Set(allImages)].filter(url => url && url.trim())
+
+    if (allImages.length > 0) {
       await prisma.vehicleImage.createMany({
-        data: body.imagenes
-          .filter((url: string) => url && url.trim())
-          .map((url: string, index: number) => ({
-            vehicleId: vehicle.id,
-            imageUrl: url,
-            position: index,
-          })),
+        data: allImages.map((url: string, index: number) => ({
+          vehicleId: vehicle.id,
+          imageUrl: url,
+          position: index,
+        })),
       })
     }
 
     return NextResponse.json({ success: true, data: vehicle })
-  } catch (error) {
-    console.error('Create vehicle error:', error)
+  } catch (error: any) {
+    console.error('SERVER ERROR - Create vehicle:', {
+      message: error.message,
+      stack: error.stack,
+      error
+    })
     return NextResponse.json(
-      { error: 'Error al crear el vehículo' },
+      { error: `[DATABASE_SAVE_ERROR] Error al crear el vehículo: ${error.message || 'Error interno'}` },
       { status: 500 }
     )
   }
@@ -152,15 +163,22 @@ export async function PUT(request: Request) {
       where: { vehicleId: vehicle.id },
     })
 
-    if (Array.isArray(body.imagenes) && body.imagenes.length > 0) {
+    // Create vehicle images
+    // Combine main image (body.imagen) and gallery (body.imagenes)
+    let allImages: string[] = []
+    if (body.imagen) allImages.push(body.imagen)
+    if (Array.isArray(body.imagenes)) allImages.push(...body.imagenes)
+
+    // Remove duplicates
+    allImages = [...new Set(allImages)].filter(url => url && url.trim())
+
+    if (allImages.length > 0) {
       await prisma.vehicleImage.createMany({
-        data: body.imagenes
-          .filter((url: string) => url && url.trim())
-          .map((url: string, index: number) => ({
-            vehicleId: vehicle.id,
-            imageUrl: url,
-            position: index,
-          })),
+        data: allImages.map((url: string, index: number) => ({
+          vehicleId: vehicle.id,
+          imageUrl: url,
+          position: index,
+        })),
       })
     }
 

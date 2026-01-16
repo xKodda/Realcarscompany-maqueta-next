@@ -17,8 +17,8 @@ export default function AutoDetailClient({ auto }: AutoDetailClientProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
   const imageGallery = auto.vehicleImages && auto.vehicleImages.length > 0
-    ? [auto.imagen, ...auto.vehicleImages.map(img => img.imageUrl)]
-    : [auto.imagen]
+    ? auto.vehicleImages.map(img => img.imageUrl)
+    : (auto.imagen ? [auto.imagen] : [])
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) =>

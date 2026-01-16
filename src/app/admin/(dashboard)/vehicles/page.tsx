@@ -15,7 +15,7 @@ interface PageProps {
 
 export default async function AdminVehiclesPage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
-  
+
   if (!user) {
     redirect('/admin/login')
   }
@@ -83,6 +83,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps) {
     price: v.price != null ? Number(v.price) : null,
     createdAt: new Date(v.createdAt),
     updatedAt: new Date(v.updatedAt),
+    imagen: v.vehicleImages?.[0]?.imageUrl || '',
   }))
 
   return (
