@@ -6,6 +6,7 @@ export const BRAND_MODELS: Record<string, string[]> = {
     'Cadillac': ['Escalade', 'CT4', 'CT5', 'XT4', 'XT5', 'XT6', 'Lyriq'],
     'Ferrari': ['296 GTB', '296 GTS', 'SF90 Stradale', 'SF90 Spider', 'Roma', 'Portofino M', 'F8 Tributo', 'F8 Spider', '812 GTS', '812 Competizione', 'Daytona SP3', 'Purosangue'],
     'Ford': ['Mustang', 'F-150', 'F-150 Raptor', 'Bronco', 'Bronco Sport', 'Explorer', 'Edge', 'Territory', 'Ranger', 'Maverick'],
+    'Ducati': ['Monster', 'Panigale', 'Diavel', 'Multistrada', 'Scrambler', 'Streetfighter', 'Hypermotard', 'SuperSport'],
     'Jaguar': ['F-PACE', 'E-PACE', 'I-PACE', 'F-TYPE', 'XE', 'XF'],
     'Jeep': ['Wrangler', 'Grand Cherokee', 'Gladiator', 'Compass', 'Renegade', 'Wagoneer', 'Grand Wagoneer'],
     'Lamborghini': ['Urus', 'Urus Performante', 'Urus S', 'Huracán EVO', 'Huracán Tecnica', 'Huracán Sterrato', 'Revuelto', 'Aventador'],

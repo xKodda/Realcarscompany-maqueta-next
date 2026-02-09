@@ -53,6 +53,7 @@ export const MARCAS_DISPONIBLES = [
   'Toyota',
   'Audi',
   'Porsche',
+  'Ducati',
   'Volvo',
   'Lexus',
   'Range Rover',
