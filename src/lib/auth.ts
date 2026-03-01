@@ -84,33 +84,34 @@ function verifyToken(token: string): SessionUser | null {
  */
 export async function login(credentials: LoginCredentials): Promise<{ user: SessionUser } | null> {
   const { email, password } = credentials
+  const sanitizedEmail = email.trim().toLowerCase()
 
   // Find user by email
   const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
+    where: { email: sanitizedEmail },
   })
 
   if (!user) {
-    console.log(`[AUTH] Login failed: User not found: ${email}`)
+    console.log(`[AUTH] Login failed: User not found: ${sanitizedEmail}`)
     return null
   }
 
   // Check if user is active
   if (!user.isActive) {
-    console.log(`[AUTH] Login failed: User is inactive: ${email}`)
+    console.log(`[AUTH] Login failed: User is inactive: ${sanitizedEmail}`)
     return null
   }
 
   // Check if user has admin role
   if (user.role !== 'admin') {
-    console.log(`[AUTH] Login failed: User is not admin: ${email}`)
+    console.log(`[AUTH] Login failed: User is not admin: ${sanitizedEmail}`)
     return null
   }
 
   // Verify password
   const isValidPassword = await verifyPassword(password, user.passwordHash)
   if (!isValidPassword) {
-    console.log(`[AUTH] Login failed: Invalid password for user: ${email}`)
+    console.log(`[AUTH] Login failed: Invalid password for user: ${sanitizedEmail}`)
     return null
   }
 
