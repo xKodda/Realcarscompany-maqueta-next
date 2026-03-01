@@ -53,6 +53,8 @@ async function getAuto(id: string) {
   }
 }
 
+import Breadcrumbs from '@/components/Breadcrumbs'
+
 export async function generateMetadata({ params }: AutoPageProps): Promise<Metadata> {
   const { id } = await params
   const auto = await getAuto(id)
@@ -63,22 +65,27 @@ export async function generateMetadata({ params }: AutoPageProps): Promise<Metad
     }
   }
 
-  const title = `${auto.marca} ${auto.modelo} ${auto.año} | RealCars Company`
-  const description = `Compra este ${auto.marca} ${auto.modelo} ${auto.año} con ${auto.kilometraje.toLocaleString()} km. Precio: $${auto.precio.toLocaleString()}. ${auto.transmision}, ${auto.combustible}. Garantía y calidad premium.`
+  const title = `${auto.marca} ${auto.modelo} ${auto.año} - Venta Autos de Lujo Chile`
+  const description = `Descubre este espectacular ${auto.marca} ${auto.modelo} ${auto.año} con ${auto.kilometraje.toLocaleString()} km. Disponible en RealCars Company, automotora de lujo en Santiago. Precio: $${auto.precio.toLocaleString()}. ${auto.transmision}, ${auto.combustible}.`
   const imageUrl = auto.vehicleImages?.[0]?.imageUrl || '/images/og-default.jpg'
+  const canonicalUrl = `https://realcarscompany.cl/autos/${auto.id}`
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${auto.marca} ${auto.modelo}`,
+          alt: `${auto.marca} ${auto.modelo} en RealCars Company`,
         },
       ],
       type: 'article',
@@ -100,7 +107,7 @@ export default async function AutoDetailPage({ params }: AutoPageProps) {
     notFound()
   }
 
-  // Structured Data (JSON-LD) for Vehicle
+  // Structured Data (JSON-LD) for Vehicle - Extended version
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Vehicle',
@@ -119,26 +126,39 @@ export default async function AutoDetailPage({ params }: AutoPageProps) {
       value: auto.kilometraje,
       unitCode: 'KMT',
     },
+    vehicleTransmission: auto.transmision,
+    fuelType: auto.combustible,
+    color: auto.color,
     offers: {
       '@type': 'Offer',
       price: auto.precio,
       priceCurrency: 'CLP',
+      url: `https://realcarscompany.cl/autos/${auto.id}`,
       availability: auto.estado === 'disponible' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
       itemCondition: 'https://schema.org/UsedCondition',
       seller: {
-        '@type': 'AutomotiveBusiness',
+        '@type': 'AutoDealer',
         name: 'RealCars Company',
+        url: 'https://realcarscompany.cl'
       },
     },
   }
 
+  const breadcrumbItems = [
+    { label: 'Inicio', href: '/' },
+    { label: 'Catálogo', href: '/autos' },
+    { label: `${auto.marca} ${auto.modelo}`, href: `/autos/${auto.id}`, active: true }
+  ]
+
   return (
-    <>
+    <div className="container mx-auto px-4 py-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Breadcrumbs items={breadcrumbItems} />
       <AutoDetailClient auto={auto} />
-    </>
+    </div>
   )
 }
+

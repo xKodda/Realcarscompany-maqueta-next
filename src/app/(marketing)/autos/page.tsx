@@ -132,16 +132,27 @@ async function getAutos(searchParams: any) {
   }
 }
 
+import Breadcrumbs from '@/components/Breadcrumbs'
+
 export default async function AutosPage({ searchParams }: PageProps) {
   const params = await searchParams
   const result = await getAutos(params)
 
+  const breadcrumbItems = [
+    { label: 'Inicio', href: '/' },
+    { label: 'Catálogo', href: '/autos', active: true }
+  ]
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AutosPageClient
-        initialData={result}
-        itemsPerPage={ITEMS_PER_PAGE}
-      />
-    </Suspense>
+    <div className="container mx-auto px-4 py-8">
+      <Breadcrumbs items={breadcrumbItems} />
+      <Suspense fallback={<div className="h-96 flex items-center justify-center">Cargando catálogo...</div>}>
+        <AutosPageClient
+          initialData={result}
+          itemsPerPage={ITEMS_PER_PAGE}
+        />
+      </Suspense>
+    </div>
   )
 }
+

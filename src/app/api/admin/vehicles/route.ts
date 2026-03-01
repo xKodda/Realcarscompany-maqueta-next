@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthAPI } from '@/lib/auth'
 import { Prisma } from '@prisma/client'
 
 function toSlug(value: string) {
@@ -14,7 +14,9 @@ function toSlug(value: string) {
 
 export async function POST(request: Request) {
   try {
-    const user = await requireAuth()
+    const authResult = await requireAuthAPI()
+    if (authResult instanceof NextResponse) return authResult
+    const user = authResult
 
     const body = await request.json()
 
@@ -111,7 +113,9 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const user = await requireAuth()
+    const authResult = await requireAuthAPI()
+    if (authResult instanceof NextResponse) return authResult
+
     const url = new URL(request.url)
     const id = url.searchParams.get('id')
 
@@ -191,4 +195,3 @@ export async function PUT(request: Request) {
     )
   }
 }
-

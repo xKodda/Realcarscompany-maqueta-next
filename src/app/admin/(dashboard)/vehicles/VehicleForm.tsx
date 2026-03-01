@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND_MODELS, COMMON_FEATURES, generateDescription } from './vehicle-data'
 
 interface VehicleImage {
@@ -78,6 +79,24 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
   )
   const [displayLitrosMotor, setDisplayLitrosMotor] = useState(formData.litrosMotor || '')
 
+  const [brandSearch, setBrandSearch] = useState(formData.marca)
+  const [isBrandDropdownOpen, setIsBrandDropdownOpen] = useState(false)
+  const brandRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (brandRef.current && !brandRef.current.contains(event.target as Node)) {
+        setIsBrandDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    setBrandSearch(formData.marca)
+  }, [formData.marca])
+
   const [isUploadingImages, setIsUploadingImages] = useState(false)
 
 
@@ -89,6 +108,10 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
   const colorOptions = [
     'Blanco', 'Negro', 'Gris', 'Plata', 'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja', 'Café', 'Beige', 'Bronce', 'Grafito'
   ]
+
+  const filteredBrands = brandOptions.filter(b =>
+    b.toLowerCase().includes(brandSearch.toLowerCase())
+  )
   const years = Array.from({ length: (new Date().getFullYear() + 1) - 1990 + 1 }, (_, i) => (new Date().getFullYear() + 1) - i).filter(y => y >= 1990)
 
   const handlePrecioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -376,19 +399,66 @@ export default function VehicleForm({ vehicle }: VehicleFormProps) {
             </div>
 
             <div className="p-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="col-span-1 sm:col-span-2">
+              <div className="col-span-1 sm:col-span-2 relative" ref={brandRef}>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Marca del Vehículo</label>
-                <select
-                  required
-                  value={formData.marca}
-                  onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
-                >
-                  <option value="">Seleccionar Fabricante</option>
-                  {brandOptions.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Escribe para buscar o seleccionar marca..."
+                    value={brandSearch}
+                    onFocus={() => setIsBrandDropdownOpen(true)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setBrandSearch(val);
+                      setFormData({ ...formData, marca: val });
+                      setIsBrandDropdownOpen(true);
+                    }}
+                    className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#161b39]/10 focus:border-[#161b39] transition-all outline-none"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg className={`w-4 h-4 transition-transform ${isBrandDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {isBrandDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute z-20 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-64 overflow-y-auto"
+                    >
+                      {filteredBrands.length > 0 ? (
+                        filteredBrands.map((b) => (
+                          <button
+                            key={b}
+                            type="button"
+                            onClick={() => {
+                              setFormData({ ...formData, marca: b });
+                              setBrandSearch(b);
+                              setIsBrandDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-5 py-3 hover:bg-gray-50 text-sm text-gray-700 transition-colors flex items-center justify-between group"
+                          >
+                            <span>{b}</span>
+                            {formData.marca === b && (
+                              <svg className="w-4 h-4 text-[#802223]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-5 py-4 text-sm text-gray-500 italic">
+                          No se encontraron marcas
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div>

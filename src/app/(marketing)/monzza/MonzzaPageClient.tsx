@@ -5,9 +5,19 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
+import Breadcrumbs from '@/components/Breadcrumbs'
+
 export default function MonzzaPageClient() {
+  const breadcrumbItems = [
+    { label: 'Inicio', href: '/' },
+    { label: 'Colección Monzza', href: '/monzza', active: true }
+  ]
+
   return (
     <div className="h-screen bg-[#050505] font-sans flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="absolute top-10 left-10 z-[100] hidden md:block">
+        <Breadcrumbs items={breadcrumbItems} />
+      </div>
 
       {/* Background Image / Texture */}
       <div className="absolute inset-0 z-0">

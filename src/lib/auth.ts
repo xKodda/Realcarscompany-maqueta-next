@@ -4,7 +4,12 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from './prisma'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET must be defined in production environment')
+}
+const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-key-do-not-use-in-production'
+
 const JWT_EXPIRES_IN = '7d'
 
 export interface SessionUser {
@@ -44,7 +49,7 @@ function createToken(user: SessionUser): string {
       name: user.name,
       role: user.role,
     },
-    JWT_SECRET,
+    ACTUAL_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   )
 }
@@ -54,8 +59,13 @@ function createToken(user: SessionUser): string {
  */
 function verifyToken(token: string): SessionUser | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as SessionUser
-    return decoded
+    const decoded = jwt.verify(token, ACTUAL_SECRET) as any
+    return {
+      id: decoded.id,
+      email: decoded.email,
+      name: decoded.name,
+      role: decoded.role
+    }
   } catch (error) {
     return null
   }
@@ -171,5 +181,23 @@ export async function requireAuth(): Promise<SessionUser> {
 export async function isAuthenticated(): Promise<boolean> {
   const user = await getCurrentUser()
   return user !== null
+}
+
+import { NextResponse } from 'next/server'
+
+/**
+ * Require authentication for API routes - returns 401 instead of redirecting
+ */
+export async function requireAuthAPI(): Promise<SessionUser | NextResponse> {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return NextResponse.json(
+      { error: 'No autorizado. Por favor inicie sesión.' },
+      { status: 401 }
+    )
+  }
+
+  return user
 }
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthAPI } from '@/lib/auth'
 import { Prisma } from '@prisma/client'
 
 export async function PUT(
@@ -8,7 +8,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const authResult = await requireAuthAPI()
+    if (authResult instanceof NextResponse) return authResult
+    const user = authResult
     const { id } = await params
 
     const body = await request.json()
@@ -91,7 +93,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAuth()
+    const authResult = await requireAuthAPI()
+    if (authResult instanceof NextResponse) return authResult
 
     const { id } = await params
 
