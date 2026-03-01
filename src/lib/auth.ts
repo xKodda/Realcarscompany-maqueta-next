@@ -5,9 +5,13 @@ import jwt from 'jsonwebtoken'
 import { prisma } from './prisma'
 
 const JWT_SECRET = process.env.JWT_SECRET
-if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('JWT_SECRET must be defined in production environment')
+
+// In production, we should have a JWT_SECRET, but during build time (Next.js pre-rendering), 
+// it might not be available yet. We'll warn instead of throwing at the top level.
+if (!JWT_SECRET && process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+  console.warn('⚠️ WARNING: JWT_SECRET is missing. Authentication will not work properly in production.')
 }
+
 const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-key-do-not-use-in-production'
 
 const JWT_EXPIRES_IN = '7d'
@@ -42,6 +46,9 @@ export async function hashPassword(password: string): Promise<string> {
  * Create a JWT token
  */
 function createToken(user: SessionUser): string {
+  if (process.env.NODE_ENV === 'production' && ACTUAL_SECRET === 'dev-secret-key-do-not-use-in-production') {
+    throw new Error('JWT_SECRET must be defined in production environment to create tokens')
+  }
   return jwt.sign(
     {
       id: user.id,
