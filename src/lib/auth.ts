@@ -4,7 +4,8 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from './prisma'
 
-const JWT_SECRET = process.env.JWT_SECRET
+// We check both uppercase and lowercase because some environments might differ
+const JWT_SECRET = process.env.JWT_SECRET || process.env.jwt_secret
 
 // In development, we use a fallback if the env var is not present.
 // In production, we REQUIRE a JWT_SECRET for security.
