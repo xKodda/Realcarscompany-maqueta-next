@@ -6,13 +6,14 @@ import { prisma } from './prisma'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
-// In production, we should have a JWT_SECRET, but during build time (Next.js pre-rendering), 
-// it might not be available yet. We'll warn instead of throwing at the top level.
-if (!JWT_SECRET && process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
-  console.warn('⚠️ WARNING: JWT_SECRET is missing. Authentication will not work properly in production.')
-}
+// In development, we use a fallback if the env var is not present.
+// In production, we REQUIRE a JWT_SECRET for security.
+const DEFAULT_DEV_SECRET = 'your-secret-key-change-in-production'
+const ACTUAL_SECRET = JWT_SECRET || DEFAULT_DEV_SECRET
 
-const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-key-do-not-use-in-production'
+if (process.env.NODE_ENV === 'production' && !JWT_SECRET && typeof window === 'undefined') {
+  console.error('🔴 CRITICAL: JWT_SECRET environment variable is missing!')
+}
 
 const JWT_EXPIRES_IN = '7d'
 
@@ -46,7 +47,7 @@ export async function hashPassword(password: string): Promise<string> {
  * Create a JWT token
  */
 function createToken(user: SessionUser): string {
-  if (process.env.NODE_ENV === 'production' && ACTUAL_SECRET === 'dev-secret-key-do-not-use-in-production') {
+  if (process.env.NODE_ENV === 'production' && !JWT_SECRET) {
     throw new Error('JWT_SECRET must be defined in production environment to create tokens')
   }
   return jwt.sign(
@@ -90,22 +91,26 @@ export async function login(credentials: LoginCredentials): Promise<{ user: Sess
   })
 
   if (!user) {
+    console.log(`[AUTH] Login failed: User not found: ${email}`)
     return null
   }
 
   // Check if user is active
   if (!user.isActive) {
+    console.log(`[AUTH] Login failed: User is inactive: ${email}`)
     return null
   }
 
   // Check if user has admin role
   if (user.role !== 'admin') {
+    console.log(`[AUTH] Login failed: User is not admin: ${email}`)
     return null
   }
 
   // Verify password
   const isValidPassword = await verifyPassword(password, user.passwordHash)
   if (!isValidPassword) {
+    console.log(`[AUTH] Login failed: Invalid password for user: ${email}`)
     return null
   }
 
