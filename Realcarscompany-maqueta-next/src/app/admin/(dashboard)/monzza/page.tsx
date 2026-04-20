@@ -107,7 +107,8 @@ export default async function MonzzaSalesPage() {
                                             {sale.id.slice(-6).toUpperCase()}
                                         </td>
                                         <td className="p-4 text-gray-600">
-                                            {sale.createdAt ? new Date(sale.createdAt).toLocaleDateString('es-CL', {
+                                            {sale.createdAt ? new Date(sale.createdAt).toLocaleString('es-CL', {
+                                                timeZone: 'America/Santiago',
                                                 day: '2-digit',
                                                 month: 'short',
                                                 hour: '2-digit',
