@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // Uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // Uses direct connection
+}
+
+enum AutoEstado {
+  disponible
+  vendido
+  reservado
+}
+
+enum AdminRol {
+  SUPERADMIN
+}
+
+
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  email               String    @unique
+  passwordHash        String
+  role                String    @default("admin")
+  isActive            Boolean   @default(true)
+  resetToken          String?   @unique
+  resetTokenExpires   DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  vehicles            Auto[]    @relation("UserVehicles")
+}
+
+model Auto {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  marca           String
+  modelo          String
+  anio            Int
+  precio          Int
+  kilometraje     Int
+  transmision     String
+  combustible     String
+  litrosMotor     String?
+  color           String
+
+  imagen          String?
+  descripcion     String
+  caracteristicas String[]      @default([])
+  estado          AutoEstado    @default(disponible)
+  destacado       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+
+  // Relations
+  createdById      Int?
+  createdBy        User?         @relation("UserVehicles", fields: [createdById], references: [id])
+  
+  // Vehicle images
+  vehicleImages    VehicleImage[]
+}
+
+model VehicleImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  vehicleId String
+  vehicle   Auto     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+// Keep AdminUser for backward compatibility, but use User for new auth
+model AdminUser {
+  id           String    @id @default(cuid())
+  nombre       String
+  email        String    @unique
+  passwordHash String
+  role         AdminRol  @default(SUPERADMIN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Raffle and Payment models
+model Order {
+  id              String      @id @default(cuid())
+  sorteoId        String
+  sorteoTitulo    String
+  cantidad        Int
+  total           Int
+  precioUnitario  Int
+  estado          String      @default("pendiente") // pendiente, pagado, fallido, cancelado
+  
+  // Comprador details
+  nombreComprador String
+  emailComprador  String
+  telefonoComprador String
+  rutComprador    String?
+  
+  tickets         Ticket[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  fechaPago       DateTime?
+}
+
+model Ticket {
+  id          String    @id @default(cuid())
+  numero      String    // e.g. "00001"
+  ordenId     String
+  orden       Order     @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  estado      String    @default("activo") // activo, ganador
+}
+
+

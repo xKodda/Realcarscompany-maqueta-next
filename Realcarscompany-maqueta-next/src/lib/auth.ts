@@ -1,0 +1,217 @@
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { prisma } from './prisma'
+
+// We check both uppercase and lowercase because some environments might differ
+const JWT_SECRET = process.env.JWT_SECRET || process.env.jwt_secret
+
+// In development, we use a fallback if the env var is not present.
+// In production, we REQUIRE a JWT_SECRET for security.
+const DEFAULT_DEV_SECRET = 'your-secret-key-change-in-production'
+const ACTUAL_SECRET = JWT_SECRET || DEFAULT_DEV_SECRET
+
+if (process.env.NODE_ENV === 'production' && !JWT_SECRET && typeof window === 'undefined') {
+  console.error('🔴 CRITICAL: JWT_SECRET environment variable is missing!')
+}
+
+const JWT_EXPIRES_IN = '7d'
+
+export interface SessionUser {
+  id: number
+  email: string
+  name: string
+  role: string
+}
+
+export interface LoginCredentials {
+  email: string
+  password: string
+}
+
+/**
+ * Verify password against hash
+ */
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash)
+}
+
+/**
+ * Hash a password
+ */
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10)
+}
+
+/**
+ * Create a JWT token
+ */
+function createToken(user: SessionUser): string {
+  if (process.env.NODE_ENV === 'production' && !JWT_SECRET) {
+    throw new Error('JWT_SECRET must be defined in production environment to create tokens')
+  }
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    },
+    ACTUAL_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  )
+}
+
+/**
+ * Verify and decode JWT token
+ */
+function verifyToken(token: string): SessionUser | null {
+  try {
+    const decoded = jwt.verify(token, ACTUAL_SECRET) as any
+    return {
+      id: decoded.id,
+      email: decoded.email,
+      name: decoded.name,
+      role: decoded.role
+    }
+  } catch (error) {
+    return null
+  }
+}
+
+/**
+ * Login user and create session
+ */
+export async function login(credentials: LoginCredentials): Promise<{ user: SessionUser } | null> {
+  const { email, password } = credentials
+  const sanitizedEmail = email.trim().toLowerCase()
+
+  // Find user by email
+  const user = await prisma.user.findUnique({
+    where: { email: sanitizedEmail },
+  })
+
+  if (!user) {
+    console.log(`[AUTH] Login failed: User not found: ${sanitizedEmail}`)
+    return null
+  }
+
+  // Check if user is active
+  if (!user.isActive) {
+    console.log(`[AUTH] Login failed: User is inactive: ${sanitizedEmail}`)
+    return null
+  }
+
+  // Check if user has admin role
+  if (user.role !== 'admin') {
+    console.log(`[AUTH] Login failed: User is not admin: ${sanitizedEmail}`)
+    return null
+  }
+
+  // Verify password
+  const isValidPassword = await verifyPassword(password, user.passwordHash)
+  if (!isValidPassword) {
+    console.log(`[AUTH] Login failed: Invalid password for user: ${sanitizedEmail}`)
+    return null
+  }
+
+  // Create session user
+  const sessionUser: SessionUser = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+  }
+
+  // Create token
+  const token = createToken(sessionUser)
+
+  // Set secure HTTP-only cookie
+  const cookieStore = await cookies()
+  cookieStore.set('session', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
+  })
+
+  return { user: sessionUser }
+}
+
+/**
+ * Logout user
+ */
+export async function logout(): Promise<void> {
+  const cookieStore = await cookies()
+  cookieStore.delete('session')
+}
+
+/**
+ * Get current logged-in user from session
+ */
+export async function getCurrentUser(): Promise<SessionUser | null> {
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get('session')
+
+  if (!sessionCookie?.value) {
+    return null
+  }
+
+  const user = verifyToken(sessionCookie.value)
+  if (!user) {
+    return null
+  }
+
+  // Verify user still exists and is active
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+  })
+
+  if (!dbUser || !dbUser.isActive || dbUser.role !== 'admin') {
+    return null
+  }
+
+  return user
+}
+
+/**
+ * Require authentication - throws redirect if not authenticated
+ */
+export async function requireAuth(): Promise<SessionUser> {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect('/admin/login')
+  }
+
+  return user
+}
+
+/**
+ * Check if user is authenticated (for client-side checks)
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  const user = await getCurrentUser()
+  return user !== null
+}
+
+import { NextResponse } from 'next/server'
+
+/**
+ * Require authentication for API routes - returns 401 instead of redirecting
+ */
+export async function requireAuthAPI(): Promise<SessionUser | NextResponse> {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return NextResponse.json(
+      { error: 'No autorizado. Por favor inicie sesión.' },
+      { status: 401 }
+    )
+  }
+
+  return user
+}
+
