@@ -7,7 +7,17 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { total, email, nombre, ordenId, metadata } = body;
 
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://realcarscompany.cl';
+        // Remover trailing slash para evitar doble slash (//) que causa 308 en Next.js
+        baseUrl = baseUrl.replace(/\/+$/, '');
+        // Forzar HTTPS en producción
+        if (!baseUrl.includes('localhost') && baseUrl.startsWith('http://')) {
+            baseUrl = baseUrl.replace('http://', 'https://');
+        }
+        // Evitar localhost en producción
+        if (process.env.NODE_ENV === 'production' && baseUrl.includes('localhost')) {
+            baseUrl = 'https://realcarscompany.cl';
+        }
         const cantidad = metadata?.tickets || 1;
         const subjectText = cantidad === 1 ? '1 Imagen Digital Monzza' : `${cantidad} Imágenes Digitales Monzza`;
 
