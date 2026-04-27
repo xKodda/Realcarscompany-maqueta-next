@@ -20,9 +20,7 @@ enum AutoEstado {
   reservado
 }
 
-enum AdminRol {
-  SUPERADMIN
-}
+
 
 
 
@@ -80,16 +78,7 @@ model VehicleImage {
   vehicle   Auto     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 }
 
-// Keep AdminUser for backward compatibility, but use User for new auth
-model AdminUser {
-  id           String    @id @default(cuid())
-  nombre       String
-  email        String    @unique
-  passwordHash String
-  role         AdminRol  @default(SUPERADMIN)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
+
 
 // Raffle and Payment models
 model Order {

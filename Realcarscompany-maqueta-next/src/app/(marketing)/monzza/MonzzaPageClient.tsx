@@ -154,7 +154,7 @@ export default function MonzzaPageClient() {
             {/* Dynamic Expanded Gallery */}
             <div className="w-full flex flex-col gap-4 lg:gap-6 mt-8 xl:mt-12">
               <div className="w-full relative rounded-2xl overflow-hidden group aspect-[4/3] lg:aspect-[16/10] shadow-2xl border border-white/5">
-                <Image src={mainImage} alt="MV Agusta" fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
+                <Image src={mainImage} alt="MV Agusta" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
               </div>
               <div className="grid grid-cols-4 gap-3 lg:gap-4 shrink-0">
                 {[
@@ -164,7 +164,7 @@ export default function MonzzaPageClient() {
                   '/images/brand/moto4.jpeg'
                 ].map((img, i) => (
                   <button key={i} type="button" onClick={() => setMainImage(img)} className={`relative rounded-xl overflow-hidden border aspect-[4/3] group transition-all ${mainImage === img ? 'border-white opacity-100 ring-1 ring-white' : 'border-white/10 opacity-50 hover:opacity-100 hover:border-white/30'}`}>
-                    <Image src={img} alt={`Detalle moto ${i + 1}`} fill className={`object-cover transition-opacity ${mainImage === img ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`} />
+                    <Image src={img} alt={`Detalle moto ${i + 1}`} fill sizes="(max-width: 1024px) 25vw, 15vw" className={`object-cover transition-opacity ${mainImage === img ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`} />
                   </button>
                 ))}
               </div>

@@ -38,6 +38,7 @@ export default function SafePurchaseSection() {
                 src="https://i.pinimg.com/1200x/54/28/01/542801808cbac541af30a78bb9b3887e.jpg"
                 alt="Negociación de compra de vehículo"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -56,6 +57,7 @@ export default function SafePurchaseSection() {
                 src="https://i.pinimg.com/1200x/6a/9a/66/6a9a661a89881207fcc24bf0c16e5bf5.jpg"
                 alt="Inspección técnica de vehículo"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>

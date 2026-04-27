@@ -1,44 +1,41 @@
 # 🚗 RealCars Company - Automotora Premium
 
-Sistema web completo para automotora de lujo con sistema de sorteos y pagos integrados.
+Sistema web completo para automotora de lujo con sistema de venta de imágenes digitales, promoción comercial y pagos integrados.
 
 ## 🎯 Características Principales
 
 ### 🚘 Catálogo de Vehículos
-- Listado de autos premium con filtros avanzados
-- Página de detalle con galería interactiva
-- Información completa de especificaciones
-- Estados: Disponible, Reservado, Vendido
+- Listado de autos premium con diseño sofisticado.
+- Página de detalle con galería interactiva y especificaciones completas.
+- Panel de gestión para inventario y estados del vehículo (Disponible, Vendido).
 
-### 🎰 Sistema de Sorteos (con Khipu)
-- Compra de tickets online
-- Pago seguro vía transferencia bancaria (Khipu)
-- Envío automático de tickets por email
-- Barra de progreso de tickets vendidos
-- Sorteos supervisados por notario
+### 🎰 Sistema de Promoción Monzza
+- Venta automatizada de "Imágenes Digitales" (Tickets promocionales).
+- Pago seguro integrado con **Flow Chile** (Webpay, MACH, Servipag, transferencia bancaria).
+- Generación automática de IDs de participación únicos y enlazados al RUT.
+- Envío automático de correos electrónicos con las imágenes adjuntas a través de **Resend**.
 
-### 📱 Funcionalidades
-- Integración con WhatsApp
-- Formulario de contacto
-- Diseño responsive (mobile-first)
+### 📱 Funcionalidades Extra
+- Contacto directo vía WhatsApp.
+- Base de datos de clientes y órdenes unificada en un CRM básico administrativo.
+- Diseño de alto impacto y totalmente responsivo (mobile-first).
 
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- **Framework:** Next.js 15.5.4 (App Router)
-- **React:** 19.1.0
-- **Styling:** Tailwind CSS 4
-- **Animaciones:** Framer Motion 12.23
+- **Framework:** Next.js 15+ (App Router)
+- **Librería UI:** React 19+
+- **Estilos:** Tailwind CSS 4
+- **Animaciones:** Framer Motion
 - **Iconos:** Lucide React
-- **Estado:** Zustand 5.0
-- **TypeScript:** 5.x
+- **Lenguaje:** TypeScript 5.x
 
-### Backend (Preparado)
-- **Pagos:** Khipu (pasarela chilena)
-- **Base de datos:** PostgreSQL
-- **Email:** Resend
-- **Storage:** AWS S3 / Cloudinary
-- **Caché:** Redis
+### Backend y Servicios
+- **Framework:** Next.js API Routes (Serverless)
+- **Base de Datos:** PostgreSQL (alojada en Supabase)
+- **ORM:** Prisma Client
+- **Pagos:** API REST de Flow Chile (Creación de pagos y Webhooks de confirmación)
+- **Emailing:** Resend API
 
 ## 🚀 Inicio Rápido
 
@@ -48,301 +45,116 @@ Node.js 18+
 npm o pnpm
 ```
 
-### Instalación
+### Instalación Local
 
 ```bash
-# Clonar el repositorio
-cd realcarscompany-web
+# Clonar y/o entrar al directorio
+cd Realcarscompany-maqueta-next
 
 # Instalar dependencias
 npm install
 
-# Copiar variables de entorno
-cp .env.local.example .env.local
+# Copiar variables de entorno (si aplica)
+cp .env.example .env
+```
 
-# Editar .env.local con tus valores
-# (Por ahora puedes dejarlo por defecto para modo DEMO)
+Editar `.env` con las credenciales de tu proyecto (Supabase, Flow, Resend).
 
-# Iniciar servidor de desarrollo
+```bash
+# Sincronizar Prisma con la base de datos
+npx prisma generate
+npx prisma db push
+
+# Iniciar servidor de desarrollo con Turbopack
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000)
+El sitio estará disponible en [http://localhost:3000](http://localhost:3000)
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto Destacada
 
 ```
 realcarscompany-web/
 ├── src/
 │   ├── app/                    # App Router (Next.js 15)
-│   │   ├── (marketing)/       # Rutas públicas
-│   │   │   ├── page.tsx       # Home
-│   │   │   ├── autos/         # Catálogo
-│   │   │   ├── sorteos/       # Sistema de sorteos
-│   │   │   └── contacto/      # Contacto
-│   │   ├── admin/             # Panel admin (protegido)
-│   │   ├── layout.tsx         # Layout raíz
+│   │   ├── (marketing)/       # Rutas públicas (Inicio, Monzza, Autos, Contacto)
+│   │   ├── admin/             # Panel admin (protegido) con Dashboard y CRM
+│   │   ├── api/               # Endpoints del Backend
+│   │   │   └── pagos/flow/    # Lógica de Integración y Webhooks de Flow
+│   │   ├── layout.tsx         # Layout principal
 │   │   └── global.css         # Estilos globales
 │   │
-│   ├── components/            # Componentes reutilizables
-│   │   ├── AutoCard.tsx
-│   │   ├── CompraTicketsModal.tsx
-│   │   ├── Filters.tsx
-│   │   ├── Header.tsx
-│   │   ├── Footer.tsx
-│   │   └── ...
-│   │
-│   ├── lib/                   # Lógica de negocio
-│   │   ├── api/              # Servicios API
-│   │   │   ├── client.ts     # Cliente HTTP
-│   │   │   └── services/
-│   │   │       ├── autos.service.ts
-│   │   │       ├── consultas.service.ts
-│   │   │       ├── sorteos.service.ts
-│   │   │       └── pagos.service.ts  # Khipu
-│   │   ├── constants.ts      # Constantes
-│   │   ├── types.ts          # TypeScript types
-│   │   ├── utils.ts          # Utilidades
-│   │   └── data.ts           # Datos mock
-│   │
-│   └── hooks/                # Custom hooks
-│       ├── useAutos.ts
-│       ├── useConsultas.ts
-│       ├── useSorteos.ts
-│       └── usePagos.ts       # Hooks de Khipu
+│   ├── components/            # Componentes reutilizables (Formularios, Tarjetas, Modales)
+│   ├── lib/                   # Configuración y utilidades de servidor
+│   │   ├── prisma.ts          # Inicialización de Prisma Client
+│   │   ├── flow.ts            # Utilidades de criptografía (HMAC-SHA256) para Flow
+│   │   └── supabase.ts        # Cliente nativo de Supabase
 │
-├── public/                   # Assets estáticos
-│   ├── images/
-│   └── robots.txt
-│
-├── .env.local.example       # Template de variables
-├── next.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-└── package.json
+├── prisma/                    # Modelos de base de datos PostgreSQL
+│   └── schema.prisma
+├── public/                    # Assets estáticos (logos, imágenes, stickers adjuntos)
+└── tailwind.config.ts         # Configuración de sistema de diseño
 ```
 
-## 🎨 Páginas Disponibles
+## 🔐 Variables de Entorno Clave
 
-| Ruta | Descripción | Estado |
-|------|-------------|--------|
-| `/` | Home con últimos vehículos agregados | ✅ |
-| `/autos` | Catálogo completo con filtros | ✅ |
-| `/autos/[id]` | Detalle de auto con galería | ✅ |
-| `/sorteos` | Sistema de sorteos con compra | ✅ |
-| `/contacto` | Formulario de contacto | ✅ |
-| `/admin` | Panel de administración | ⏳ |
+Configuraciones necesarias en tu archivo `.env`:
 
-## 🧪 Probar el Sistema
+```env
+# Base de datos Supabase (Prisma)
+POSTGRES_URL_NON_POOLING="postgresql://..."
+POSTGRES_PRISMA_URL="postgresql://..."
 
-### Modo DEMO (sin backend)
-El proyecto incluye un modo DEMO que te permite probar toda la UI y flujo de compra sin necesidad de backend:
+# Supabase Cliente
+NEXT_PUBLIC_SUPABASE_URL="..."
+NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
 
-1. Inicia el servidor: `npm run dev`
-2. Ve a http://localhost:3000/sorteos
-3. Click en "Comprar tickets"
-4. Completa el formulario
-5. Verás una simulación del proceso
+# Integración Email
+RESEND_API_KEY="re_..."
 
-### Con Backend Real
-Para usar Khipu real, configura las variables de entorno necesarias en `.env.local`.
+# Integración Pasarela Flow
+FLOW_API_KEY="..."
+FLOW_SECRET_KEY="..."
+FLOW_URL="https://www.flow.cl/api"
 
-## 📦 Scripts Disponibles
-
-```bash
-# Desarrollo
-npm run dev          # Servidor de desarrollo (Turbopack)
-
-# Producción
-npm run build        # Build para producción
-npm run start        # Servidor de producción
-
-# Linting
-npm run lint         # ESLint
+# URL base para webhooks y redirecciones
+NEXT_PUBLIC_BASE_URL="http://localhost:3000" # Cambiar en Producción
 ```
 
-## 🔐 Variables de Entorno
+## 💳 Flujo del Sistema de Pagos (Flow)
 
-Copia `.env.local.example` a `.env.local` y configura:
+Este proyecto está integrado oficialmente con **Flow Chile**. El proceso de compra automatizado es el siguiente:
+1. El usuario llena el formulario y elige la cantidad de imágenes digitales en `/monzza`.
+2. Se registra la `Orden` en estado `pendiente` dentro de PostgreSQL.
+3. Se firma la petición de pago y se redirige al cliente a la plataforma segura de Flow.
+4. Una vez realizado el pago, Flow notifica al servidor vía POST al webhook oculto `api/pagos/flow/confirmacion`.
+5. El sistema procesa la notificación (retornando HTTP 200 a Flow), actualiza la orden en la base de datos a `pagado`, genera los "tickets" asignados, y dispara la confirmación por correo usando **Resend** con los archivos adjuntos incluidos.
+6. El usuario visualiza la pantalla de "Pago Exitoso" (`/pago/exito`) en el navegador.
 
-```bash
-# URLs
-NEXT_PUBLIC_SITE_URL=https://realcarscompany.cl
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+## 🎯 Estado y Roadmap
 
-# Khipu (Sistema de pagos)
-KHIPU_RECEIVER_ID=your-receiver-id
-KHIPU_SECRET=your-secret
-NEXT_PUBLIC_KHIPU_RETURN_URL=http://localhost:3000/sorteos/pago/exito
-NEXT_PUBLIC_KHIPU_CANCEL_URL=http://localhost:3000/sorteos/pago/cancelado
+### ✅ Implementado y Funcional
+- [x] Diseño UI/UX premium responsivo
+- [x] Landing promocional "Monzza" y Catálogo de Autos
+- [x] Base de datos en PostgreSQL con Prisma Schema (Vehículos, Órdenes, Tickets)
+- [x] Integración completa de pagos con Flow Chile (Checkouts y Webhooks)
+- [x] Envío de correos automatizados con Resend (incluyendo adjuntos)
+- [x] Panel de administración básico (Dashboard / CRM de órdenes)
 
-# Base de datos
-DATABASE_URL=postgresql://...
-
-# Email
-RESEND_API_KEY=re_...
-EMAIL_FROM=noreply@realcarscompany.cl
-
-# Storage
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_S3_BUCKET=realcarscompany-images
-
-# Analytics
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-```
-
-Ver `.env.local.example` para la lista completa.
-
-## 💳 Sistema de Pagos (Khipu)
-
-Este proyecto usa **Khipu**, la pasarela de pagos líder en Chile que permite cobrar mediante transferencia bancaria.
-
-### Características:
-- ✅ Transferencia bancaria instantánea
-- ✅ Sin necesidad de tarjetas
-- ✅ Comisión competitiva (~2.9%)
-- ✅ API simple y robusta
-- ✅ Webhooks para notificaciones
-
-### Setup:
-1. Registrarse en https://khipu.com
-2. Obtener credenciales (KHIPU_RECEIVER_ID y KHIPU_SECRET)
-3. Configurar las variables de entorno en `.env.local`
-
-## 📧 Sistema de Emails
-
-Los tickets se envían automáticamente por email después del pago. Servicios recomendados:
-
-- **Resend** (recomendado) - resend.com
-- **SendGrid** - sendgrid.com
-- **Amazon SES** - aws.amazon.com/ses
-
-## 🗄️ Base de Datos
-
-### Esquema Principal (PostgreSQL)
-
-```sql
--- Autos
-CREATE TABLE autos (
-  id UUID PRIMARY KEY,
-  marca VARCHAR(100),
-  modelo VARCHAR(100),
-  año INTEGER,
-  precio DECIMAL(10,2),
-  -- ... más campos
-);
-
--- Sorteos
-CREATE TABLE sorteos (
-  id UUID PRIMARY KEY,
-  titulo VARCHAR(200),
-  premio VARCHAR(200),
-  precio_ticket DECIMAL(10,2),
-  total_tickets INTEGER,
-  tickets_vendidos INTEGER,
-  fecha_sorteo TIMESTAMP,
-  estado VARCHAR(20),
-  -- ... más campos
-);
-
--- Órdenes de compra
-CREATE TABLE ordenes (
-  id UUID PRIMARY KEY,
-  sorteo_id UUID REFERENCES sorteos(id),
-  comprador_nombre VARCHAR(200),
-  comprador_email VARCHAR(200),
-  comprador_telefono VARCHAR(50),
-  cantidad INTEGER,
-  total DECIMAL(10,2),
-  estado VARCHAR(20), -- pendiente, pagado, expirado
-  khipu_payment_id VARCHAR(100),
-  -- ... más campos
-);
-
--- Tickets
-CREATE TABLE tickets (
-  id UUID PRIMARY KEY,
-  numero VARCHAR(10) UNIQUE,
-  orden_id UUID REFERENCES ordenes(id),
-  sorteo_id UUID REFERENCES sorteos(id),
-  estado VARCHAR(20), -- activo, usado, ganador
-  -- ... más campos
-);
-```
-
-## 🎯 Roadmap
-
-### ✅ Completado
-- [x] Diseño UI/UX premium
-- [x] Catálogo de autos con filtros
-- [x] Sistema de sorteos con Khipu
-- [x] Modal de compra de tickets
-- [x] Integración WhatsApp
-- [x] Responsive design
-- [x] Galería de imágenes interactiva
-- [x] Servicios API preparados
-- [x] Hooks personalizados
-- [x] TypeScript 100%
-
-### 🔄 En Progreso
-- [ ] Backend API (NestJS/Express)
-- [ ] Panel de administración
-- [ ] Sistema de autenticación
-- [ ] Envío de emails automático
-
-### 📋 Próximamente
-- [ ] Comparación de vehículos
-- [ ] Favoritos (wishlist)
-- [ ] Sistema de notificaciones
-- [ ] Blog / Noticias
-- [ ] Chat en vivo
-- [ ] App móvil (React Native)
-
-## 🤝 Contribuir
-
-Este es un proyecto privado de RealCars Company. Para contribuir:
-
-1. Fork el proyecto
-2. Crea tu branch (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add: amazing feature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+### 🔄 En Progreso / Tareas Futuras
+- [ ] Seguridad estricta y Autenticación para el panel de administración (`/admin`).
+- [ ] CRUD completo y subida de imágenes optimizada para nuevos Vehículos desde el Admin.
+- [ ] Exportación avanzada de bases de datos desde el CRM.
 
 ## 📝 Licencia
 
-Código propietario © 2025 RealCars Company. Todos los derechos reservados.
+Código propietario © 2026 RealCars Company. Todos los derechos reservados.
 
 ## 📞 Contacto
 
 **RealCars Company**
 - Website: https://realcarscompany.cl
 - Email: contacto@realcarscompany.cl
-- WhatsApp: +56 9 8777 5463
-- Instagram: [@realcarscompanycl](https://instagram.com/realcarscompanycl)
 
 **Desarrollo**
-- Desarrollado por [Clikium](https://clikium.cl)
-
----
-
-## 🎉 Estado del Proyecto
-
-```
-Progreso General: ████████░░ 85%
-
-Frontend:    ██████████ 100%
-Backend:     ████░░░░░░  40%
-Testing:     ██████░░░░  60%
-Deploy:      ████░░░░░░  40%
-```
-
-**Última actualización:** Octubre 2025
-
----
-
-<div align="center">
-  <strong>🚗 Excelencia Automotriz desde 2010 🏆</strong>
-  <br>
-  <em>RealCars Company - Santiago, Chile</em>
-</div>
+- Desarrollado y administrado por [Clikium](https://clikium.cl)

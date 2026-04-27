@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFlowPaymentStatus } from '@/lib/flow';
-import { supabaseAdmin } from '@/lib/supabase';
 import crypto from 'crypto';
 import { Resend } from 'resend';
 import fs from 'fs';
@@ -10,18 +9,19 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
     try {
-        const formData = await req.formData();
-        const token = formData.get('token') as string;
+        const formData = await req.formData().catch(() => null);
+        const token = formData ? formData.get('token') as string : null;
 
         if (!token) {
-            return NextResponse.json({ error: 'No token provided' }, { status: 400 });
+            console.error('Flow Webhook: No token provided');
+            return new NextResponse('OK', { status: 200 }); // Siempre 200 para Flow
         }
 
         const flowStatus = await getFlowPaymentStatus(token);
 
         if (!flowStatus || flowStatus.error) {
             console.error('Flow status error:', flowStatus);
-            return NextResponse.json({ error: 'Error verificando pago' }, { status: 500 });
+            return new NextResponse('OK', { status: 200 });
         }
 
         const ordenId = flowStatus.commerceOrder;
@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
             });
 
             if (!order) {
-                console.error('Order not found in DB:', ordenId);
-                return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 });
+                console.warn('⚠️ Order not found in DB but Flow says it was Paid:', ordenId);
+                return new NextResponse('OK', { status: 200 });
             }
 
             if (order.estado !== 'pagado') {
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
                     });
                 } catch (updateError) {
                     console.error('Error updating order:', updateError);
-                    return NextResponse.json({ error: 'Error actualizando orden' }, { status: 500 });
+                    return new NextResponse('OK', { status: 200 });
                 }
 
                 // Enviar email con Resend
@@ -152,18 +152,28 @@ export async function POST(req: NextRequest) {
 
                 console.log(`✅ Pago completado y ${cantidadStickers} BD updates OK para la orden ${ordenId}`);
             }
-        } else {
+        } else if ([3, 4, '3', '4'].includes(flowStatus.status)) {
+            // Only update to rejected if it's status 3 (rejected) or 4 (cancelled)
             const { prisma } = await import('@/lib/prisma');
-            await prisma.order.update({
-                where: { id: ordenId },
-                data: { estado: 'rechazado' }
-            });
+            const order = await prisma.order.findUnique({ where: { id: ordenId } });
+            
+            if (order) {
+                await prisma.order.update({
+                    where: { id: ordenId },
+                    data: { estado: 'rechazado' }
+                });
+                console.log(`❌ Orden ${ordenId} marcada como rechazada/cancelada.`);
+            } else {
+                console.warn(`⚠️ Intento de rechazar orden inexistente: ${ordenId}`);
+            }
         }
 
 
-        return NextResponse.json({ success: true });
+        return new NextResponse('OK', { status: 200 });
     } catch (error: any) {
         console.error('Flow Webhook Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        // Important: return success: false BUT still return a status code 200.
+        return new NextResponse('OK', { status: 200 });
     }
 }
+

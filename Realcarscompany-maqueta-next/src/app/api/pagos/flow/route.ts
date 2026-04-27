@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             amount: total,
             email: email,
             urlConfirmation: `${baseUrl}/api/pagos/flow/confirmacion`,
-            urlReturn: `${baseUrl}/pago/exito?orden=${ordenId}`,
+            urlReturn: `${baseUrl}/api/pagos/flow/retorno?orden=${ordenId}`,
         };
 
         const flowResponse = await createFlowPayment(params);

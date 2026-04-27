@@ -30,7 +30,7 @@ export default function MonzzaCollage() {
             transition={{ duration: 0.9, ease: 'easeOut', delay: 0.3 }}
             className="md:col-span-7 relative rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl overflow-hidden"
           >
-            <div className="aspect-[16/10]">
+            <div className="relative aspect-[16/10]">
               <Image
                 src={motoImages[0]}
                 alt="Sorteo MONZZA - Premio principal"
@@ -54,7 +54,7 @@ export default function MonzzaCollage() {
                 transition={{ duration: 0.7, ease: 'easeOut', delay: 0.4 + i * 0.12 }}
                 className="relative overflow-hidden rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-xl"
               >
-                <div className="aspect-[16/9]">
+                <div className="relative aspect-[16/9]">
                   <Image
                     src={src}
                     alt={`Sorteo MONZZA ${i + 2}`}
