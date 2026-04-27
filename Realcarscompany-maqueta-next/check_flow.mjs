@@ -37,7 +37,7 @@ async function main() {
     // Flow webhook sends the token, but we don't save the token in DB.
     // However, we can use the `payment/getStatusByCommerceId` endpoint in Flow if we know the orderId!
     
-    const commerceId = 'RC-JO7VCH5EB';
+    const commerceId = 'RC-V0D8M16O8';
     const params = { apiKey, commerceId };
     const s = sign(params);
     const url = `${apiUrl}/payment/getStatusByCommerceId?apiKey=${apiKey}&commerceId=${commerceId}&s=${s}`;

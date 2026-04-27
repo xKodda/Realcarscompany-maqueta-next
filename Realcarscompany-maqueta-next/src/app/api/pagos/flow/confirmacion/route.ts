@@ -16,6 +16,16 @@ export async function POST(req: NextRequest) {
 
         if (!token) {
             console.error('Flow Webhook: No token provided');
+            try {
+                const { Resend } = await import('resend');
+                const alertResend = new Resend(process.env.RESEND_API_KEY);
+                await alertResend.emails.send({
+                    from: 'RealCars Debug <contacto@realcarscompany.cl>',
+                    to: 'christofergodcer@gmail.com',
+                    subject: '🚨 Debug: Webhook hit but NO TOKEN',
+                    html: `<p>Webhook was hit but token could not be parsed.</p><p>Body text was: ${bodyText}</p>`
+                });
+            } catch (e) {}
             return new NextResponse('OK', { status: 200 }); // Siempre 200 para Flow
         }
 
@@ -174,6 +184,19 @@ export async function POST(req: NextRequest) {
         return new NextResponse('OK', { status: 200 });
     } catch (error: any) {
         console.error('Flow Webhook Error:', error);
+        
+        // ALERT VIA EMAIL ABOUT THE ERROR
+        try {
+            const { Resend } = await import('resend');
+            const alertResend = new Resend(process.env.RESEND_API_KEY);
+            await alertResend.emails.send({
+                from: 'RealCars Debug <contacto@realcarscompany.cl>',
+                to: 'christofergodcer@gmail.com', // user's email
+                subject: '🚨 URGENTE: Error en Webhook Flow',
+                html: `<p>Ocurrió un error en el webhook:</p><pre>${error.stack || error.message || JSON.stringify(error)}</pre>`
+            });
+        } catch (e) {}
+
         // Important: return success: false BUT still return a status code 200.
         return new NextResponse('OK', { status: 200 });
     }

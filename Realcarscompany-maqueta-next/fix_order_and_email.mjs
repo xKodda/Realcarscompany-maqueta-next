@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function main() {
-  const orderId = 'RC-JO7VCH5EB';
+  const orderId = 'RC-V0D8M16O8';
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { tickets: true }
