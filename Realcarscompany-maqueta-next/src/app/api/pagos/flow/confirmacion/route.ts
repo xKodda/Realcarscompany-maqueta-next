@@ -9,8 +9,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
     try {
-        const formData = await req.formData().catch(() => null);
-        const token = formData ? formData.get('token') as string : null;
+        // Flow sends data as application/x-www-form-urlencoded
+        const bodyText = await req.text().catch(() => '');
+        const params = new URLSearchParams(bodyText);
+        const token = params.get('token');
 
         if (!token) {
             console.error('Flow Webhook: No token provided');
